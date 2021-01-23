@@ -5,9 +5,11 @@ import { toast } from 'react-toastify'
 import { useForm } from 'react-hook-form'
 import 'react-toastify/dist/ReactToastify.css'
 import { Images } from '../../utils/Images'
+import { Link } from 'react-router-dom'
 
 toast.configure({ autoClose: 2000 })
-const Register = () => {
+
+const Edit = () => {
     const { register, handleSubmit, errors } = useForm()
     const [religion, setReligion] = useState({ value: null, error: null })
     const [socialOrder, setSocialOrder] = useState({ value: null, error: null })
@@ -68,18 +70,18 @@ const Register = () => {
 
         console.log(regData)
         setLoading(true)
-        toast.success('SUccessfully account created.')
+        toast.success('Successfully account updated.')
     }
 
 
     return (
-        <div className="register">
+        <div className="user-edit">
             <div className="card border-0">
                 <div className="card-header bg-white p-4">
                     <div className="d-flex">
                         <div>
-                            <h4 className="mb-0">User Register</h4>
-                            <p className="mb-0">User account registration.</p>
+                            <h4 className="mb-0">User Edit</h4>
+                            <p className="mb-0"><Link to="/">Go Back</Link> to see registered users.</p>
                         </div>
                         <div className="ml-auto">
                             <img src={Images.Logo} className="img-fluid" alt="Company logo" />
@@ -296,37 +298,17 @@ const Register = () => {
                                 </div>
                             </div>
 
-                            {/* Password */}
-                            <div className="col-12 col-lg-6">
-                                <div className="form-group mb-4">
-                                    {errors.password && errors.password.message ? (
-                                        <small className="text-danger">{errors.password && errors.password.message}</small>
-                                    ) : <small>Password</small>
-                                    }
-                                    <input
-                                        type="password"
-                                        name="password"
-                                        className={errors.password ? "form-control shadow-none danger-border" : "form-control shadow-none"}
-                                        placeholder="Password"
-                                        ref={register({
-                                            required: "Password is required.",
-                                            minLength: {
-                                                value: 8,
-                                                message: "Minimun length 8 character"
-                                            }
-                                        })}
-                                    />
-                                </div>
-                            </div>
                         </div>
 
+
+                        {/* Submit Button */}
                         <div className="text-right">
                             <button
                                 type="submit"
                                 className="btn shadow-none"
                                 disabled={isLoading}
                             >
-                                {isLoading ? <span>Submitting...</span> : <span>Submit</span>}
+                                {isLoading ? <span>Updating...</span> : <span>Update</span>}
                             </button>
                         </div>
                     </form>
@@ -336,7 +318,8 @@ const Register = () => {
     );
 }
 
-export default Register;
+export default Edit;
+
 const customStyles = {
     control: (provided, state) => ({
         ...provided,
