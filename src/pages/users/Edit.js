@@ -1,27 +1,39 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import './style.scss'
+import axios from 'axios'
 import Select from 'react-select'
+import Icon from 'react-icons-kit'
+import { api } from '../../utils/api'
 import { toast } from 'react-toastify'
 import { useForm } from 'react-hook-form'
-import 'react-toastify/dist/ReactToastify.css'
 import { Images } from '../../utils/Images'
-import { Link } from 'react-router-dom'
+import { ic_add } from 'react-icons-kit/md'
+import 'react-toastify/dist/ReactToastify.css'
+import { Link, useParams } from 'react-router-dom'
+
+import ReligionCreateModal from '../../components/modal/Religion'
+import SocialOrderCreateModal from '../../components/modal/SocialOrder'
 
 toast.configure({ autoClose: 2000 })
-
 const Edit = () => {
     const { register, handleSubmit, errors } = useForm()
+    const { email } = useParams()
+    const [isUpdate, setUpdate] = useState(false)
+    const [isLoading, setLoading] = useState(true)
     const [religion, setReligion] = useState({ value: null, error: null })
     const [socialOrder, setSocialOrder] = useState({ value: null, error: null })
     const [birthCountry, setBirthCountry] = useState({ value: null, error: null })
     const [livingCountry, setLivingCountry] = useState({ value: null })
-    const [isLoading, setLoading] = useState(false)
+    const [user, setUser] = useState({})
 
-    const religions = [
-        { value: 'Muslim', label: 'Muslim' },
-        { value: 'Hindu', label: 'Hindu' },
-        { value: 'Chistams', label: 'Chistams' }
-    ]
+    // Religion states
+    const [religionOptions, setReligionOptions] = useState([])
+    const [isReligionShow, setReligionShow] = useState(false)
+    const [isCreateReligion, setCreateReligion] = useState(false)
+
+    // Social order states
+    const [isSocialOrderShow, setSocialOrderShow] = useState(false)
+    const [isCreateSocialOrder, setCreateSocialOrder] = useState(false)
 
     const socialOrders = [
         { value: 'Muslim', label: 'Muslim' },
@@ -35,6 +47,25 @@ const Edit = () => {
         { value: 'India', label: 'India' }
     ]
 
+    useEffect(() => {
+        // Fetch User
+        const fetchUser = async () => {
+            try {
+                const response = await axios.get(`${api}admin/show/${email}`)
+                if (response.status === 200) {
+                    setLoading(false)
+                    setUser(response.data.user)
+                    console.log(response.data.user)
+                }
+            } catch (error) {
+                if (error) console.log(error.response)
+            }
+        }
+
+        fetchUser()
+        getReligion()
+    }, [email])
+
     // onChange religion
     const onChangeReligion = event => setReligion({ value: event.value, error: null })
 
@@ -46,6 +77,46 @@ const Edit = () => {
 
     // OnChange Living Country
     const onChangeLivingCountry = event => setLivingCountry({ value: event.value, error: null })
+
+    // Get Religion
+    const getReligion = async () => {
+        try {
+            const response = await axios.get(`${api}admin/religion`)
+            setReligionOptions(response.data.religions.map(data => ({ label: data.name, value: data.name })))
+            console.log(response.data.religions);
+        } catch (error) {
+            if (error) {
+                toast.warn(error.response.data.message)
+            }
+        }
+    }
+
+    // Create Religion
+    const createReligion = async (data) => {
+        try {
+            setCreateReligion(true)
+            const response = await axios.post(`${api}admin/religion`, data)
+            if (response.status === 201) {
+                getReligion()
+                setCreateReligion(false)
+                setReligionShow(false)
+                toast.success(response.data.message)
+            }
+        } catch (error) {
+            if (error) {
+                setCreateReligion(false)
+                setReligionShow(false)
+                toast.warn(error.response.data.message)
+            }
+        }
+    }
+
+    // Create Social Order
+    // /////////////////////////////////////////////////////////////// working here /////////////////////////////////////////////
+    const createSocialOrder = async(data) => {
+        console.log(data)
+        setCreateSocialOrder(true)
+    }
 
 
     // Submit Registration Data
@@ -69,10 +140,18 @@ const Edit = () => {
         }
 
         console.log(regData)
-        setLoading(true)
+        setUpdate(true)
         toast.success('Successfully account updated.')
     }
 
+    // if loading
+    if (isLoading) {
+        return (
+            <div>
+                <p>Loading...</p>
+            </div>
+        )
+    }
 
     return (
         <div className="user-edit">
@@ -104,6 +183,7 @@ const Edit = () => {
                                     <input
                                         type="text"
                                         name="name"
+                                        defaultValue={user.name ? user.name : null}
                                         className={errors.name ? "form-control shadow-none danger-border" : "form-control shadow-none"}
                                         placeholder="Your name"
                                         ref={register({
@@ -127,7 +207,8 @@ const Edit = () => {
                                     <input
                                         type="text"
                                         name="phone"
-                                        className={errors.password ? "form-control shadow-none danger-border" : "form-control shadow-none"}
+                                        defaultValue={user.phone ? user.phone : null}
+                                        className={errors.phone ? "form-control shadow-none danger-border" : "form-control shadow-none"}
                                         placeholder="( 01X-XXXX-XXXX )"
                                         ref={register({
                                             required: "Phone number is required.",
@@ -143,22 +224,12 @@ const Edit = () => {
                             {/* E-mail */}
                             <div className="col-12 col-lg-4">
                                 <div className="form-group mb-4">
-                                    {errors.email && errors.email.message ? (
-                                        <small className="text-danger">{errors.email && errors.email.message}</small>
-                                    ) : <small>E-mail</small>
-                                    }
+                                    <small>E-mail</small>
                                     <input
                                         type="text"
-                                        name="email"
-                                        className={errors.email ? "form-control shadow-none danger-border" : "form-control shadow-none"}
-                                        placeholder="E-mail"
-                                        ref={register({
-                                            required: "E-mail is required",
-                                            pattern: {
-                                                value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                                                message: "Invalid email address"
-                                            }
-                                        })}
+                                        disabled
+                                        defaultValue={user.email ? user.email : null}
+                                        className="form-control shadow-none"
                                     />
                                 </div>
                             </div>
@@ -217,7 +288,6 @@ const Edit = () => {
                                         type="date"
                                         name="dob"
                                         className={errors.dob ? "form-control shadow-none danger-border" : "form-control shadow-none"}
-                                        defaultValue={Date}
                                         ref={register({
                                             required: "Date of birth is required"
                                         })}
@@ -227,20 +297,37 @@ const Edit = () => {
 
                             {/* Religion */}
                             <div className="col-12 col-lg-4">
+
                                 <div className="form-group mb-4">
                                     {religion.error ?
                                         <small className="text-danger">Religion is required.</small>
                                         : <small>Religion</small>
                                     }
-                                    <Select
-                                        name="religion"
-                                        classNamePrefix="custom-select"
-                                        styles={customStyles}
-                                        placeholder={'Select religion'}
-                                        components={{ DropdownIndicator: () => null, IndicatorSeparator: () => null }}
-                                        options={religions}
-                                        onChange={onChangeReligion}
-                                    />
+
+                                    <div className="d-flex">
+                                        <div className="flex-fill">
+                                            <Select
+                                                name="religion"
+                                                classNamePrefix="custom-select"
+                                                styles={customStyles}
+                                                placeholder={'Select religion'}
+                                                components={{ DropdownIndicator: () => null, IndicatorSeparator: () => null }}
+                                                options={religionOptions}
+                                                onChange={onChangeReligion}
+                                            // defaultOptions={{ value: user.religion, label: user.religion }}
+                                            />
+                                        </div>
+                                        <div className="pl-2 pt-1">
+                                            <button
+                                                type="button"
+                                                style={customStyles.smBtn}
+                                                className="btn shadow-none rounded-circle p-1"
+                                                onClick={() => setReligionShow(true)}
+                                            >
+                                                <Icon icon={ic_add} size={22} />
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 
@@ -251,15 +338,30 @@ const Edit = () => {
                                         <small className="text-danger">Social order is required.</small>
                                         : <small>Social order</small>
                                     }
-                                    <Select
-                                        name="religion"
-                                        classNamePrefix="custom-select"
-                                        styles={customStyles}
-                                        placeholder={'Social order'}
-                                        components={{ DropdownIndicator: () => null, IndicatorSeparator: () => null }}
-                                        options={socialOrders}
-                                        onChange={onChangeSocialOrder}
-                                    />
+
+                                    <div className="d-flex">
+                                        <div className="flex-fill">
+                                            <Select
+                                                name="religion"
+                                                classNamePrefix="custom-select"
+                                                styles={customStyles}
+                                                placeholder={'Social order'}
+                                                components={{ DropdownIndicator: () => null, IndicatorSeparator: () => null }}
+                                                options={socialOrders}
+                                                onChange={onChangeSocialOrder}
+                                            />
+                                        </div>
+                                        <div className="pl-2 pt-1">
+                                            <button
+                                                type="button"
+                                                style={customStyles.smBtn}
+                                                className="btn shadow-none rounded-circle p-1"
+                                                onClick={() => setSocialOrderShow(true)}
+                                            >
+                                                <Icon icon={ic_add} size={22} />
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 
@@ -278,6 +380,7 @@ const Edit = () => {
                                         components={{ DropdownIndicator: () => null, IndicatorSeparator: () => null }}
                                         options={countries}
                                         onChange={onChangeBirthCountry}
+                                        defaultOptions={{ value: user.birthCountry, label: user.birthCountry }}
                                     />
                                 </div>
                             </div>
@@ -306,14 +409,40 @@ const Edit = () => {
                             <button
                                 type="submit"
                                 className="btn shadow-none"
-                                disabled={isLoading}
+                                disabled={isUpdate}
                             >
-                                {isLoading ? <span>Updating...</span> : <span>Update</span>}
+                                {isUpdate ? <span>Updating...</span> : <span>Update</span>}
                             </button>
                         </div>
                     </form>
                 </div>
             </div>
+
+            {/* Modals */}
+
+            {/* Religion Create modal */}
+            {isReligionShow ?
+                <ReligionCreateModal
+                    show={isReligionShow}
+                    newdata={createReligion}
+                    isCreate={isCreateReligion}
+                    onHide={() => setReligionShow(false)}
+                />
+                : null}
+
+            {/* Social order create Modal */}
+            {isSocialOrderShow ?
+                <SocialOrderCreateModal
+                    show={isSocialOrderShow}
+                    religions={religionOptions}
+                    newdata={createSocialOrder}
+                    isCreate={isCreateSocialOrder}
+                    onHide={() => setSocialOrderShow(false)}
+                />
+                : null}
+
+
+
         </div>
     );
 }
@@ -329,5 +458,9 @@ const customStyles = {
         boxShadow: 'none', '&:hover': { borderColor: '1px solid #ced4da' },
         border: state.isFocused ? '1px solid #dfdfdf' : '1px solid #ced4da',
         borderRadius: 0
-    })
+    }),
+    smBtn: {
+        width: 33,
+        height: 34,
+    }
 }

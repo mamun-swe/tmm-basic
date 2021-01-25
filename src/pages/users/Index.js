@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { Images } from '../../utils/Images'
 import Skeleton from 'react-loading-skeleton'
-import { ic_create, ic_cached } from 'react-icons-kit/md'
+import { ic_create } from 'react-icons-kit/md'
 import InfiniteScroll from "react-infinite-scroll-component";
 
 const Index = () => {
@@ -22,24 +22,24 @@ const Index = () => {
     const fakeArr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
 
     useEffect(() => {
-        // Fetch Users
-        const fetchUsers = async () => {
-            try {
-                const response = await axios.get(`${api}comments?_page=${page}&_limit=36`)
-                if (response.status === 200) {
-                    setUsers([...users, ...response.data])
-                    setFilteredUsers([...users, ...response.data])
-                    setLoading(false)
-                }
-            } catch (error) {
-                if (error) {
-                    console.log(error.response)
-                }
-            }
-        }
-
         fetchUsers()
     }, [page])
+
+    // Fetch Users
+    const fetchUsers = async () => {
+        try {
+            const response = await axios.get(`${api}admin/index?_page=${page}&_limit=36`)
+            if (response.status === 200) {
+                setUsers([...users, ...response.data.users])
+                setFilteredUsers([...users, ...response.data.users])
+                setLoading(false)
+            }
+        } catch (error) {
+            if (error) {
+                console.log(error.response)
+            }
+        }
+    }
 
     // Submit to filter user
     const onSubmit = async (data) => {
@@ -62,6 +62,15 @@ const Index = () => {
             if (error) {
                 console.log(error.response)
             }
+        }
+    }
+
+    // On change filter
+    const filterHandle = event => {
+        const value = event.target.value
+        if (!value) {
+            setLoading(true)
+            fetchUsers()
         }
     }
 
@@ -126,17 +135,10 @@ const Index = () => {
                                                 className="form-control shadow-none border-0"
                                                 placeholder="Search user by e-mail"
                                                 ref={register()}
+                                                onChange={filterHandle}
                                             />
                                         </div>
                                     </form>
-                                </div>
-                                <div>
-                                    <button
-                                        type="button"
-                                        className="btn btn-white shadow-none border-left rounded-0 py-1"
-                                    >
-                                        <Icon icon={ic_cached} size={20} />
-                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -159,11 +161,11 @@ const Index = () => {
                                                 <img src={Images.User} className="img-fluid" alt="..." />
                                             </div>
                                             <div className="content-container">
-                                                <h6 className="text-capitalize">Colour Bangla</h6>
-                                                <p>{user.email}</p>
+                                                <h6 className="text-capitalize">{user.name ? user.name : null}</h6>
+                                                <p>{user.email ? user.email : null}</p>
                                             </div>
                                             <Link
-                                                to={`/users/${user.id}/edit`}
+                                                to={`/users/${user.email}/edit`}
                                                 type="button"
                                                 className="btn shadow-none rounded-circle"
                                             >
