@@ -11,8 +11,13 @@ import { ic_add } from 'react-icons-kit/md'
 import 'react-toastify/dist/ReactToastify.css'
 import { Link, useParams } from 'react-router-dom'
 
+import BranchCreateModal from '../../components/modal/Branch'
 import ReligionCreateModal from '../../components/modal/Religion'
 import SocialOrderCreateModal from '../../components/modal/SocialOrder'
+import CountryCreateModal from '../../components/modal/Country'
+import LanguageCreateModal from '../../components/modal/Language'
+
+import PictureAndDescUpdateForm from '../../components/modal/forms/ProfilePictureDescription'
 
 toast.configure({ autoClose: 2000 })
 const Edit = () => {
@@ -20,13 +25,24 @@ const Edit = () => {
     const { email } = useParams()
     const [isUpdate, setUpdate] = useState(false)
     const [isLoading, setLoading] = useState(true)
+
+    // Input states
+    const [branch, setBranch] = useState({ value: null, error: null })
     const [religion, setReligion] = useState({ value: null, error: null })
     const [socialOrder, setSocialOrder] = useState({ value: null, error: null })
     const [birthCountry, setBirthCountry] = useState({ value: null, error: null })
     const [livingCountry, setLivingCountry] = useState({ value: null })
+    const [motherTongue, setMotherTongue] = useState({ value: null, error: null })
+    const [spokenLanguage, setSpokenLanguage] = useState({ value: [], error: null })
     const [user, setUser] = useState({})
 
+    // Branch states
+    const [isBranchShow, setBranchShow] = useState(false)
+    const [isBranchCreated, setBranchCreated] = useState(false)
+    const [branchOptions, setBranchOptions] = useState([])
+
     // Religion states
+    const [serverReligions, setServerReligions] = useState([])
     const [religionOptions, setReligionOptions] = useState([])
     const [isReligionShow, setReligionShow] = useState(false)
     const [isCreateReligion, setCreateReligion] = useState(false)
@@ -34,18 +50,17 @@ const Edit = () => {
     // Social order states
     const [isSocialOrderShow, setSocialOrderShow] = useState(false)
     const [isCreateSocialOrder, setCreateSocialOrder] = useState(false)
+    const [socialOrderOptions, setSocialOrderOptions] = useState([])
 
-    const socialOrders = [
-        { value: 'Muslim', label: 'Muslim' },
-        { value: 'Hindu', label: 'Hindu' },
-        { value: 'Chistams', label: 'Chistams' }
-    ]
+    // Country states
+    const [isCountryShow, setCountryShow] = useState(false)
+    const [isCountryCreate, setCountryCreate] = useState(false)
+    const [countryOptions, setCountryOptions] = useState([])
 
-    const countries = [
-        { value: 'Bangladesh', label: 'Bangladesh' },
-        { value: 'Pakistan', label: 'Pakistan' },
-        { value: 'India', label: 'India' }
-    ]
+    // Language states
+    const [isLanguageShow, setLanguageShow] = useState(false)
+    const [isLanguageCreated, setLanguageCreated] = useState(false)
+    const [languageOptions, setLanguageOptions] = useState([])
 
     useEffect(() => {
         // Fetch User
@@ -55,19 +70,31 @@ const Edit = () => {
                 if (response.status === 200) {
                     setLoading(false)
                     setUser(response.data.user)
-                    console.log(response.data.user)
                 }
             } catch (error) {
-                if (error) console.log(error.response)
+                if (error) toast.warn(error.response.data.message)
             }
         }
 
         fetchUser()
         getReligion()
+        getCountry()
+        getBranches()
+        getLanguage()
     }, [email])
 
+
+    // onChange branch
+    const onChangeBranch = event => setBranch({ value: event.value, error: null })
+
     // onChange religion
-    const onChangeReligion = event => setReligion({ value: event.value, error: null })
+    const onChangeReligion = event => {
+        setReligion({ value: event.value, error: null })
+        // Find single religion
+        const singleReligion = serverReligions.find(religion => religion.name === event.value)
+        // Set to social orders
+        setSocialOrderOptions(singleReligion.socialOrders.map(data => ({ label: data, value: data })))
+    }
 
     // OnChange social order
     const onChangeSocialOrder = event => setSocialOrder({ value: event.value, error: null })
@@ -78,12 +105,52 @@ const Edit = () => {
     // OnChange Living Country
     const onChangeLivingCountry = event => setLivingCountry({ value: event.value, error: null })
 
+    // OnChange Mother Toungue
+    const onChangeMotherTongue = event => setMotherTongue({ value: event.value, error: null })
+
+    // OnChange Spoken Language
+    const onChangeSpokenLanguage = event => setSpokenLanguage({ value: event, error: null })
+
+
+    // Get Branch
+    const getBranches = async () => {
+        try {
+            const response = await axios.get(`${api}admin/branch`)
+            if (response.status === 200) {
+                setBranchOptions(response.data.branches.map(branch => ({ label: branch.name, value: branch._id })))
+            }
+        } catch (error) {
+            if (error) {
+                console.log(error.response)
+            }
+        }
+    }
+
+    // Create Branch
+    const createBranch = async (data) => {
+        try {
+            setBranchCreated(true)
+            const response = await axios.post(`${api}admin/branch`, data)
+            if (response.status === 201) {
+                getBranches()
+                setBranchCreated(false)
+                setBranchShow(false)
+                toast.success(response.data.message)
+            }
+        } catch (error) {
+            if (error) {
+                setBranchCreated(false)
+                toast.warn(error.response.data.message)
+            }
+        }
+    }
+
     // Get Religion
     const getReligion = async () => {
         try {
             const response = await axios.get(`${api}admin/religion`)
+            setServerReligions(response.data.religions)
             setReligionOptions(response.data.religions.map(data => ({ label: data.name, value: data.name })))
-            console.log(response.data.religions);
         } catch (error) {
             if (error) {
                 toast.warn(error.response.data.message)
@@ -112,15 +179,95 @@ const Edit = () => {
     }
 
     // Create Social Order
-    // /////////////////////////////////////////////////////////////// working here /////////////////////////////////////////////
-    const createSocialOrder = async(data) => {
-        console.log(data)
-        setCreateSocialOrder(true)
+    const createSocialOrder = async (data) => {
+        try {
+            setCreateSocialOrder(true)
+            const response = await axios.post(`${api}admin/religion/socialorder`, data)
+            if (response.status === 201) {
+                getReligion()
+                setCreateSocialOrder(false)
+                setSocialOrderShow(false)
+                toast.success(response.data.message)
+            }
+
+        } catch (error) {
+            if (error) {
+                setCreateSocialOrder(false)
+                toast.warn(error.response.data.message)
+            }
+        }
+    }
+
+    // Get Country
+    const getCountry = async () => {
+        try {
+            const response = await axios.get(`${api}admin/country`)
+            if (response.status === 200) {
+                setCountryOptions(response.data.countries.map(country => ({ label: country.name, value: country.name })))
+            }
+        } catch (error) {
+            if (error) {
+                toast.warn(error.response.data.message)
+            }
+        }
+    }
+
+    // Create Country
+    const createCountry = async (data) => {
+        try {
+            setCountryCreate(true)
+            const response = await axios.post(`${api}admin/country`, data)
+            if (response.status === 201) {
+                getCountry()
+                setCountryCreate(false)
+                setCountryShow(false)
+                toast.success(response.data.message)
+            }
+        } catch (error) {
+            if (error) {
+                setCountryCreate(false)
+                toast.warn(error.response.data.message)
+            }
+        }
+    }
+
+    // Get Language
+    const getLanguage = async () => {
+        try {
+            const response = await axios.get(`${api}admin/language/index`)
+            if (response.status === 200) {
+                setLanguageOptions(response.data.languages.map(language => ({ label: language.name, value: language.name })))
+            }
+        } catch (error) {
+            if (error) console.log(error.response)
+        }
+    }
+
+    // Create Language
+    const createLanguage = async (data) => {
+        try {
+            setLanguageCreated(true)
+            const response = await axios.post(`${api}admin/language/store`, data)
+            if (response.status === 201) {
+                getLanguage()
+                setLanguageCreated(false)
+                setLanguageShow(false)
+                toast.success(response.data.message)
+            }
+        } catch (error) {
+            if (error) {
+                setLanguageCreated(false)
+                toast.warn(error.response.data.message)
+            }
+        }
     }
 
 
     // Submit Registration Data
     const onSubmit = async (data) => {
+
+        // Check Branch
+        if (!branch.value) return setBranch({ error: true })
 
         // Check Religion
         if (!religion.value) return setReligion({ error: true })
@@ -131,17 +278,23 @@ const Edit = () => {
         // Check Birth Country
         if (!birthCountry.value) return setBirthCountry({ error: true })
 
+        // Check Mother Toungue
+        if (!motherTongue.value) return setMotherTongue({ error: true })
+
         const regData = {
             ...data,
+            branch: branch.value,
             religion: religion.value,
             socialOrder: socialOrder.value,
             birthCountry: birthCountry.value,
-            livingCountry: livingCountry.value ? livingCountry.value : null
+            livingCountry: livingCountry.value ? livingCountry.value : null,
+            motherTongue: motherTongue.value,
+            spokenLanguage: spokenLanguage.value ? spokenLanguage.value : null
         }
 
         console.log(regData)
-        setUpdate(true)
-        toast.success('Successfully account updated.')
+        // setUpdate(true)
+        // toast.success('Successfully account updated.')
     }
 
     // if loading
@@ -155,7 +308,7 @@ const Edit = () => {
 
     return (
         <div className="user-edit">
-            <div className="card border-0">
+            <div className="card">
                 <div className="card-header bg-white p-4">
                     <div className="d-flex">
                         <div>
@@ -167,10 +320,47 @@ const Edit = () => {
                         </div>
                     </div>
                 </div>
-                <div className="card-body pt-4 pb-4 pb-lg-5">
+                <div className="card-body p-4">
 
-                    {/* Form */}
+                    {/* Form 1 */}
                     <form onSubmit={handleSubmit(onSubmit)}>
+
+                        <div className="row">
+                            {/* Branch */}
+                            <div className="col-12 col-lg-4 ml-auto">
+                                <div className="form-group mb-4">
+                                    {branch.error ?
+                                        <small className="text-danger">Branch is required.</small>
+                                        : <small>Branch</small>
+                                    }
+
+                                    <div className="d-flex">
+                                        <div className="flex-fill">
+                                            <Select
+                                                classNamePrefix="custom-select"
+                                                styles={customStyles}
+                                                placeholder={'Select branch'}
+                                                components={{ DropdownIndicator: () => null, IndicatorSeparator: () => null }}
+                                                options={branchOptions}
+                                                onChange={onChangeBranch}
+                                            // defaultOptions={{ value: user.birthCountry, label: user.birthCountry }}
+                                            />
+                                        </div>
+                                        <div className="pl-2 pt-1">
+                                            <button
+                                                type="button"
+                                                style={customStyles.smBtn}
+                                                className="btn shadow-none rounded-circle p-1"
+                                                onClick={() => setBranchShow(true)}
+                                            >
+                                                <Icon icon={ic_add} size={22} />
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         <div className="row">
 
                             {/* Name */}
@@ -307,7 +497,6 @@ const Edit = () => {
                                     <div className="d-flex">
                                         <div className="flex-fill">
                                             <Select
-                                                name="religion"
                                                 classNamePrefix="custom-select"
                                                 styles={customStyles}
                                                 placeholder={'Select religion'}
@@ -342,12 +531,11 @@ const Edit = () => {
                                     <div className="d-flex">
                                         <div className="flex-fill">
                                             <Select
-                                                name="religion"
                                                 classNamePrefix="custom-select"
                                                 styles={customStyles}
                                                 placeholder={'Social order'}
                                                 components={{ DropdownIndicator: () => null, IndicatorSeparator: () => null }}
-                                                options={socialOrders}
+                                                options={socialOrderOptions}
                                                 onChange={onChangeSocialOrder}
                                             />
                                         </div>
@@ -372,37 +560,131 @@ const Edit = () => {
                                         <small className="text-danger">Birth country is required.</small>
                                         : <small>Birth country</small>
                                     }
-                                    <Select
-                                        name="birthCountry"
-                                        classNamePrefix="custom-select"
-                                        styles={customStyles}
-                                        placeholder={'Select birth country'}
-                                        components={{ DropdownIndicator: () => null, IndicatorSeparator: () => null }}
-                                        options={countries}
-                                        onChange={onChangeBirthCountry}
-                                        defaultOptions={{ value: user.birthCountry, label: user.birthCountry }}
-                                    />
+
+                                    <div className="d-flex">
+                                        <div className="flex-fill">
+                                            <Select
+                                                classNamePrefix="custom-select"
+                                                styles={customStyles}
+                                                placeholder={'Select birth country'}
+                                                components={{ DropdownIndicator: () => null, IndicatorSeparator: () => null }}
+                                                options={countryOptions}
+                                                onChange={onChangeBirthCountry}
+                                                defaultOptions={{ value: user.birthCountry, label: user.birthCountry }}
+                                            />
+                                        </div>
+                                        <div className="pl-2 pt-1">
+                                            <button
+                                                type="button"
+                                                style={customStyles.smBtn}
+                                                className="btn shadow-none rounded-circle p-1"
+                                                onClick={() => setCountryShow(true)}
+                                            >
+                                                <Icon icon={ic_add} size={22} />
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 
                             {/* Living Country */}
-                            <div className="col-12 col-lg-6">
+                            <div className="col-12 col-lg-4">
                                 <div className="form-group mb-4">
                                     <small>Living country</small>
-                                    <Select
-                                        name="livingCountry"
-                                        classNamePrefix="custom-select"
-                                        styles={customStyles}
-                                        placeholder={'Social order'}
-                                        components={{ DropdownIndicator: () => null, IndicatorSeparator: () => null }}
-                                        options={countries}
-                                        onChange={onChangeLivingCountry}
-                                    />
+
+                                    <div className="d-flex">
+                                        <div className="flex-fill">
+                                            <Select
+                                                classNamePrefix="custom-select"
+                                                styles={customStyles}
+                                                placeholder={'Social order'}
+                                                components={{ DropdownIndicator: () => null, IndicatorSeparator: () => null }}
+                                                options={countryOptions}
+                                                onChange={onChangeLivingCountry}
+                                            />
+                                        </div>
+                                        <div className="pl-2 pt-1">
+                                            <button
+                                                type="button"
+                                                style={customStyles.smBtn}
+                                                className="btn shadow-none rounded-circle p-1"
+                                                onClick={() => setCountryShow(true)}
+                                            >
+                                                <Icon icon={ic_add} size={22} />
+                                            </button>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Mother tounge  */}
+                            <div className="col-12 col-lg-4">
+                                <div className="form-group mb-4">
+                                    {motherTongue.error ?
+                                        <small className="text-danger">Mother toungue is required.</small>
+                                        : <small>Mother tounge</small>
+                                    }
+
+                                    <div className="d-flex">
+                                        <div className="flex-fill">
+                                            <Select
+                                                classNamePrefix="custom-select"
+                                                styles={customStyles}
+                                                placeholder={'Select mother tounge'}
+                                                components={{ DropdownIndicator: () => null, IndicatorSeparator: () => null }}
+                                                options={languageOptions}
+                                                onChange={onChangeMotherTongue}
+                                            />
+                                        </div>
+                                        <div className="pl-2 pt-1">
+                                            <button
+                                                type="button"
+                                                style={customStyles.smBtn}
+                                                className="btn shadow-none rounded-circle p-1"
+                                                onClick={() => setLanguageShow(true)}
+                                            >
+                                                <Icon icon={ic_add} size={22} />
+                                            </button>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Spoken language  */}
+                            <div className="col-12 col-lg-4">
+                                <div className="form-group mb-4">
+                                    <small>Spoken language</small>
+
+                                    <div className="d-flex">
+                                        <div className="flex-fill">
+                                            <Select
+                                                isMulti
+                                                styles={customStyles}
+                                                classNamePrefix="custom-select"
+                                                placeholder={'Select spoken language'}
+                                                components={{ DropdownIndicator: () => null, IndicatorSeparator: () => null }}
+                                                options={languageOptions}
+                                                onChange={onChangeSpokenLanguage}
+                                            />
+                                        </div>
+                                        <div className="pl-2 pt-1">
+                                            <button
+                                                type="button"
+                                                style={customStyles.smBtn}
+                                                className="btn shadow-none rounded-circle p-1"
+                                                onClick={() => setLanguageShow(true)}
+                                            >
+                                                <Icon icon={ic_add} size={22} />
+                                            </button>
+                                        </div>
+
+                                    </div>
                                 </div>
                             </div>
 
                         </div>
-
 
                         {/* Submit Button */}
                         <div className="text-right">
@@ -415,12 +697,33 @@ const Edit = () => {
                             </button>
                         </div>
                     </form>
+
+                </div>
+            </div>
+
+
+            {/* //////////////////////////////////////////////////////////////// Working here /////////////////////////// */}
+            {/* Profile Picture & Description form card */}
+            <div className="card my-lg-4">
+                <div className="card-body p-4">
+                    <PictureAndDescUpdateForm email={email} />
                 </div>
             </div>
 
             {/* Modals */}
 
-            {/* Religion Create modal */}
+            {/* Branch create modal */}
+            {isBranchShow ?
+                <BranchCreateModal
+                    show={isBranchShow}
+                    newdata={createBranch}
+                    countries={countryOptions}
+                    isCreate={isBranchCreated}
+                    onHide={() => setBranchShow(false)}
+                />
+                : null}
+
+            {/* Religion create modal */}
             {isReligionShow ?
                 <ReligionCreateModal
                     show={isReligionShow}
@@ -430,7 +733,7 @@ const Edit = () => {
                 />
                 : null}
 
-            {/* Social order create Modal */}
+            {/* Social order create modal */}
             {isSocialOrderShow ?
                 <SocialOrderCreateModal
                     show={isSocialOrderShow}
@@ -438,6 +741,26 @@ const Edit = () => {
                     newdata={createSocialOrder}
                     isCreate={isCreateSocialOrder}
                     onHide={() => setSocialOrderShow(false)}
+                />
+                : null}
+
+            {/* Country create modal */}
+            {isCountryShow ?
+                <CountryCreateModal
+                    show={isCountryShow}
+                    newdata={createCountry}
+                    isCreate={isCountryCreate}
+                    onHide={() => setCountryShow(false)}
+                />
+                : null}
+
+            {/* Language create modal  */}
+            {isLanguageShow ?
+                <LanguageCreateModal
+                    show={isLanguageShow}
+                    newdata={createLanguage}
+                    isCreate={isLanguageCreated}
+                    onHide={() => setLanguageShow(false)}
                 />
                 : null}
 
