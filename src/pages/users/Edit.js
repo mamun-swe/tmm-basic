@@ -17,7 +17,9 @@ import SocialOrderCreateModal from '../../components/modal/SocialOrder'
 import CountryCreateModal from '../../components/modal/Country'
 import LanguageCreateModal from '../../components/modal/Language'
 
-import PictureAndDescUpdateForm from '../../components/modal/forms/ProfilePictureDescription'
+import PictureAndDescUpdateForm from '../../components/forms/ProfilePictureDescription'
+import BasicAndLifestyleUpdateForm from '../../components/forms/BasicAndLifestyle'
+import ContactInfoCreateModal from '../../components/forms/ContactInformation'
 
 toast.configure({ autoClose: 2000 })
 const Edit = () => {
@@ -70,6 +72,7 @@ const Edit = () => {
                 if (response.status === 200) {
                     setLoading(false)
                     setUser(response.data.user)
+                    // console.log(response.data.user)
                 }
             } catch (error) {
                 if (error) toast.warn(error.response.data.message)
@@ -701,14 +704,17 @@ const Edit = () => {
                 </div>
             </div>
 
+            {/* Profile Picture & Description form */}
+            <PictureAndDescUpdateForm email={email} />
 
-            {/* //////////////////////////////////////////////////////////////// Working here /////////////////////////// */}
-            {/* Profile Picture & Description form card */}
-            <div className="card my-lg-4">
-                <div className="card-body p-4">
-                    <PictureAndDescUpdateForm email={email} />
-                </div>
-            </div>
+            {/* Basic and lifestyle information form */}
+            <BasicAndLifestyleUpdateForm email={email} basicandlifeinfo={user.basicAndLifestyleInformation ? user.basicAndLifestyleInformation : null} />
+
+            {/* Contact information form */}
+            <ContactInfoCreateModal email={email} />
+
+
+
 
             {/* Modals */}
 

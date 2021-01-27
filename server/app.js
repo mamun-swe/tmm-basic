@@ -11,7 +11,7 @@ app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
 app.use(cors())
 app.use(fileUpload())
-app.use(express.json({limit: '50mb'}))
+app.use(express.json({ limit: '50mb' }))
 
 
 // Main Routes
@@ -52,7 +52,8 @@ mongoose.connect('mongodb://localhost:27017/tmm', {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useCreateIndex: true,
-    useNewUrlParser: true
+    useNewUrlParser: true,
+    useFindAndModify: false
 })
 
 const db = mongoose.connection

@@ -5,6 +5,7 @@ const ReligionController = require('../controllers/admin/ReligionController')
 const CountryController = require('../controllers/admin/CountryController')
 const BranchController = require('../controllers/admin/BranchController')
 const LanguageController = require('../controllers/admin/LanguageController')
+const BasicAndLifestyleController = require('../controllers/admin/BasicAndLifestyleController')
 
 // Users
 router.get('/index', UsersController.Index)
@@ -26,5 +27,8 @@ router.post('/branch', BranchController.Store)
 // Language
 router.get('/language/index', LanguageController.Index)
 router.post('/language/store', LanguageController.Store)
+
+// Basic & Lifestyle 
+router.post('/basic-and-lifestle/store', BasicAndLifestyleController.Store)
 
 module.exports = router

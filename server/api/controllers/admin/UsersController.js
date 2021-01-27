@@ -34,7 +34,12 @@ const Show = async (req, res, next) => {
     try {
         const { email } = req.params
 
-        const result = await Users.findOne({ 'email': email }).exec()
+        const result = await Users.findOne({ 'email': email })
+            .populate(
+                'basicAndLifestyleInformation',
+                'user age materialStatus height bodyWeight diet bloodGroup healthInformation disability'
+            )
+            .exec()
         if (!result) {
             return res.status(404).json({
                 status: false,

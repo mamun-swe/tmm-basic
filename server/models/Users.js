@@ -264,60 +264,11 @@ const userSchema = new Schema({
     // },
 
 
-
-
-
-
-
-
-
-
-
-
-    ///////////////////////////////////////////////// New Collection ////////////////////////////////////////////////////
-    // basicAndLifestyleInformation: {
-    //     age: {
-    //         type: Number,
-    //         trim: true,
-    //         default: null
-    //     },
-    //     materialStatus: {
-    //         type: String,
-    //         trim: true,
-    //         default: null
-    //     },
-    //     height: {
-    //         type: String,
-    //         trim: true,
-    //         default: null
-    //     },
-    //     bodyWeight: {
-    //         type: String,
-    //         trim: true,
-    //         default: null
-    //     },
-    //     diet: {
-    //         type: String,
-    //         trim: true,
-    //         default: null
-    //     },
-    //     bloodGroup: {
-    //         type: String,
-    //         trim: true,
-    //         default: null,
-    //         enum: [null, "A(+ev)", "A(-ev)", "B(+ev)", "B(-ev)", "AB(+ev)", "AB(-ev)", "O(+ev)", "O(-ev)"]
-    //     },
-    //     healthInformation: {
-    //         type: String,
-    //         trim: true,
-    //         default: null
-    //     },
-    //     disability: {
-    //         type: String,
-    //         trim: true,
-    //         default: null
-    //     }
-    // },
+    basicAndLifestyleInformation: {
+        type: Schema.Types.ObjectId,
+        ref: 'BasicAndLifestyle',
+        default: null
+    }
 
 
 
@@ -435,12 +386,7 @@ const userSchema = new Schema({
     //         trim: true,
     //         default: null
     //     },
-    //     relationshipWithContactPerson: {
-    //         type: String,
-    //         trim: true,
-    //         default: null
-    //     },
-    //     convenientTimeToCall: {
+    //     relationship: {
     //         type: String,
     //         trim: true,
     //         default: null
@@ -475,7 +421,14 @@ const userSchema = new Schema({
     //         trim: true,
     //         default: null
     //     }
+    //     convenientTimeToCall: {
+    //         type: String,
+    //         trim: true,
+    //         default: null
+    //     },
     // },
+
+
 
     ///////////////////////////////////////////////// New Collection ////////////////////////////////////////////////////
     // personalActivities: {
