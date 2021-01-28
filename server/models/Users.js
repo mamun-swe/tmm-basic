@@ -264,11 +264,54 @@ const userSchema = new Schema({
     // },
 
 
+
     basicAndLifestyleInformation: {
         type: Schema.Types.ObjectId,
         ref: 'BasicAndLifestyle',
         default: null
-    }
+    },
+    contactInformation: {
+        type: Schema.Types.ObjectId,
+        ref: 'ContactInfo',
+        default: null
+    },
+    personalActivities: {
+        hobbies: [{
+            type: String,
+            trim: true,
+            default: null
+        }],
+        interests: [{
+            type: String,
+            trim: true,
+            default: null
+        }],
+        favouriteMusic: [{
+            type: String,
+            trim: true,
+            default: null
+        }],
+        favouriteReads: [{
+            type: String,
+            trim: true,
+            default: null
+        }],
+        preferredMovies: [{
+            type: String,
+            trim: true,
+            default: null
+        }],
+        sports: [{
+            type: String,
+            trim: true,
+            default: null
+        }],
+        favouriteCuisine: [{
+            type: String,
+            trim: true,
+            default: null
+        }]
+    },
 
 
 
@@ -378,98 +421,6 @@ const userSchema = new Schema({
     //         default: null
     //     }]
     // },
-
-    ///////////////////////////////////////////////// New Collection ////////////////////////////////////////////////////
-    // contactInformation: {
-    //     contactPersonName: {
-    //         type: String,
-    //         trim: true,
-    //         default: null
-    //     },
-    //     relationship: {
-    //         type: String,
-    //         trim: true,
-    //         default: null
-    //     },
-    //     presentAddress: {
-    //         type: String,
-    //         trim: true,
-    //         default: null
-    //     },
-    //     permanentAddress: {
-    //         type: String,
-    //         trim: true,
-    //         default: null
-    //     },
-    //     nidNumber: {
-    //         type: String,
-    //         trim: true,
-    //         default: null
-    //     },
-    //     passportNumber: {
-    //         type: String,
-    //         trim: true,
-    //         default: null
-    //     },
-    //     phoneNumber: {
-    //         type: String,
-    //         trim: true,
-    //         default: null
-    //     },
-    //     altPhone: {
-    //         type: String,
-    //         trim: true,
-    //         default: null
-    //     }
-    //     convenientTimeToCall: {
-    //         type: String,
-    //         trim: true,
-    //         default: null
-    //     },
-    // },
-
-
-
-    ///////////////////////////////////////////////// New Collection ////////////////////////////////////////////////////
-    // personalActivities: {
-    //     hobbies: [{
-    //         type: String,
-    //         trim: true,
-    //         default: null
-    //     }],
-    //     interests: [{
-    //         type: String,
-    //         trim: true,
-    //         default: null
-    //     }],
-    //     favouriteMusic: [{
-    //         type: String,
-    //         trim: true,
-    //         default: null
-    //     }],
-    //     favouriteReads: [{
-    //         type: String,
-    //         trim: true,
-    //         default: null
-    //     }],
-    //     preferredMovies: [{
-    //         type: String,
-    //         trim: true,
-    //         default: null
-    //     }],
-    //     sports: [{
-    //         type: String,
-    //         trim: true,
-    //         default: null
-    //     }],
-    //     favouriteCuisine: [{
-    //         type: String,
-    //         trim: true,
-    //         default: null
-    //     }]
-    // },
-
-
 
 
 }, {

@@ -1,4 +1,4 @@
-const Branch = require('../../../models/Branch')
+const Branch = require('../../../../models/Branch')
 
 
 // Index of branch

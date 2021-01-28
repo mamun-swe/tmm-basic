@@ -1,4 +1,4 @@
-const Religion = require('../../../models/Religion')
+const Religion = require('../../../../models/Religion')
 
 // Religion index
 const Index = async (req, res, next) => {

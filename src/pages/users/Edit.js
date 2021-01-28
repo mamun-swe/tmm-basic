@@ -19,7 +19,10 @@ import LanguageCreateModal from '../../components/modal/Language'
 
 import PictureAndDescUpdateForm from '../../components/forms/ProfilePictureDescription'
 import BasicAndLifestyleUpdateForm from '../../components/forms/BasicAndLifestyle'
-import ContactInfoCreateModal from '../../components/forms/ContactInformation'
+import ContactInfoCreateForm from '../../components/forms/ContactInformation'
+import HobbiForm from '../../components/forms/Hobbi'
+import InterestForm from '../../components/forms/Interests'
+import MusicForm from '../../components/forms/FavouriteMusic'
 
 toast.configure({ autoClose: 2000 })
 const Edit = () => {
@@ -72,10 +75,13 @@ const Edit = () => {
                 if (response.status === 200) {
                     setLoading(false)
                     setUser(response.data.user)
-                    // console.log(response.data.user)
+                    console.log(response.data.user)
                 }
             } catch (error) {
-                if (error) toast.warn(error.response.data.message)
+                if (error) {
+                    console.log(error.response)
+                    toast.warn(error.response.data.message)
+                }
             }
         }
 
@@ -711,7 +717,34 @@ const Edit = () => {
             <BasicAndLifestyleUpdateForm email={email} basicandlifeinfo={user.basicAndLifestyleInformation ? user.basicAndLifestyleInformation : null} />
 
             {/* Contact information form */}
-            <ContactInfoCreateModal email={email} />
+            <ContactInfoCreateForm email={email} contact={user.contactInformation ? user.contactInformation : null} />
+
+            {/* Personal activities */}
+            <div className="card my-lg-4">
+                <div className="card-header bg-white">
+                    <h6 className="mb-0">Personal Activities</h6>
+                </div>
+                <div className="card-body p-4">
+                    <div className="row">
+
+                        {/* Hobbi create form */}
+                        <div className="col-12 col-lg-6 pr-lg-4 border-bottom pb-4 mb-4">
+                            <HobbiForm email={email} />
+                        </div>
+
+                        {/* Interests create form */}
+                        <div className="col-12 col-lg-6 pl-lg-4 border-bottom pb-4 mb-4">
+                            <InterestForm email={email} />
+                        </div>
+
+                        {/* Music create form */}
+                        <div className="col-12 col-lg-6 pl-lg-4 border-bottom pb-4 mb-4">
+                            <MusicForm email={email} />
+                        </div>
+
+                    </div>
+                </div>
+            </div>
 
 
 

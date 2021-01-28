@@ -1,5 +1,5 @@
-const Language = require('../../../models/Language')
-const toCapitalize = require('../../services/Capitalize')
+const Language = require('../../../../models/Language')
+const toCapitalize = require('../../../services/Capitalize')
 
 // Index of languages
 const Index = async (req, res, next) => {

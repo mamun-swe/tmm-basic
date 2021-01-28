@@ -272,7 +272,7 @@ const BasicAndLifestyle = ({ email, basicandlifeinfo }) => {
                                     className="btn shadow-none"
                                     disabled={isLoading}
                                 >
-                                    {isLoading ? <span>Adding...</span> : <span>Add</span>}
+                                    {isLoading ? <span>Adding...</span> : <span>Add Lifestyle</span>}
                                 </button>
                             </div>
 

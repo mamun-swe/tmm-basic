@@ -71,11 +71,38 @@
             }
 
             .btn {
-                color: #fff;
                 font-size: 15px;
                 font-weight: 700;
                 padding: 10px 30px;
-                background: $theme-color;
+                color: $theme-color !important;
+                background: $secondary-color !important;
+            }
+        }
+
+        .section {
+            .section-header {
+                .section-title {
+                    color: #555;
+                    font-size: 14px;
+                    margin-top: 6px;
+                    font-weight: 500;
+                    margin-bottom: 0;
+                    font-family: "Roboto", sans-serif;
+                }
+            }
+
+            .section-body {
+                font-size: 14px;
+                text-transform: capitalize;
+                font-family: "Roboto", sans-serif;
+
+                .btn {
+                    font-size: 15px;
+                    font-weight: 700;
+                    padding: 10px 30px;
+                    color: $theme-color !important;
+                    background: $secondary-color !important;
+                }
             }
         }
     }

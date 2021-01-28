@@ -1,41 +1,44 @@
-const Users = require('../../../models/Users')
-const BasicAndLifestyle = require('../../../models/BasicAndLifestyle')
+const Users = require('../../../../models/Users')
+const ContactInfo = require('../../../../models/ContactInfo')
 
-// Store basic & lifestyle info for an user
+// Store user contact info
 const Store = async (req, res, next) => {
     try {
         const {
             email,
-            age,
-            materialStatus,
-            height,
-            bodyWeight,
-            diet,
-            bloodGroup,
-            healthInformation,
-            disability
+            contactPersonName,
+            relationship,
+            presentAddress,
+            permanentAddress,
+            nidNumber,
+            passportNumber,
+            phoneNumber,
+            altPhone,
+            convenientTimeToCall
         } = req.body
 
-        // Find user already exist or not
-        const existUser = await BasicAndLifestyle.findOne({ 'user': email }).exec()
 
-        const newBasicAndLifestyle = new BasicAndLifestyle({
+        // Find user already exist or not
+        const existUser = await ContactInfo.findOne({ 'user': email }).exec()
+
+        const newContactInfo = new ContactInfo({
             user: email,
-            age: age,
-            materialStatus: materialStatus,
-            height: height,
-            bodyWeight: bodyWeight,
-            diet: diet,
-            bloodGroup: bloodGroup,
-            healthInformation: healthInformation,
-            disability: disability
+            contactPersonName: contactPersonName,
+            relationship: relationship,
+            presentAddress: presentAddress,
+            permanentAddress: permanentAddress,
+            nidNumber: nidNumber,
+            passportNumber: passportNumber,
+            phoneNumber: phoneNumber,
+            altPhone: altPhone,
+            convenientTimeToCall: convenientTimeToCall
         })
 
         if (!existUser) {
 
-            // Create new information
-            const createInformation = await newBasicAndLifestyle.save()
-            if (!createInformation) {
+            // Create new contact information
+            const createContactInformation = await newContactInfo.save()
+            if (!createContactInformation) {
                 return res.status(501).json({
                     status: false,
                     message: 'Internat server error'
@@ -45,7 +48,7 @@ const Store = async (req, res, next) => {
             // Find registered user from users collection and update
             const updateUser = await Users.findOneAndUpdate(
                 { 'email': email },
-                { $set: { 'basicAndLifestyleInformation': createInformation._id } },
+                { $set: { 'contactInformation': createContactInformation._id } },
                 { new: true }
             ).exec()
 
@@ -63,7 +66,7 @@ const Store = async (req, res, next) => {
         }
 
         // if user already added her/his information
-        const updateExistUserInfo = await BasicAndLifestyle.findOneAndUpdate(
+        const updateExistUserInfo = await ContactInfo.findOneAndUpdate(
             { user: email },
             { $set: req.body },
             { new: true }
@@ -77,13 +80,12 @@ const Store = async (req, res, next) => {
         }
         res.status(201).json({
             status: true,
-            message: 'Successfully basic & lifestyle information created.'
+            message: 'Successfully basic & lifestyle information updated.'
         })
+
+
     } catch (error) {
-        if (error) {
-            console.log(error)
-            next(error)
-        }
+        if (error) next(error)
     }
 }
 

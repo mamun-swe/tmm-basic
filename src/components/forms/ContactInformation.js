@@ -1,20 +1,34 @@
 import React, { useState } from 'react'
 import './style.scss'
+import axios from 'axios'
+import { api } from '../../utils/api'
 import { useForm } from 'react-hook-form'
+import { toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
-const ContactInformation = ({ email }) => {
+toast.configure({ autoClose: 2000 })
+const ContactInformation = ({ email, contact }) => {
     const { register, handleSubmit, errors } = useForm()
     const [isLoading, setLoading] = useState(false)
 
     const onSubmit = async (data) => {
-        setLoading(true)
+        try {
+            const newData = {
+                ...data,
+                email
+            }
 
-        const newData = {
-            ...data,
-            email
+            setLoading(true)
+            const response = await axios.post(`${api}admin/contactinfo/store`, newData)
+            if (response.status === 201) {
+                setLoading(false)
+                toast.success(response.data.message)
+            }
+        } catch (error) {
+            if (error) {
+                toast.warn(error.response.message)
+            }
         }
-
-        console.log(newData)
     }
 
     return (
@@ -37,6 +51,7 @@ const ContactInformation = ({ email }) => {
                                     <input
                                         type="text"
                                         name="contactPersonName"
+                                        defaultValue={contact ? contact.contactPersonName : null}
                                         className={errors.contactPersonName ? "form-control shadow-none danger-border" : "form-control shadow-none"}
                                         placeholder="Enter contact person name"
                                         ref={register({ required: "Name is required." })}
@@ -54,6 +69,7 @@ const ContactInformation = ({ email }) => {
                                     <input
                                         type="text"
                                         name="relationship"
+                                        defaultValue={contact ? contact.relationship : null}
                                         className={errors.relationship ? "form-control shadow-none danger-border" : "form-control shadow-none"}
                                         placeholder="Enter relationship"
                                         ref={register({ required: "Relationship is required." })}
@@ -71,6 +87,7 @@ const ContactInformation = ({ email }) => {
                                     <input
                                         type="text"
                                         name="presentAddress"
+                                        defaultValue={contact ? contact.presentAddress : null}
                                         className={errors.presentAddress ? "form-control shadow-none danger-border" : "form-control shadow-none"}
                                         placeholder="Enter present address"
                                         ref={register({ required: "Present address is required." })}
@@ -88,6 +105,7 @@ const ContactInformation = ({ email }) => {
                                     <input
                                         type="text"
                                         name="permanentAddress"
+                                        defaultValue={contact ? contact.permanentAddress : null}
                                         className={errors.permanentAddress ? "form-control shadow-none danger-border" : "form-control shadow-none"}
                                         placeholder="Enter permanent address"
                                         ref={register({ required: "Permanent address is required." })}
@@ -102,6 +120,7 @@ const ContactInformation = ({ email }) => {
                                     <input
                                         type="text"
                                         name="nidNumber"
+                                        defaultValue={contact ? contact.nidNumber : null}
                                         className={errors.nidNumber ? "form-control shadow-none danger-border" : "form-control shadow-none"}
                                         placeholder="Enter NID number"
                                         ref={register()}
@@ -116,6 +135,7 @@ const ContactInformation = ({ email }) => {
                                     <input
                                         type="text"
                                         name="passportNumber"
+                                        defaultValue={contact ? contact.passportNumber : null}
                                         className={errors.passportNumber ? "form-control shadow-none danger-border" : "form-control shadow-none"}
                                         placeholder="Enter passport number"
                                         ref={register()}
@@ -134,6 +154,7 @@ const ContactInformation = ({ email }) => {
                                     <input
                                         type="text"
                                         name="phoneNumber"
+                                        defaultValue={contact ? contact.phoneNumber : null}
                                         className={errors.phoneNumber ? "form-control shadow-none danger-border" : "form-control shadow-none"}
                                         placeholder="( 01X-XXXX-XXXX )"
                                         ref={register({
@@ -157,6 +178,7 @@ const ContactInformation = ({ email }) => {
                                     <input
                                         type="text"
                                         name="altPhone"
+                                        defaultValue={contact ? contact.altPhone : null}
                                         className={errors.altPhone ? "form-control shadow-none danger-border" : "form-control shadow-none"}
                                         placeholder="( 01X-XXXX-XXXX )"
                                         ref={register({
@@ -180,6 +202,7 @@ const ContactInformation = ({ email }) => {
                                     <input
                                         type="time"
                                         name="convenientTimeToCall"
+                                        defaultValue={contact ? contact.convenientTimeToCall : null}
                                         className={errors.convenientTimeToCall ? "form-control shadow-none danger-border" : "form-control shadow-none"}
                                         ref={register({ required: "Time is required." })}
                                     />
@@ -194,7 +217,7 @@ const ContactInformation = ({ email }) => {
                                     className="btn shadow-none"
                                     disabled={isLoading}
                                 >
-                                    {isLoading ? <span>Adding...</span> : <span>Add</span>}
+                                    {isLoading ? <span>Adding...</span> : <span>Add Contacts</span>}
                                 </button>
                             </div>
 

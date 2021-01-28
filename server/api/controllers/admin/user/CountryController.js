@@ -1,5 +1,5 @@
-const Country = require('../../../models/Country')
-const toCapitalize = require('../../services/Capitalize')
+const Country = require('../../../../models/Country')
+const toCapitalize = require('../../../services/Capitalize')
 
 // Index of countries
 const Index = async (req, res, next) => {
