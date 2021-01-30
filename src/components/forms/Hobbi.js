@@ -10,8 +10,10 @@ import { Form } from 'react-bootstrap'
 
 import HobbiCreateModal from '../modal/Hobbi'
 
+import { removeItem } from '../../utils/helpers'
+
 toast.configure({ autoClose: 2000 })
-const PersonalActivities = ({ email }) => {
+const PersonalActivities = ({ email, activities }) => {
     const [isLoading, setLoading] = useState(false)
     const [hobbies, setHobbies] = useState([])
 
@@ -28,15 +30,15 @@ const PersonalActivities = ({ email }) => {
     }, [])
 
     // Handle hobbie
-    const handleHobbie = event => {
-        const newHobbi = event.target.value
-        const exHobbie = selectedHobbies.find((hobbi) => hobbi === newHobbi)
-        if (exHobbie) {
-            const newArr = selectedHobbies.filter(e => e !== newHobbi)
-            return setSelectedHobbies(newArr)
-        }
-        setSelectedHobbies([...selectedHobbies, newHobbi])
-    }
+    // const handleHobbie = event => {
+    //     const newHobbi = event.target.value
+    // const exHobbie = selectedHobbies.find((hobbi) => hobbi === newHobbi)
+    // if (exHobbie) {
+    //     const newArr = selectedHobbies.filter(e => e !== newHobbi)
+    //     return setSelectedHobbies(newArr)
+    // }
+    // setSelectedHobbies([...selectedHobbies, newHobbi])
+    // }
 
     // Fetch Hobbi
     const fetchHobbi = async () => {
@@ -71,18 +73,24 @@ const PersonalActivities = ({ email }) => {
         }
     }
 
+
+    // Add hobbi
     const addHobbi = async () => {
         try {
-            if (!selectedHobbies.length) return setEmpty(true)
+            console.log(selectedHobbies)
+            // console.log(activities.hobbies)
+            // setSelectedHobbies([...selectedHobbies, activities.hobbies])
+            // console.log(selectedHobbies)
 
-            const data = { email: email, hobbies: selectedHobbies }
+            // if (!selectedHobbies.length) return setEmpty(true)
+            // const data = { email: email, hobbies: selectedHobbies }
 
-            setLoading(true)
-            const response = await axios.put(`${api}admin/user/profile/activity?field=hobbies`, data)
-            if (response.status === 200) {
-                setLoading(false)
-                console.log(response)
-            }
+            // setLoading(true)
+            // const response = await axios.put(`${api}admin/user/profile/activity?field=hobbies`, data)
+            // if (response.status === 201) {
+            //     setLoading(false)
+            //     toast.success(response.data.message)
+            // }
 
         } catch (error) {
             if (error) {
@@ -91,6 +99,46 @@ const PersonalActivities = ({ email }) => {
             }
         }
     }
+
+    // Active sellected options
+    const checkedHobbi = hobbi => {
+        if (activities) {
+            const activity = activities.hobbies.find(data => data === hobbi)
+            if (activity)
+                return activity
+            return false
+        }
+
+    }
+
+
+    const toggleCheckbox = event => {
+        const item = event.target.value
+
+        setSelectedHobbies(activities.hobbies)
+
+        // const isAvailable = selectedHobbies.find(oldItem => oldItem === item)
+        // if (isAvailable) {
+        //     const freshItems = removeItem(selectedHobbies, item)
+        //     setSelectedHobbies(freshItems)
+        // } else {
+        //     setSelectedHobbies([...selectedHobbies, item])
+        // }
+
+
+      
+
+
+        // const exHobbie = selectedHobbies.find((hobbi) => hobbi === item)
+        // if (exHobbie) {
+        //     const index = selectedHobbies.indexOf(item)
+        //     if (index > -1) { selectedHobbies.splice(index, 1) }
+        // }
+        // setSelectedHobbies([...selectedHobbies, item])
+
+        // console.log(selectedHobbies);
+    }
+
 
     return (
         <div className="section">
@@ -123,7 +171,8 @@ const PersonalActivities = ({ email }) => {
                                     type="checkbox"
                                     label={hobbie}
                                     value={hobbie}
-                                    onChange={handleHobbie}
+                                    onChange={toggleCheckbox}
+                                    defaultChecked={checkedHobbi(hobbie)}
                                 />
                             </Form.Group>
                         </div>

@@ -729,7 +729,7 @@ const Edit = () => {
 
                         {/* Hobbi create form */}
                         <div className="col-12 col-lg-6 pr-lg-4 border-bottom pb-4 mb-4">
-                            <HobbiForm email={email} />
+                            <HobbiForm email={email} activities={user.personalActivities ? user.personalActivities : null} />
                         </div>
 
                         {/* Interests create form */}
