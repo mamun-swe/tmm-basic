@@ -126,26 +126,44 @@ const UpdateActivities = async(req, res, next) => {
         }
 
 
+<<<<<<< HEAD
         /////////////////////////// Working here ///////////////////
+=======
+>>>>>>> refs/remotes/origin/master
         switch (field) {
+
+            // Hobbi
             case 'hobbies':
-                if (!email && !hobbies.length) {
-                    return res.status(501).json({ status: false, message: 'Internat server error hh' })
+
+                // Check email & hobbies
+                if (!email && !hobbies.length)
+                    return res.status(501).json({ status: false, message: 'Internat server error' })
+
+                // Find a user
+                const user = await Users.findOne({ 'email': email }).exec()
+                if (!user) {
+                    return res.status(404).json({ status: false, message: 'Invalid email address' })
                 }
 
-                // Find user
-                const user = await Users.findOne({ 'email': email }).exec()
-                if (!user) return res.status(404).json({ status: false, message: 'Invalid email address' })
+                // Save Hobbies
+                const saveHobbi = Users.findOneAndUpdate(
+                    { 'email': email },
+                    { $set: { personalActivities: { hobbies: hobbies } } },
+                    { new: true })
+                    .exec()
 
-                // Find exists hobbies
-                const existHobbies = Users.find({ 'hobbies': { $elemMatch: { $elemMatch: { $in: hobbies } } } }).exec()
-                if (existHobbies.length) return res.status(200).json({ status: false, messgae: 'This fields already added' })
+                // Send success message
+                if (saveHobbi) {
+                    return res.status(201).json({ message: 'Successfully hobbies saved' })
+                }
 
-                return res.status(200).json({ messgae: 'not found' })
-
-
+<<<<<<< HEAD
                 // return res.status(200).json(hobbies)
+=======
+                return res.status(501).json({ status: false, message: 'Internal server error' })
+>>>>>>> refs/remotes/origin/master
 
+            // Interest
             case 'interests':
                 return res.status(200).json(field)
 
