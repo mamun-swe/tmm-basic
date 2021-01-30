@@ -12,7 +12,9 @@ const ActivityController = require('../controllers/admin/user/ActivityController
 // Users
 router.get('/index', UsersController.Index)
 router.get('/show/:email', UsersController.Show)
+router.put('/user/primaryinfo/update', UsersController.UpdatePrimaryInfo);
 router.put('/user/profile/activity', UsersController.UpdateActivities)
+
 
 // Religion
 router.get('/religion', ReligionController.Index)
@@ -42,5 +44,7 @@ router.get('/activity/index', ActivityController.Index)
 router.post('/activity/store/hobbi', ActivityController.StoreHobbi)
 router.post('/activity/store/interest', ActivityController.StoreInterest)
 router.post('/activity/store/music', ActivityController.StoreMusic)
+
+
 
 module.exports = router
