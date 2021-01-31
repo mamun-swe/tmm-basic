@@ -126,10 +126,6 @@ const UpdateActivities = async(req, res, next) => {
         }
 
 
-<<<<<<< HEAD
-        /////////////////////////// Working here ///////////////////
-=======
->>>>>>> refs/remotes/origin/master
         switch (field) {
 
             // Hobbi
@@ -157,11 +153,7 @@ const UpdateActivities = async(req, res, next) => {
                     return res.status(201).json({ message: 'Successfully hobbies saved' })
                 }
 
-<<<<<<< HEAD
                 // return res.status(200).json(hobbies)
-=======
-                return res.status(501).json({ status: false, message: 'Internal server error' })
->>>>>>> refs/remotes/origin/master
 
             // Interest
             case 'interests':
