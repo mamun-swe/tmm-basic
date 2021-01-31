@@ -1,7 +1,7 @@
 const Religion = require('../../../../models/Religion')
 
 // Religion index
-const Index = async (req, res, next) => {
+const Index = async(req, res, next) => {
     try {
         const results = await Religion.find().sort({ name: 1 }).exec()
         if (!results.length) {
@@ -23,7 +23,7 @@ const Index = async (req, res, next) => {
 
 
 // Create Religion
-const Create = async (req, res, next) => {
+const Create = async(req, res, next) => {
     try {
         const { name } = req.body
         if (typeof name !== 'string') {
@@ -56,7 +56,7 @@ const Create = async (req, res, next) => {
 }
 
 // Create Social Order
-const CreateSocialOrder = async (req, res, next) => {
+const CreateSocialOrder = async(req, res, next) => {
     try {
         const { religion, socialOrder } = req.body
 

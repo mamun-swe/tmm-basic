@@ -1,4 +1,8 @@
 const Users = require('../../../../models/Users')
+const generateUniqueId = require('generate-unique-id');
+
+
+
 
 // Users list index
 const Index = async(req, res, next) => {
@@ -7,6 +11,7 @@ const Index = async(req, res, next) => {
 
         const totalItems = await Users.countDocuments().exec()
         const users = await Users.find({}, { name: 1, email: 1 })
+            .sort({ _id: -1 })
             .skip(parseInt(_page) * parseInt(_limit))
             .limit(parseInt(_limit))
             .exec()
@@ -142,10 +147,7 @@ const UpdateActivities = async(req, res, next) => {
                 }
 
                 // Save Hobbies
-                const saveHobbi = Users.findOneAndUpdate(
-                    { 'email': email },
-                    { $set: { personalActivities: { hobbies: hobbies } } },
-                    { new: true })
+                const saveHobbi = Users.findOneAndUpdate({ 'email': email }, { $set: { personalActivities: { hobbies: hobbies } } }, { new: true })
                     .exec()
 
                 // Send success message
@@ -155,7 +157,7 @@ const UpdateActivities = async(req, res, next) => {
 
                 // return res.status(200).json(hobbies)
 
-            // Interest
+                // Interest
             case 'interests':
                 return res.status(200).json(field)
 
@@ -191,8 +193,71 @@ const UpdateActivities = async(req, res, next) => {
     }
 }
 
+// create user
+const CreateUser = async(req, res, next) => {
+    try {
+        const {
+            name,
+            phone,
+            email,
+            gender,
+            lookingFor,
+            dob,
+            religion,
+            socialOrder,
+            birthCountry,
+            livingCountry,
+        } = req.body
+
+        const checkUnique = await Users.findOne({ $or: [{ email: email }, { phone: phone }] })
+        if (checkUnique) {
+            return res.status(409).json({
+                status: false,
+                message: "Email or Phone Number Already Exist!"
+            })
+        }
+        const profileId = await generateUniqueId({
+            length: 8,
+            useLetters: false
+        });
+
+        const result = new Users({
+            'profileId': profileId,
+            'name': name,
+            'phone': phone,
+            'gender': gender,
+            'email': email,
+            'lookingFor': lookingFor,
+            'dob': dob,
+            'religion': religion,
+            'socialOrder': socialOrder,
+            'birthCountry': birthCountry,
+            'livingCountry': livingCountry
+        })
+        await result.save()
+        res.status(201).json({
+            status: true,
+            message: `Successfully User created`
+        })
+    } catch (error) {
+        if (error.name == 'ValidationError') {
+            let message = []
+            for (field in error.errors) {
+                message.push(error.errors[field].message)
+            }
+            return res.status(500).json({
+                success: false,
+                message
+            })
+        }
+        next(error)
+
+    }
+}
+
 module.exports = {
     Index,
+    CreateUser,
     Show,
     UpdatePrimaryInfo,
     UpdateActivities,

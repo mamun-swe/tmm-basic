@@ -15,7 +15,7 @@ const userSchema = new Schema({
     baranchId: {
         type: Schema.Types.ObjectId,
         ref: 'Branch',
-        required: true
+        default: null
     },
     name: {
         type: String,
@@ -27,7 +27,8 @@ const userSchema = new Schema({
         type: String,
         trim: true,
         maxlength: 50,
-        required: true
+        required: true,
+        unique: true
     },
     email: {
         type: String,
