@@ -10,9 +10,10 @@ const ContactInfoController = require('../controllers/admin/user/ContactInfoCont
 const ActivityController = require('../controllers/admin/user/ActivityController')
 
 // Users
-router.get('/index', UsersController.Index)
-router.get('/show/:email', UsersController.Show)
+router.get('/user/index', UsersController.Index)
+router.get('/user/show/:email', UsersController.Show)
 router.put('/user/primaryinfo/update', UsersController.UpdatePrimaryInfo);
+router.put('/user/profile-picture/:email/update', UsersController.UpdateProfilePicture);
 router.put('/user/profile/activity', UsersController.UpdateActivities)
 
 
