@@ -1,17 +1,10 @@
-
 const Users = require('../../../../models/Users')
-<<<<<<< HEAD
-const generateUniqueId = require('generate-unique-id');
-
-
-=======
 const Unlink = require('../../../services/Image')
 const ImageProcess = require('../../../services/ImageProcess')
->>>>>>> refs/remotes/origin/master
 
 
 // Users list index
-const Index = async (req, res, next) => {
+const Index = async(req, res, next) => {
     try {
         const { _page, _limit } = req.query
 
@@ -44,7 +37,7 @@ const Index = async (req, res, next) => {
 
 
 // Show specific user
-const Show = async (req, res, next) => {
+const Show = async(req, res, next) => {
     try {
         const { email } = req.params
 
@@ -73,7 +66,7 @@ const Show = async (req, res, next) => {
 }
 
 
-const UpdatePrimaryInfo = async (req, res, next) => {
+const UpdatePrimaryInfo = async(req, res, next) => {
     try {
         const {
             name,
@@ -125,7 +118,7 @@ const UpdatePrimaryInfo = async (req, res, next) => {
 
 
 // Update Profile Picture
-const UpdateProfilePicture = async (req, res, next) => {
+const UpdateProfilePicture = async(req, res, next) => {
     try {
 
         const { email } = req.params
@@ -179,7 +172,7 @@ const UpdateProfilePicture = async (req, res, next) => {
 
 
 // Update personal activities
-const UpdateActivities = async (req, res, next) => {
+const UpdateActivities = async(req, res, next) => {
     try {
         const { field } = req.query
         const { email, hobbies, interests, favouriteMusic, favouriteReads, preferredMovies, sports, favouriteCuisine } = req.body
@@ -215,7 +208,7 @@ const UpdateActivities = async (req, res, next) => {
                     return res.status(201).json({ message: 'Successfully hobbies saved' })
                 }
 
-            // return res.status(200).json(hobbies)
+                // return res.status(200).json(hobbies)
 
                 // Interest
             case 'interests':
