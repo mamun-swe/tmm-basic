@@ -115,7 +115,8 @@ const PersonalActivities = ({ email, activities }) => {
     const toggleCheckbox = event => {
         const item = event.target.value
 
-        setSelectedHobbies(activities.hobbies)
+        // setSelectedHobbies(activities.hobbies)
+        console.log(item);
 
         // const isAvailable = selectedHobbies.find(oldItem => oldItem === item)
         // if (isAvailable) {
