@@ -48,7 +48,7 @@ app.get('/', (req, res) => {
 })
 
 // DB Connection
-mongoose.connect('mongodb://localhost:27017/tmm', {
+mongoose.connect('mongodb://localhost:27017/tmm2021', {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useCreateIndex: true,

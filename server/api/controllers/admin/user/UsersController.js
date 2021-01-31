@@ -1,7 +1,7 @@
 const Users = require('../../../../models/Users')
 
 // Users list index
-const Index = async (req, res, next) => {
+const Index = async(req, res, next) => {
     try {
         const { _page, _limit } = req.query
 
@@ -33,7 +33,7 @@ const Index = async (req, res, next) => {
 
 
 // Show specific user
-const Show = async (req, res, next) => {
+const Show = async(req, res, next) => {
     try {
         const { email } = req.params
 
@@ -61,8 +61,60 @@ const Show = async (req, res, next) => {
     }
 }
 
+
+const UpdatePrimaryInfo = async(req, res, next) => {
+    try {
+        const {
+            name,
+            phone,
+            email,
+            gender,
+            lookingFor,
+            dob,
+            religion,
+            socialOrder,
+            birthCountry,
+            livingCountry,
+        } = req.body
+
+        const updatePrimar = await Users.findOneAndUpdate({ 'email': email }, {
+            $set: {
+                'name': name,
+                'phone': phone,
+                'email': email,
+                'gender': gender,
+                'lookingFor': lookingFor,
+                'dob': dob,
+                'religion': religion,
+                'socialOrder': socialOrder,
+                'birthCountry': birthCountry,
+                'livingCountry': livingCountry,
+            }
+        }, { new: true }).exec()
+
+        if (!updatePrimar) {
+            return res.status(500).json({
+                status: false,
+                message: 'Internal Server Error '
+            })
+        }
+
+        res.status(201).json({
+            status: true,
+            message: "User Basic Informaiton Update Success !!"
+        })
+
+    } catch (error) {
+        if (error) {
+            console.log(error)
+            next(error)
+        }
+    }
+}
+
+
 // Update personal activities
-const UpdateActivities = async (req, res, next) => {
+const UpdateActivities = async(req, res, next) => {
     try {
         const { field } = req.query
         const { email, hobbies, interests, favouriteMusic, favouriteReads, preferredMovies, sports, favouriteCuisine } = req.body
@@ -74,6 +126,10 @@ const UpdateActivities = async (req, res, next) => {
         }
 
 
+<<<<<<< HEAD
+        /////////////////////////// Working here ///////////////////
+=======
+>>>>>>> refs/remotes/origin/master
         switch (field) {
 
             // Hobbi
@@ -101,7 +157,11 @@ const UpdateActivities = async (req, res, next) => {
                     return res.status(201).json({ message: 'Successfully hobbies saved' })
                 }
 
+<<<<<<< HEAD
+                // return res.status(200).json(hobbies)
+=======
                 return res.status(501).json({ status: false, message: 'Internal server error' })
+>>>>>>> refs/remotes/origin/master
 
             // Interest
             case 'interests':
@@ -139,13 +199,12 @@ const UpdateActivities = async (req, res, next) => {
     }
 }
 
-
 module.exports = {
     Index,
     Show,
-    UpdateActivities
+    UpdatePrimaryInfo,
+    UpdateActivities,
 }
-
 
 
 // Update field name
