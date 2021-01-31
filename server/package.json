@@ -15,7 +15,11 @@
     "cors": "^2.8.5",
     "express": "^4.17.1",
     "express-fileupload": "^1.2.1",
+<<<<<<< HEAD
     "generate-unique-id": "^2.0.1",
+=======
+    "jimp": "^0.16.1",
+>>>>>>> refs/remotes/origin/master
     "mongoose": "^5.11.13",
     "morgan": "^1.10.0",
     "nodemon": "^2.0.7"
