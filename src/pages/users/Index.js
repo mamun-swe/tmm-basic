@@ -28,7 +28,7 @@ const Index = () => {
     // Fetch Users
     const fetchUsers = async () => {
         try {
-            const response = await axios.get(`${api}admin/index?_page=${page}&_limit=36`)
+            const response = await axios.get(`${api}admin/user/index?_page=${page}&_limit=36`)
             if (response.status === 200) {
                 setUsers([...users, ...response.data.users])
                 setFilteredUsers([...users, ...response.data.users])

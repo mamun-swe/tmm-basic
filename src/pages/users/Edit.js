@@ -27,7 +27,7 @@ const Edit = () => {
         // Fetch User
         const fetchUser = async () => {
             try {
-                const response = await axios.get(`${api}admin/show/${email}`)
+                const response = await axios.get(`${api}admin/user/show/${email}`)
                 if (response.status === 200) {
                     setLoading(false)
                     setUser(response.data.user)
