@@ -1,79 +1,80 @@
-const { Schema, model } = require("mongoose")
+const { Schema, model } = require("mongoose");
 
 const validateEmail = function (email) {
-    const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    return re.test(email)
-}
+  const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  return re.test(email);
+};
 
-const userSchema = new Schema({
+const userSchema = new Schema(
+  {
     profileId: {
-        type: String,
-        unique: true,
-        trim: true,
-        required: true
+      type: String,
+      unique: true,
+      trim: true,
+      required: true,
     },
     baranchId: {
-        type: Schema.Types.ObjectId,
-        ref: 'Branch',
-        default: null
+      type: Schema.Types.ObjectId,
+      ref: "Branch",
+      default: null,
     },
     name: {
-        type: String,
-        trim: true,
-        maxlength: 50,
-        required: true
+      type: String,
+      trim: true,
+      maxlength: 50,
+      required: true,
     },
     phone: {
-        type: String,
-        trim: true,
-        maxlength: 50,
-        required: true,
-        unique: true
+      type: String,
+      trim: true,
+      maxlength: 50,
+      required: true,
+      unique: true,
     },
     email: {
-        type: String,
-        required: true,
-        unique: true,
-        trim: true,
-        lowercase: true,
-        validate: [validateEmail, 'Please provide a valid email address']
+      type: String,
+      required: true,
+      unique: true,
+      trim: true,
+      lowercase: true,
+      validate: [validateEmail, "Please provide a valid email address"],
     },
     gender: {
-        type: String,
-        trim: true,
-        required: true,
-        enum: ["Male", "Female"]
+      type: String,
+      trim: true,
+      required: true,
+      enum: ["Male", "Female"],
     },
     lookingFor: {
-        type: String,
-        trim: true,
-        required: true,
-        enum: ["Bride", "groom"]
+      type: String,
+      trim: true,
+      required: true,
+      enum: ["Bride", "groom"],
     },
     dob: {
-        type: Date,
-        trim: true,
-        required: true
+      type: Date,
+      trim: true,
+      required: true,
     },
     religion: {
-        type: String,
-        trim: true,
-        required: true
+      type: String,
+      trim: true,
+      required: true,
     },
     socialOrder: {
-        type: String,
-        trim: true,
-        required: true
+      type: String,
+      trim: true,
+      required: true,
     },
     birthCountry: {
-        type: String,
-        trim: true,
-        required: true
+      type: String,
+      trim: true,
+      required: true,
     },
     livingCountry: {
-        type: String,
-        trim: true,
-        default: null
+      type: String,
+      trim: true,
+      default: null,
     },
 
     // language: {
@@ -96,16 +97,16 @@ const userSchema = new Schema({
     // },
 
     profilePicture: {
-        blurImage: {
-            type: String,
-            trim: true,
-            default: null
-        },
-        clearImage: {
-            type: String,
-            trim: true,
-            default: null
-        }
+      blurImage: {
+        type: String,
+        trim: true,
+        default: null,
+      },
+      clearImage: {
+        type: String,
+        trim: true,
+        default: null,
+      },
     },
     // shortDescription: {
     //     type: String,
@@ -113,8 +114,6 @@ const userSchema = new Schema({
     //     default: null,
     //     maxlength: 350
     // },
-
-
 
     // profileCreatorId: {
     //     type: Schema.Types.ObjectId,
@@ -126,8 +125,6 @@ const userSchema = new Schema({
     //     ref: 'User',
     //     default: null
     // }],
-
-
 
     // profileUpdateRange: {
     //     type: Number,
@@ -264,57 +261,67 @@ const userSchema = new Schema({
     //     }
     // },
 
-
-
     basicAndLifestyleInformation: {
-        type: Schema.Types.ObjectId,
-        ref: 'BasicAndLifestyle',
-        default: null
+      type: Schema.Types.ObjectId,
+      ref: "BasicAndLifestyle",
+      default: null,
     },
     contactInformation: {
-        type: Schema.Types.ObjectId,
-        ref: 'ContactInfo',
-        default: null
+      type: Schema.Types.ObjectId,
+      ref: "ContactInfo",
+      default: null,
     },
     personalActivities: {
-        hobbies: [{
-            type: String,
-            trim: true,
-            default: null
-        }],
-        interests: [{
-            type: String,
-            trim: true,
-            default: null
-        }],
-        favouriteMusic: [{
-            type: String,
-            trim: true,
-            default: null
-        }],
-        favouriteReads: [{
-            type: String,
-            trim: true,
-            default: null
-        }],
-        preferredMovies: [{
-            type: String,
-            trim: true,
-            default: null
-        }],
-        sports: [{
-            type: String,
-            trim: true,
-            default: null
-        }],
-        favouriteCuisine: [{
-            type: String,
-            trim: true,
-            default: null
-        }]
+      hobbies: [
+        {
+          type: String,
+          trim: true,
+          default: null,
+        },
+      ],
+      interests: [
+        {
+          type: String,
+          trim: true,
+          default: null,
+        },
+      ],
+      favouriteMusic: [
+        {
+          type: String,
+          trim: true,
+          default: null,
+        },
+      ],
+      favouriteReads: [
+        {
+          type: String,
+          trim: true,
+          default: null,
+        },
+      ],
+      preferredMovies: [
+        {
+          type: String,
+          trim: true,
+          default: null,
+        },
+      ],
+      sports: [
+        {
+          type: String,
+          trim: true,
+          default: null,
+        },
+      ],
+      favouriteCuisine: [
+        {
+          type: String,
+          trim: true,
+          default: null,
+        },
+      ],
     },
-
-
 
     ///////////////////////////////////////////////// New Collection ////////////////////////////////////////////////////
     // partnerPreference: {
@@ -422,12 +429,12 @@ const userSchema = new Schema({
     //         default: null
     //     }]
     // },
+  },
+  {
+    timestamps: true,
+  }
+);
 
-
-}, {
-    timestamps: true
-})
-
-const User = model('User', userSchema)
+const User = model("User", userSchema);
 
 module.exports = User;

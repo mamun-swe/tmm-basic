@@ -7,7 +7,7 @@ Request Body
 "phone": "01611848786",
 "email":"taqwamarriegemedia@gmail.com",
 "gender": "Male",
-"lookingFo": "Groom",
+"lookingFor": "groom",
 "dob": "12/10/1993",
 "religion": "Islam",
 "socialOrder": "Sunni",
