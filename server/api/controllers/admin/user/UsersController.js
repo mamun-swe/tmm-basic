@@ -2,6 +2,7 @@
 const Users = require('../../../../models/Users')
 const Unlink = require('../../../services/Image')
 const ImageProcess = require('../../../services/ImageProcess')
+const hostURL = require('../../../utils/url')
 
 
 // Users list index
@@ -41,7 +42,7 @@ const Show = async (req, res, next) => {
     try {
         const { email } = req.params
 
-        const result = await Users.findOne({ 'email': email })
+        let result = await Users.findOne({ 'email': email })
             .populate(
                 'basicAndLifestyleInformation',
                 'user age materialStatus height bodyWeight diet bloodGroup healthInformation disability'
@@ -55,13 +56,22 @@ const Show = async (req, res, next) => {
             })
         }
 
+        // add Host URL with file 
+        if (result.profilePicture && result.profilePicture.blurImage && result.profilePicture.clearImage) {
+            result.profilePicture.blurImage = hostURL(req) + 'uploads/blur/' + result.profilePicture.blurImage
+            result.profilePicture.clearImage = hostURL(req) + 'uploads/clear/' + result.profilePicture.clearImage
+        }
+
         res.status(200).json({
             status: true,
             user: result
         })
 
     } catch (error) {
-        if (error) next(error)
+        if (error) {
+            console.log(error)
+            next(error)
+        }
     }
 }
 
@@ -155,7 +165,7 @@ const UpdateProfilePicture = async (req, res, next) => {
             }, { new: true }).exec()
 
             if (updateAccount) {
-                res.status(200).json({
+                res.status(201).json({
                     status: true,
                     message: 'Successfully profile picture uploaded'
                 })
@@ -167,6 +177,33 @@ const UpdateProfilePicture = async (req, res, next) => {
             console.log(error)
             next(error)
         }
+    }
+}
+
+
+// Update Short Description
+const UpdateShortDescription = async (req, res, next) => {
+    try {
+        const { email } = req.params
+        const { description } = req.body
+
+        // Find User 
+        const user = Users.findOne({ 'email': email }).exec()
+        if (!user) return res.status(404).json({ status: false, message: 'User not found.' })
+
+        // Update description to database
+        await Users.findOneAndUpdate(
+            { 'email': email },
+            { $set: { shortDescription: description } },
+            { new: true }).exec()
+
+        res.status(201).json({
+            status: true,
+            message: 'Successfully description added'
+        })
+
+    } catch (error) {
+        if (error) next(error)
     }
 }
 
@@ -254,6 +291,7 @@ module.exports = {
     Show,
     UpdatePrimaryInfo,
     UpdateProfilePicture,
+    UpdateShortDescription,
     UpdateActivities,
 }
 
