@@ -108,12 +108,11 @@ const userSchema = new Schema(
         default: null,
       },
     },
-    // shortDescription: {
-    //     type: String,
-    //     trim: true,
-    //     default: null,
-    //     maxlength: 350
-    // },
+    shortDescription: {
+      type: String,
+      trim: true,
+      default: null,
+    },
 
     // profileCreatorId: {
     //     type: Schema.Types.ObjectId,
@@ -126,37 +125,37 @@ const userSchema = new Schema(
     //     default: null
     // }],
 
-    // profileUpdateRange: {
-    //     type: Number,
-    //     trim: true,
-    //     default: 0,
-    //     enum: [0, 10, 20, 30, 40, 50, 60, 70, 80, 90]
-    // },
-    // profileUpdateStep: {
-    //     type: Number,
-    //     trim: true,
-    //     default: 0,
-    //     enum: [0, 10, 20, 30, 40, 50, 60, 70, 80, 90]
-    // },
-    // isVerified: {
-    //     type: Boolean,
-    //     default: false,
-    //     enum: [true, false]
-    // },
-    // isLocked: {
-    //     type: Boolean,
-    //     default: false,
-    //     enum: [true, false]
-    // },
-    // assignToAdmin: {
-    //     type: Schema.Types.ObjectId,
-    //     default: null
-    // },
-    // activeStatus: {
-    //     type: String,
-    //     default: 'deactivated',
-    //     enum: ['activated', 'deactivated']
-    // },
+    profileUpdateRange: {
+      type: Number,
+      trim: true,
+      default: 0,
+      enum: [0, 10, 20, 30, 40, 50, 60, 70, 80, 90],
+    },
+    profileUpdateStep: {
+      type: Number,
+      trim: true,
+      default: 0,
+      enum: [0, 10, 20, 30, 40, 50, 60, 70, 80, 90],
+    },
+    isVerified: {
+      type: Boolean,
+      default: false,
+      enum: [true, false],
+    },
+    isLocked: {
+      type: Boolean,
+      default: false,
+      enum: [true, false],
+    },
+    assignToAdmin: {
+      type: Schema.Types.ObjectId,
+      default: null,
+    },
+    activeStatus: {
+      type: String,
+      default: "deactivated",
+      enum: ["activated", "deactivated"],
+    },
     // adminMessages: [{
     //     type: Schema.Types.ObjectId,
     //     ref: 'AdminMessage',
@@ -184,38 +183,38 @@ const userSchema = new Schema(
     //     ref: 'UserImage',
     //     deafult: null
     // }],
-    // isChecked: {
-    //     type: Boolean,
-    //     deafult: false,
-    //     enum: [true, false]
-    // },
-    // loggedinAt: {
-    //     type: Date,
-    //     trim: true,
-    //     deafult: null
-    // },
-    // loggedOutAt: {
-    //     type: Date,
-    //     trim: true,
-    //     deafult: null
-    // },
-    // isDisable: {
-    //     status: {
-    //         type: Boolean,
-    //         deafult: false,
-    //         enum: [true, false]
-    //     },
-    //     disabledTime: {
-    //         type: Date,
-    //         trim: true,
-    //         deafult: null
-    //     },
-    //     disabledBy: {
-    //         type: Date,
-    //         trim: true,
-    //         deafult: null
-    //     }
-    // },
+    isChecked: {
+      type: Boolean,
+      deafult: false,
+      enum: [true, false],
+    },
+    loggedinAt: {
+      type: Date,
+      trim: true,
+      deafult: null,
+    },
+    loggedOutAt: {
+      type: Date,
+      trim: true,
+      deafult: null,
+    },
+    isDisable: {
+      status: {
+        type: Boolean,
+        deafult: false,
+        enum: [true, false],
+      },
+      disabledTime: {
+        type: Date,
+        trim: true,
+        deafult: null,
+      },
+      disabledBy: {
+        type: Date,
+        trim: true,
+        deafult: null,
+      },
+    },
 
     // connections: [{
     //     type: Schema.Types.ObjectId,
@@ -247,20 +246,19 @@ const userSchema = new Schema(
     //     ref: 'UserImage',
     //     deafult: null
     // }],
-    // isDelete: {
-    //     status: {
-    //         type: Boolean,
-    //         trim: true,
-    //         deafult: false,
-    //         enum: [false, false]
-    //     },
-    //     date: {
-    //         type: Date,
-    //         trim: true,
-    //         deafult: null
-    //     }
-    // },
-
+    isDelete: {
+      status: {
+        type: Boolean,
+        trim: true,
+        deafult: false,
+        enum: [false, false],
+      },
+      date: {
+        type: Date,
+        trim: true,
+        deafult: null,
+      },
+    },
     basicAndLifestyleInformation: {
       type: Schema.Types.ObjectId,
       ref: "BasicAndLifestyle",

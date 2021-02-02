@@ -24,25 +24,32 @@ const Edit = () => {
 
 
     useEffect(() => {
-        // Fetch User
-        const fetchUser = async () => {
-            try {
-                const response = await axios.get(`${api}admin/user/show/${email}`)
-                if (response.status === 200) {
-                    setLoading(false)
-                    setUser(response.data.user)
-                    console.log(response.data.user)
-                }
-            } catch (error) {
-                if (error) {
-                    console.log(error.response)
-                    toast.warn(error.response.data.message)
-                }
-            }
-        }
-
         fetchUser()
     }, [email])
+
+    // Fetch User
+    const fetchUser = async () => {
+        try {
+            const response = await axios.get(`${api}admin/user/show/${email}`)
+            if (response.status === 200) {
+                setLoading(false)
+                setUser(response.data.user)
+                console.log(response.data.user)
+            }
+        } catch (error) {
+            if (error) {
+                console.log(error.response)
+                // toast.warn(error.response.data.message)
+            }
+        }
+    }
+
+    // re fetch data after updated
+    const reFetch = data => {
+        if (data) {
+            fetchUser()
+        }
+    }
 
     // if loading
     if (isLoading) return (<div><p>Loading...</p></div>)
@@ -64,12 +71,17 @@ const Edit = () => {
                 </div>
                 <div className="card-body p-4">
                     {/* Primary info */}
-                    <PrimaryInfoForm email={email} user={user} />
+                    <PrimaryInfoForm email={email} user={user} updated={reFetch} />
                 </div>
             </div>
 
             {/* Profile Picture & Description form */}
-            <PictureAndDescUpdateForm email={email} />
+            <PictureAndDescUpdateForm
+                email={email}
+                profileimages={user.profilePicture ? user.profilePicture : null}
+                olddescription={user.shortDescription ? user.shortDescription : null}
+                updated={reFetch}
+            />
 
             {/* Basic and lifestyle information form */}
             <BasicAndLifestyleUpdateForm email={email} basicandlifeinfo={user.basicAndLifestyleInformation ? user.basicAndLifestyleInformation : null} />

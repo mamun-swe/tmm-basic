@@ -15,7 +15,7 @@ import CountryCreateModal from '../../components/modal/Country'
 import LanguageCreateModal from '../../components/modal/Language'
 
 toast.configure({ autoClose: 2000 })
-const PrimaryInfo = ({ email, user }) => {
+const PrimaryInfo = ({ email, user, updated }) => {
     const { register, handleSubmit, errors } = useForm()
 
     const [isUpdate, setUpdate] = useState(false)
@@ -274,6 +274,7 @@ const PrimaryInfo = ({ email, user }) => {
         }
 
         console.log(regData)
+        updated(true)
         // setUpdate(true)
         // toast.success('Successfully account updated.')
     }

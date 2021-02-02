@@ -1,6 +1,7 @@
+const hostURL = require("../../../utils/url");
 const Users = require("../../../../models/Users");
-const generateUniqueId = require("generate-unique-id");
 const Unlink = require("../../../services/Image");
+const generateUniqueId = require("generate-unique-id");
 const ImageProcess = require("../../../services/ImageProcess");
 
 // Users list index
@@ -39,7 +40,7 @@ const Show = async (req, res, next) => {
   try {
     const { email } = req.params;
 
-    const result = await Users.findOne({ email: email })
+    let result = await Users.findOne({ email: email })
       .populate(
         "basicAndLifestyleInformation",
         "user age materialStatus height bodyWeight diet bloodGroup healthInformation disability"
@@ -53,12 +54,27 @@ const Show = async (req, res, next) => {
       });
     }
 
+    // add Host URL with file
+    if (
+      result.profilePicture &&
+      result.profilePicture.blurImage &&
+      result.profilePicture.clearImage
+    ) {
+      result.profilePicture.blurImage =
+        hostURL(req) + "uploads/blur/" + result.profilePicture.blurImage;
+      result.profilePicture.clearImage =
+        hostURL(req) + "uploads/clear/" + result.profilePicture.clearImage;
+    }
+
     res.status(200).json({
       status: true,
       user: result,
     });
   } catch (error) {
-    if (error) next(error);
+    if (error) {
+      console.log(error);
+      next(error);
+    }
   }
 };
 
@@ -182,6 +198,33 @@ const UpdateProfilePicture = async (req, res, next) => {
     }
   }
 };
+
+// Update Short Description
+const UpdateShortDescription = async (req, res, next) => {
+  try {
+      const { email } = req.params
+      const { description } = req.body
+
+      // Find User 
+      const user = Users.findOne({ 'email': email }).exec()
+      if (!user) return res.status(404).json({ status: false, message: 'User not found.' })
+
+      // Update description to database
+      await Users.findOneAndUpdate(
+          { 'email': email },
+          { $set: { shortDescription: description } },
+          { new: true }).exec()
+
+      res.status(201).json({
+          status: true,
+          message: 'Successfully description added'
+      })
+
+  } catch (error) {
+      if (error) next(error)
+  }
+}
+
 
 // Update personal activities
 const UpdateActivities = async (req, res, next) => {
@@ -510,10 +553,10 @@ const CreateUser = async (req, res, next) => {
 
 module.exports = {
   Index,
-  CreateUser,
   Show,
   UpdatePrimaryInfo,
   UpdateProfilePicture,
+  UpdateShortDescription,
   UpdateActivities,
 };
 
