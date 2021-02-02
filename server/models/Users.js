@@ -1,80 +1,79 @@
 const { Schema, model } = require("mongoose");
 
 const validateEmail = function (email) {
-  const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-  return re.test(email);
+    const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(email);
 };
 
-const userSchema = new Schema(
-  {
+const userSchema = new Schema({
     profileId: {
-      type: String,
-      unique: true,
-      trim: true,
-      required: true,
+        type: String,
+        unique: true,
+        trim: true,
+        required: true
     },
     baranchId: {
-      type: Schema.Types.ObjectId,
-      ref: "Branch",
-      default: null,
+        type: Schema.Types.ObjectId,
+        ref: "Branch",
+        default: null
     },
     name: {
-      type: String,
-      trim: true,
-      maxlength: 50,
-      required: true,
+        type: String,
+        trim: true,
+        maxlength: 50,
+        required: true
     },
     phone: {
-      type: String,
-      trim: true,
-      maxlength: 50,
-      required: true,
-      unique: true,
+        type: String,
+        trim: true,
+        maxlength: 50,
+        required: true,
+        unique: true
     },
     email: {
-      type: String,
-      required: true,
-      unique: true,
-      trim: true,
-      lowercase: true,
-      validate: [validateEmail, "Please provide a valid email address"],
+        type: String,
+        required: true,
+        unique: true,
+        trim: true,
+        lowercase: true,
+        validate: [validateEmail, "Please provide a valid email address"]
     },
     gender: {
-      type: String,
-      trim: true,
-      required: true,
-      enum: ["Male", "Female"],
+        type: String,
+        trim: true,
+        required: true,
+        enum: ["Male", "Female"]
     },
     lookingFor: {
-      type: String,
-      trim: true,
-      required: true,
-      enum: ["Bride", "groom"],
+        type: String,
+        trim: true,
+        required: true,
+        enum: ["Bride", "groom"]
     },
     dob: {
-      type: Date,
-      trim: true,
-      required: true,
+        type: Date,
+        trim: true,
+        required: true
     },
     religion: {
-      type: String,
-      trim: true,
-      required: true,
+        type: String,
+        trim: true,
+        required: true
     },
     socialOrder: {
-      type: String,
-      trim: true,
-      required: true,
+        type: String,
+        trim: true,
+        required: true
     },
     birthCountry: {
-      type: String,
-      trim: true,
-      required: true,
+        type: String,
+        trim: true,
+        required: true
     },
     livingCountry: {
-      type: String,
-      trim: true,
-      default: null,
+        type: String,
+        trim: true,
+        default: null
     },
 
     // language: {
@@ -97,21 +96,21 @@ const userSchema = new Schema(
     // },
 
     profilePicture: {
-      blurImage: {
-        type: String,
-        trim: true,
-        default: null,
-      },
-      clearImage: {
-        type: String,
-        trim: true,
-        default: null,
-      },
+        blurImage: {
+            type: String,
+            trim: true,
+            default: null
+        },
+        clearImage: {
+            type: String,
+            trim: true,
+            default: null
+        }
     },
     shortDescription: {
-      type: String,
-      trim: true,
-      default: null,
+        type: String,
+        trim: true,
+        default: null
     },
 
     // profileCreatorId: {
@@ -126,35 +125,35 @@ const userSchema = new Schema(
     // }],
 
     profileUpdateRange: {
-      type: Number,
-      trim: true,
-      default: 0,
-      enum: [0, 10, 20, 30, 40, 50, 60, 70, 80, 90],
+        type: Number,
+        trim: true,
+        default: 0,
+        enum: [0, 10, 20, 30, 40, 50, 60, 70, 80, 90]
     },
     profileUpdateStep: {
-      type: Number,
-      trim: true,
-      default: 0,
-      enum: [0, 10, 20, 30, 40, 50, 60, 70, 80, 90],
+        type: Number,
+        trim: true,
+        default: 0,
+        enum: [0, 10, 20, 30, 40, 50, 60, 70, 80, 90]
     },
     isVerified: {
-      type: Boolean,
-      default: false,
-      enum: [true, false],
+        type: Boolean,
+        default: false,
+        enum: [true, false]
     },
     isLocked: {
-      type: Boolean,
-      default: false,
-      enum: [true, false],
+        type: Boolean,
+        default: false,
+        enum: [true, false]
     },
     assignToAdmin: {
-      type: Schema.Types.ObjectId,
-      default: null,
+        type: Schema.Types.ObjectId,
+        default: null
     },
     activeStatus: {
-      type: String,
-      default: "deactivated",
-      enum: ["activated", "deactivated"],
+        type: String,
+        default: "deactivated",
+        enum: ["activated", "deactivated"]
     },
     // adminMessages: [{
     //     type: Schema.Types.ObjectId,
@@ -184,36 +183,36 @@ const userSchema = new Schema(
     //     deafult: null
     // }],
     isChecked: {
-      type: Boolean,
-      deafult: false,
-      enum: [true, false],
-    },
-    loggedinAt: {
-      type: Date,
-      trim: true,
-      deafult: null,
-    },
-    loggedOutAt: {
-      type: Date,
-      trim: true,
-      deafult: null,
-    },
-    isDisable: {
-      status: {
         type: Boolean,
         deafult: false,
-        enum: [true, false],
-      },
-      disabledTime: {
+        enum: [true, false]
+    },
+    loggedinAt: {
         type: Date,
         trim: true,
-        deafult: null,
-      },
-      disabledBy: {
+        deafult: null
+    },
+    loggedOutAt: {
         type: Date,
         trim: true,
-        deafult: null,
-      },
+        deafult: null
+    },
+    isDisable: {
+        status: {
+            type: Boolean,
+            deafult: false,
+            enum: [true, false]
+        },
+        disabledTime: {
+            type: Date,
+            trim: true,
+            deafult: null
+        },
+        disabledBy: {
+            type: Date,
+            trim: true,
+            deafult: null
+        }
     },
 
     // connections: [{
@@ -247,81 +246,81 @@ const userSchema = new Schema(
     //     deafult: null
     // }],
     isDelete: {
-      status: {
-        type: Boolean,
-        trim: true,
-        deafult: false,
-        enum: [false, false],
-      },
-      date: {
-        type: Date,
-        trim: true,
-        deafult: null,
-      },
+        status: {
+            type: Boolean,
+            trim: true,
+            deafult: false,
+            enum: [false, false]
+        },
+        date: {
+            type: Date,
+            trim: true,
+            deafult: null
+        }
     },
     basicAndLifestyleInformation: {
-      type: Schema.Types.ObjectId,
-      ref: "BasicAndLifestyle",
-      default: null,
+        type: Schema.Types.ObjectId,
+        ref: "BasicAndLifestyle",
+        default: null
     },
     contactInformation: {
-      type: Schema.Types.ObjectId,
-      ref: "ContactInfo",
-      default: null,
+        type: Schema.Types.ObjectId,
+        ref: "ContactInfo",
+        default: null
     },
     personalActivities: {
-      hobbies: [
-        {
-          type: String,
-          trim: true,
-          default: null,
-        },
-      ],
-      interests: [
-        {
-          type: String,
-          trim: true,
-          default: null,
-        },
-      ],
-      favouriteMusic: [
-        {
-          type: String,
-          trim: true,
-          default: null,
-        },
-      ],
-      favouriteReads: [
-        {
-          type: String,
-          trim: true,
-          default: null,
-        },
-      ],
-      preferredMovies: [
-        {
-          type: String,
-          trim: true,
-          default: null,
-        },
-      ],
-      sports: [
-        {
-          type: String,
-          trim: true,
-          default: null,
-        },
-      ],
-      favouriteCuisine: [
-        {
-          type: String,
-          trim: true,
-          default: null,
-        },
-      ],
+        hobbies: [
+            {
+                type: String,
+                trim: true,
+                default: null
+            },
+        ],
+        interests: [
+            {
+                type: String,
+                trim: true,
+                default: null
+            },
+        ],
+        favouriteMusic: [
+            {
+                type: String,
+                trim: true,
+                default: null
+            },
+        ],
+        favouriteReads: [
+            {
+                type: String,
+                trim: true,
+                default: null
+            },
+        ],
+        preferredMovies: [
+            {
+                type: String,
+                trim: true,
+                default: null
+            },
+        ],
+        sports: [
+            {
+                type: String,
+                trim: true,
+                default: null
+            },
+        ],
+        favouriteCuisine: [
+            {
+                type: String,
+                trim: true,
+                default: null
+            },
+        ]
     },
 
-    ///////////////////////////////////////////////// New Collection ////////////////////////////////////////////////////
+    // /////////////////////////////////////////////// New Collection ////////////////////////////////////////////////////
     // partnerPreference: {
     //     ageRange: {
     //         startFrom: {
@@ -350,24 +349,32 @@ const userSchema = new Schema(
     //     materialStatus: [{
     //         type: String,
     //         trim: true,
-    //         default: "unmarried",
-    //         enum: ["unmarried", "divorced"]
+    //         default: 'never_married',
+    //         enum: ['never_married', 'divorced', 'annulled', 'widowed']
     //     }],
     //     religion: [{
     //         type: String,
     //         trim: true,
     //         default: null
     //     }],
-    //     community: [{
+    //     socialOrder: [{
     //         type: String,
     //         trim: true,
     //         default: null
     //     }],
-    //     motherTounge: [{
+    //     motherTounge: {
+    //         type: String,
+    //         trim: true,
+    //         default: null
+    //     },
+    //     spokenLanguages: [{
     //         type: String,
     //         trim: true,
     //         default: null
     //     }],
+
+    ///////////////////////////////////////////////// work zone///////////////
+
     //     location: {
     //         Country: {
     //             type: String,
@@ -427,11 +434,7 @@ const userSchema = new Schema(
     //         default: null
     //     }]
     // },
-  },
-  {
-    timestamps: true,
-  }
-);
+}, { timestamps: true });
 
 const User = model("User", userSchema);
 

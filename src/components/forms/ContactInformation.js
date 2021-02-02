@@ -220,9 +220,6 @@ const ContactInformation = ({ email, contact }) => {
                                     {isLoading ? <span>Adding...</span> : <span>Add Contacts</span>}
                                 </button>
                             </div>
-
-
-
                         </div>
                     </form>
                 </div>
