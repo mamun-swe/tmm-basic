@@ -76,6 +76,16 @@ const userSchema = new Schema(
             trim: true,
             default: null,
         },
+        stateDevision: {
+            type: String,
+            trim: true,
+            required: true
+        },
+        city: {
+            type: String,
+            trim: true,
+            required: true
+        },
 
         // language: {
         //     motherTongue: {
