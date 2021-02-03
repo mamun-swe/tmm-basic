@@ -10,13 +10,13 @@ const ContactInfoController = require("../controllers/admin/user/ContactInfoCont
 const ActivityController = require("../controllers/admin/user/ActivityController");
 
 // Users
-router.get('/user/index', UsersController.Index)
-router.get('/user/show/:email', UsersController.Show)
-router.put('/user/primaryinfo/update', UsersController.UpdatePrimaryInfo);
-router.put('/user/profile-picture/:email/update', UsersController.UpdateProfilePicture);
-router.put('/user/profile/description/:email/update', UsersController.UpdateShortDescription)
-router.put('/user/profile/activity', UsersController.UpdateActivities)
-
+router.get("/user/index", UsersController.Index);
+router.get("/user/show/:email", UsersController.Show);
+router.post("/user/create", UsersController.CreateUser);
+router.put("/user/primaryinfo/update", UsersController.UpdatePrimaryInfo);
+router.put("/user/profile-picture/:email/update",UsersController.UpdateProfilePicture);
+router.put("/user/profile/description/:email/update", UsersController.UpdateShortDescription);
+router.put("/user/profile/activity", UsersController.UpdateActivities);
 
 // Religion
 router.get("/religion", ReligionController.Index);
