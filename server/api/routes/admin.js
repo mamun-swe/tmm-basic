@@ -9,6 +9,7 @@ const BasicAndLifestyleController = require("../controllers/admin/user/BasicAndL
 const ContactInfoController = require("../controllers/admin/user/ContactInfoController");
 const ActivityController = require("../controllers/admin/user/ActivityController");
 const PartnerPreferenceController = require("../controllers/admin/user/PartnerPreferenceController")
+const QualificationController = require("../controllers/admin/user/QualificationController")
 
 // Users
 router.get('/user/index', UsersController.Index)
@@ -53,5 +54,8 @@ router.post("/activity/store/music", ActivityController.StoreMusic);
 
 // Partner preference 
 router.post("/create/partnerpreference",PartnerPreferenceController.Create)
+// Qualification
+router.get("/qualification", QualificationController.Index)
+router.post("/qualification/store", QualificationController.Store)
 
 module.exports = router;
