@@ -1,5 +1,8 @@
 const hostURL = require("../../../utils/url");
 const Users = require("../../../../models/Users");
+const Religions = require("../../../../models/Religion")
+const Countries = require("../../../../models/Country")
+const Languages = require("../../../../models/Language")
 const Unlink = require("../../../services/Image");
 const generateUniqueId = require("generate-unique-id");
 const ImageProcess = require("../../../services/ImageProcess");
@@ -7,41 +10,110 @@ const ImageProcess = require("../../../services/ImageProcess");
 // Users list index
 const Index = async (req, res, next) => {
     try {
-        const {_page, _limit} = req.query;
+        const { _page, _limit } = req.query;
 
         const totalItems = await Users.countDocuments().exec();
-        // {
-        //     name: 1,
-        //     email: 1
-        // }
-        const users = await Users.find({}).sort({_id: -1}).skip(parseInt(_page) * parseInt(_limit)).limit(parseInt(_limit)).exec();
-        if (users.length < 0) {
-            return res.status(404).json({status: false, message: "Users not found ."});
+        let results = await Users.find({}, { name: 1, email: 1, profilePicture: 1 })
+            .sort({ _id: -1 })
+            .skip(parseInt(_page) * parseInt(_limit))
+            .limit(parseInt(_limit))
+            .exec();
+
+
+        if (results.length < 0) {
+            return res.status(404).json({ status: false, message: "Users not found ." });
         }
+
+        // Modifiy image path
+        await results.map(user => {
+            if (user.profilePicture.blurImage && user.profilePicture.clearImage) {
+                user.profilePicture.blurImage = hostURL(req) + "uploads/blur/" + user.profilePicture.blurImage
+                user.profilePicture.clearImage = hostURL(req) + "uploads/clear/" + user.profilePicture.clearImage
+            } else {
+                user.profilePicture.blurImage = null
+                user.profilePicture.clearImage = null
+            }
+        })
 
         res.status(200).json({
             status: true,
             totalItems: totalItems,
-            currentItem: users.length,
+            currentItem: results.length,
             totalPage: parseInt(totalItems / _limit),
             currentPage: parseInt(_page),
-            users: users
+            users: results
         });
     } catch (error) {
-        if (error) 
-            next(error);
-        
+        if (error) next(error)
+    }
+};
+
+// Create a user
+const CreateUser = async (req, res, next) => {
+    try {
+        const {
+            name,
+            phone,
+            email,
+            gender,
+            lookingFor,
+            dob,
+            religion,
+            socialOrder,
+            birthCountry,
+            livingCountry
+        } = req.body;
+
+        const checkUnique = await Users.findOne({
+            $or: [
+                {
+                    email: email
+                }, {
+                    phone: phone
+                }
+            ]
+        });
+        if (checkUnique) {
+            return res.status(409).json({ status: false, message: "Email or Phone Number Already Exist!" });
+        }
+        const profileId = await generateUniqueId({ length: 8, useLetters: false });
+
+        const result = new Users({
+            profileId: profileId,
+            name: name,
+            phone: phone,
+            gender: gender,
+            email: email,
+            lookingFor: lookingFor,
+            dob: dob,
+            religion: religion,
+            socialOrder: socialOrder,
+            birthCountry: birthCountry,
+            livingCountry: livingCountry
+        });
+        await result.save();
+        res.status(201).json({ status: true, message: `Successfully User created` });
+    } catch (error) {
+        if (error.name == "ValidationError") {
+            let message = [];
+            for (field in error.errors) {
+                message.push(error.errors[field].message);
+            }
+
+            return res.status(500).json({ success: false, message });
+        }
+        next(error);
     }
 };
 
 // Show specific user
 const Show = async (req, res, next) => {
     try {
-        const {email} = req.params;
+        const { email } = req.params;
 
-        let result = await Users.findOne({email: email}).populate("basicAndLifestyleInformation", "user age materialStatus height bodyWeight diet bloodGroup healthInformation disability").populate("contactInformation").exec();
-        if (! result) {
-            return res.status(404).json({status: false, message: "User not found."});
+        let result = await Users.findOne({ email: email }).populate("basicAndLifestyleInformation", "user age materialStatus height bodyWeight diet bloodGroup healthInformation disability").populate("contactInformation").exec();
+        if (!result) {
+            return res.status(404).json({ status: false, message: "User not found." });
         }
 
         // add Host URL with file
@@ -50,7 +122,7 @@ const Show = async (req, res, next) => {
             result.profilePicture.clearImage = hostURL(req) + "uploads/clear/" + result.profilePicture.clearImage;
         }
 
-        res.status(200).json({status: true, user: result});
+        res.status(200).json({ status: true, user: result });
     } catch (error) {
         if (error) {
             console.log(error);
@@ -59,6 +131,35 @@ const Show = async (req, res, next) => {
     }
 };
 
+// Search User
+const SearchUser = async (req, res, next) => {
+    try { // Query Params
+        const { query } = req.query
+
+        // Search from users collection
+        let results = await Users.find({
+            email: new RegExp(query, 'i')
+        }).exec()
+
+        // Modifiy image path
+        await results.map(user => {
+            if (user.profilePicture.blurImage && user.profilePicture.clearImage) {
+                user.profilePicture.blurImage = hostURL(req) + "uploads/blur/" + user.profilePicture.blurImage
+                user.profilePicture.clearImage = hostURL(req) + "uploads/clear/" + user.profilePicture.clearImage
+            } else {
+                user.profilePicture.blurImage = null
+                user.profilePicture.clearImage = null
+            }
+        })
+
+        res.status(200).json(results)
+
+    } catch (error) {
+        if (error) next(error)
+    }
+}
+
+// Update primary information of a user
 const UpdatePrimaryInfo = async (req, res, next) => {
     try {
         const {
@@ -89,13 +190,13 @@ const UpdatePrimaryInfo = async (req, res, next) => {
                 birthCountry: birthCountry,
                 livingCountry: livingCountry
             }
-        }, {new: true}).exec();
+        }, { new: true }).exec();
 
-        if (! updatePrimar) {
-            return res.status(500).json({status: false, message: "Internal Server Error "});
+        if (!updatePrimar) {
+            return res.status(500).json({ status: false, message: "Internal Server Error " });
         }
 
-        res.status(201).json({status: true, message: "User Basic Informaiton Update Success !!"});
+        res.status(201).json({ status: true, message: "User Basic Informaiton Update Success !!" });
     } catch (error) {
         if (error) {
             console.log(error);
@@ -107,20 +208,22 @@ const UpdatePrimaryInfo = async (req, res, next) => {
 // Update Profile Picture
 const UpdateProfilePicture = async (req, res, next) => {
     try {
-        const {email} = req.params;
+        const { email } = req.params;
         const file = req.files.image;
 
         // Check request if empty
-        if (! file) 
-            return res.status(422).json({status: false, message: "Image is required"});
-        
+        if (!file)
+            return res.status(422).json({ status: false, message: "Image is required" });
+
+
 
         // Find user using email
-        const checkedUser = await Users.findOne({email: email}).exec();
+        const checkedUser = await Users.findOne({ email: email }).exec();
 
-        if (! checkedUser) 
-            return res.status(404).json({status: false, message: "User not found"});
-        
+        if (!checkedUser)
+            return res.status(404).json({ status: false, message: "User not found" });
+
+
 
         // Remove Blur image
         if (checkedUser && checkedUser.profilePicture.blurImage && checkedUser.profilePicture.clearImage) {
@@ -142,10 +245,10 @@ const UpdateProfilePicture = async (req, res, next) => {
                         clearImage: isCLearUpload
                     }
                 }
-            }, {new: true}).exec();
+            }, { new: true }).exec();
 
             if (updateAccount) {
-                res.status(200).json({status: true, message: "Successfully profile picture uploaded"});
+                res.status(200).json({ status: true, message: "Successfully profile picture uploaded" });
             }
         }
     } catch (error) {
@@ -159,14 +262,15 @@ const UpdateProfilePicture = async (req, res, next) => {
 // Update Short Description
 const UpdateShortDescription = async (req, res, next) => {
     try {
-        const {email} = req.params;
-        const {description} = req.body;
+        const { email } = req.params;
+        const { description } = req.body;
 
         // Find User
-        const user = Users.findOne({email: email}).exec();
-        if (! user) 
-            return res.status(404).json({status: false, message: "User not found."});
-        
+        const user = Users.findOne({ email: email }).exec();
+        if (!user)
+            return res.status(404).json({ status: false, message: "User not found." });
+
+
 
         // Update description to database
         await Users.findOneAndUpdate({
@@ -175,20 +279,22 @@ const UpdateShortDescription = async (req, res, next) => {
             $set: {
                 shortDescription: description
             }
-        }, {new: true}).exec();
+        }, { new: true }).exec();
 
-        res.status(201).json({status: true, message: "Successfully description added"});
+        res.status(201).json({ status: true, message: "Successfully description added" });
     } catch (error) {
-        if (error) 
+        if (error)
             next(error);
-        
+
+
+
     }
 };
 
 // Update personal activities
 const UpdateActivities = async (req, res, next) => {
     try {
-        const {field} = req.query;
+        const { field } = req.query;
         const {
             email,
             hobbies,
@@ -199,168 +305,233 @@ const UpdateActivities = async (req, res, next) => {
             sports,
             favouriteCuisine
         } = req.body;
+
         if (!field) {
-            return res.status(422).json({status: false, message: "Please specify field."});
+            return res.status(422).json({ status: false, message: "Please specify field." });
         }
 
-        switch (field) {
+        switch (field) { // Hobbi
             case "hobbies":
-                if (!email && !hobbies.length && field!=hobbies) {
-                    return res.status(501).json({status: false, message: "Internal Server Error"});
-                }
-                const hobbiesEmail = await Users.findOne({email: email}).exec();
-                if (! hobbiesEmail) {
-                    return res.status(404).json({status: false, message: "User Not Found"});
+                // Check email & hobbies
+                if (!email && !hobbies.length)
+                    return res.status(501).json({ status: false, message: "Internat server error" });
+
+
+
+                // Find a user
+                const user = await Users.findOne({ email: email }).exec();
+                if (!user) {
+                    return res.status(404).json({ status: false, message: "Invalid email address" });
                 }
 
-                let updateHobbies = await Users.updateOne({
+                // Save Hobbies
+                const saveHobbi = Users.findOneAndUpdate({
                     email: email
                 }, {
                     $set: {
-                        "personalActivities.hobbies": hobbies
+                        personalActivities: {
+                            hobbies: hobbies
+                        }
                     }
-                },{new:true}).exec();
+                }, { new: true }).exec();
 
-                if (updateHobbies) {
-                    return res.status(201).json({message: "Successfully hobbies saved"});
+                // Send success message
+                if (saveHobbi) {
+                    return res.status(201).json({ message: "Successfully hobbies saved" });
                 }
 
-                // Interest
+            // return res.status(200).json(hobbies)
+
+            // Interest
             case "interests":
-                if (!email && !interests.length) {
-                    return res.status(501).json({status: false, message: "Internal Server Error"});
-                }
-                const interestsEmail = await Users.findOne({email: email});
-                if (! interestsEmail) {
-                    return res.status(404).json({status: false, message: "User Not Found"});
+                // Check email & Interests
+                if (!email && !interests.length)
+                    return res.status(501).json({ status: false, message: "Internat server error" });
+
+
+
+                // Find a user
+                const interestsUser = await Users.findOne({ email: email }).exec();
+                if (!interestsUser) {
+                    return res.status(404).json({ status: false, message: "Invalid email address" });
                 }
 
-                // let data = new set(interests)
-                const updateInterest = await Users.updateOne({
+                // Save interests
+                const saveinterests = Users.findOneAndUpdate({
                     email: email
                 }, {
                     $set: {
-                        "personalActivities.interests": interests
+                        personalActivities: {
+                            interests: interests
+                        }
                     }
-                }, {new: true}).exec();
-                if (updateInterest) {
-                    return res.status(200).json({status: true, message: "Interest Update Successful"});
-                }
-// Favorite Music
-            case "favouriteMusic":
-              if (!email && !favouriteMusic.length) {
-                return res.status(501).json({status: false, message: "Internal Server Error"});
-            }
-            const favouriteMusicEmail = await Users.findOne({email: email});
-            if (! favouriteMusicEmail) {
-                return res.status(404).json({status: false, message: "User Not Found"});
-            }
+                }, { new: true }).exec();
 
-            // let data = new set(interests)
-            const updatefavouriteMusic = await Users.updateOne({
-                email: email
-            }, {
-                $set: {
-                    "personalActivities.favouriteMusic": favouriteMusic
+                // Send success message
+                if (saveinterests) {
+                    return res.status(201).json({ message: "Successfully Interests saved" });
                 }
-            }, {new: true}).exec();
-            if (updatefavouriteMusic) {
-                return res.status(200).json({status: true, message: "Favourite Music Update Successful"});
-            }
-                // return res.status(200).json(field);
+
+            // return res.status(200).json(interests)
+            // return res.status(200).json(field);
+
+            case "favouriteMusic":
+                // Check email & Favorite Music
+                if (!email && !favouriteMusic.length)
+                    return res.status(501).json({ status: false, message: "Internat server error" });
+
+
+
+                // Find a user
+                const favouriteMusicUser = await Users.findOne({ email: email }).exec();
+                if (!favouriteMusicUser) {
+                    return res.status(404).json({ status: false, message: "Invalid email address" });
+                }
+
+                // Save Favourite Music
+                const saveFavouriteMusic = Users.findOneAndUpdate({
+                    email: email
+                }, {
+                    $set: {
+                        personalActivities: {
+                            favouriteMusic: favouriteMusic
+                        }
+                    }
+                }, { new: true }).exec();
+
+                // Send success message
+                if (saveFavouriteMusic) {
+                    return res.status(201).json({ message: "Successfully Favourite Music saved" });
+                }
+            // return res.status(200).json(field);
 
             case "favouriteReads":
+                // Check email & Favourite Reads
+                if (!email && !favouriteReads.length)
+                    return res.status(501).json({ status: false, message: "Internat server error" });
 
-              if (!email && !favouriteReads.length) {
-                return res.status(501).json({status: false, message: "Internal Server Error"});
-            }
-            const favouriteReadsEmail = await Users.findOne({email: email});
-            if (! favouriteReadsEmail) {
-                return res.status(404).json({status: false, message: "User Not Found"});
-            }
 
-            // let data = new set(interests)
-            const updatefavouriteReads = await Users.updateOne({
-                email: email
-            }, {
-                $set: {
-                    "personalActivities.favouriteReads": favouriteReads
+
+                // Find a user
+                const favouriteReadsUser = await Users.findOne({ email: email }).exec();
+                if (!favouriteReadsUser) {
+                    return res.status(404).json({ status: false, message: "Invalid email address" });
                 }
-            }, {new: true}).exec();
-            if (updatefavouriteReads) {
-                return res.status(200).json({status: true, message: "Favourite Reads Update Successful"});
-            }
 
-                // return res.status(200).json(field);
+                // Save Favourite Reads
+                const saveFavouriteReads = Users.findOneAndUpdate({
+                    email: email
+                }, {
+                    $set: {
+                        personalActivities: {
+                            favouriteReads: favouriteReads
+                        }
+                    }
+                }, { new: true }).exec();
+
+                // Send success message
+                if (saveFavouriteReads) {
+                    return res.status(201).json({ message: "Successfully Favourite Reads saved" });
+                }
+
+            // return res.status(200).json(field);
 
             case "preferredMovies":
+                // Check email & Preferred Movies
+                if (!email && !preferredMovies.length)
+                    return res.status(501).json({ status: false, message: "Internat server error" });
 
-                if (!email && !preferredMovies.length) {
-                    return res.status(501).json({status: false, message: "Internal Server Error"});
+
+
+                // Find a user
+                const preferredMoviesUser = await Users.findOne({ email: email }).exec();
+
+                if (!preferredMoviesUser) {
+                    return res.status(404).json({ status: false, message: "Invalid email address" });
                 }
-                const preferredMoviesEmail = await Users.findOne({email: email});
-                if (! preferredMoviesEmail) {
-                    return res.status(404).json({status: false, message: "User Not Found"});
-                }
-    
-                // let data = new set(interests)
-                const updatepreferredMovies = await Users.updateOne({
+
+                // Save Preferred Movies
+                const savepreferredMovies = Users.findOneAndUpdate({
                     email: email
                 }, {
                     $set: {
-                        "personalActivities.preferredMovies": preferredMovies
+                        personalActivities: {
+                            preferredMovies: preferredMovies
+                        }
                     }
-                }, {new: true}).exec();
-                if (updatepreferredMovies) {
-                    return res.status(200).json({status: true, message: "Preferred Movies Update Successful"});
+                }, { new: true }).exec();
+
+                // Send success message
+                if (savepreferredMovies) {
+                    return res.status(201).json({ message: "Successfully Preferred Movies saved" });
                 }
-                // return res.status(200).json(field);
+
+            // return res.status(200).json(field);
 
             case "sports":
-            
-                if (!email && !sports.length) {
-                    return res.status(501).json({status: false, message: "Internal Server Error"});
+                // Check email & Interests
+                if (!email && !sports.length)
+                    return res.status(501).json({ status: false, message: "Internat server error" });
+
+
+
+                // Find a user
+                const sportsUser = await Users.findOne({ email: email }).exec();
+
+                if (!sportsUser) {
+                    return res.status(404).json({ status: false, message: "Invalid email address" });
                 }
-                const sportsEmail = await Users.findOne({email: email});
-                if (! sportsEmail) {
-                    return res.status(404).json({status: false, message: "User Not Found"});
-                }
-    
-                // let data = new set(interests)
-                const updatesports = await Users.updateOne({
+
+                // Save Sports
+                const savesports = Users.findOneAndUpdate({
                     email: email
                 }, {
                     $set: {
-                        "personalActivities.sports": sports
+                        personalActivities: {
+                            sports: sports
+                        }
                     }
-                }, {new: true}).exec();
-                if (updatesports) {
-                    return res.status(200).json({status: true, message: "Sports Update Successful"});
+                }, { new: true }).exec();
+
+                // Send success message
+                if (savesports) {
+                    return res.status(201).json({ message: "Successfully Sports saved" });
                 }
-                // return res.status(200).json(field);
+            // return res.status(200).json(field);
 
             case "favouriteCuisine":
+                // Check email & Interests
+                if (!email && !favouriteCuisine.length)
+                    return res.status(501).json({ status: false, message: "Internat server error" });
 
-                if (!email && !favouriteCuisine.length) {
-                    return res.status(501).json({status: false, message: "Internal Server Error"});
+
+
+                // Find a user
+                const favouriteCuisineUser = await Users.findOne({ email: email }).exec();
+                if (!favouriteCuisineUser) {
+                    return res.status(404).json({ status: false, message: "Invalid email address" });
                 }
-                const favouriteCuisineEmail = await Users.findOne({email: email});
-                if (! favouriteCuisineEmail) {
-                    return res.status(404).json({status: false, message: "User Not Found"});
-                }
-    
-                // let data = new set(interests)
-                const updatefavouriteCuisine = await Users.updateOne({
+
+                // Save favourite Cuisine
+                const savesFavouriteCuisine = Users.findOneAndUpdate({
                     email: email
                 }, {
                     $set: {
-                        "personalActivities.favouriteCuisine": favouriteCuisine
+                        personalActivities: {
+                            favouriteCuisine: favouriteCuisine
+                        }
                     }
-                }, {new: true}).exec();
-                if (updatefavouriteCuisine) {
-                    return res.status(200).json({status: true, message: "Favourite Cuisine Update Successful"});
+                }, { new: true }).exec();
+
+                // Send success message
+                if (savesFavouriteCuisine) {
+                    return res.status(201).json({ message: "Successfully Favourite Cuisine saved" });
                 }
-                // return res.status(200).json(field);
+
+            // return res.status(200).json(field);
+
+            default:
+                return res.status(422).json({ status: false, message: "Invalid field." });
         }
     } catch (error) {
         if (error) {
@@ -370,71 +541,41 @@ const UpdateActivities = async (req, res, next) => {
     }
 };
 
-// create user
-const CreateUser = async (req, res, next) => {
+// All needed data of partner preference
+const PartnerPreferenceData = async (req, res, next) => {
     try {
-        const {
-            name,
-            phone,
-            email,
-            gender,
-            lookingFor,
-            dob,
-            religion,
-            socialOrder,
-            birthCountry,
-            livingCountry
-        } = req.body;
+        const religions = await Religions.find({}, { name: 1, socialOrders: 1 }).exec()
+        const countries = await Countries.find({}, { name: 1 }).exec()
+        const languages = await Languages.find({}, { name: 1 }).exec()
 
-        const checkUnique = await Users.findOne({
-            $or: [
-                {
-                    email: email
-                }, {
-                    phone: phone
-                },
-            ]
-        });
-        if (checkUnique) {
-            return res.status(409).json({status: false, message: "Email or Phone Number Already Exist!"});
-        }
-        const profileId = await generateUniqueId({length: 8, useLetters: false});
+        const religionResults = await religions.map(religion => religion.name)
+        const countryResults = await countries.map(country => country.name)
+        const languageResults = await languages.map(language => language.name)
+        const orders = await religions.map(order => order.socialOrders).flat()
 
-        const result = new Users({
-            profileId: profileId,
-            name: name,
-            phone: phone,
-            gender: gender,
-            email: email,
-            lookingFor: lookingFor,
-            dob: dob,
-            religion: religion,
-            socialOrder: socialOrder,
-            birthCountry: birthCountry,
-            livingCountry: livingCountry
-        });
-        await result.save();
-        res.status(201).json({status: true, message: `Successfully User created`});
+        res.status(200).json({
+            status: true,
+            religions: religionResults,
+            socialOrders: orders,
+            countries: countryResults,
+            languages: languageResults
+        })
     } catch (error) {
-        if (error.name == "ValidationError") {
-            let message = [];
-            for (field in error.errors) {
-                message.push(error.errors[field].message);
-            }
-            return res.status(500).json({success: false, message});
-        }
-        next(error);
+        if (error) next(error)
     }
-};
+}
+
 
 module.exports = {
     Index,
-    Show,
     CreateUser,
+    Show,
+    SearchUser,
     UpdatePrimaryInfo,
     UpdateProfilePicture,
     UpdateShortDescription,
-    UpdateActivities
+    UpdateActivities,
+    PartnerPreferenceData
 };
 
 // Update field name
