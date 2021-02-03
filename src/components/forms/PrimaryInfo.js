@@ -30,7 +30,6 @@ const PrimaryInfo = ({ email, user, updated }) => {
     const [motherTongue, setMotherTongue] = useState({ value: null, error: null })
     const [spokenLanguage, setSpokenLanguage] = useState({ value: [], error: null })
 
-
     // Branch states
     const [isBranchShow, setBranchShow] = useState(false)
     const [isBranchCreated, setBranchCreated] = useState(false)
@@ -657,11 +656,6 @@ const PrimaryInfo = ({ email, user, updated }) => {
                     </button>
                 </div>
             </form>
-
-
-
-
-
 
             {/* Modals */}
 

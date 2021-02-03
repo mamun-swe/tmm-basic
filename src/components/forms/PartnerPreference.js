@@ -14,12 +14,15 @@ import { ic_add } from 'react-icons-kit/md'
 // Create modals
 import QualificationModal from '../modal/Qualification'
 
+
 toast.configure({ autoClose: 2000 })
 const PartnerPreference = ({ email }) => {
     const { register, handleSubmit, errors } = useForm()
     const [isLoading, setLoading] = useState(false)
-    // Modal states
+
+    // Qualification modal states
     const [showQualification, setShowQualification] = useState(false)
+    const [isQualificationCreated, setQualificationCreated] = useState(false)
 
     // Input States
     const [ageRange, setAgeRange] = useState({ startFrom: 18, endTo: 40 })
@@ -44,6 +47,7 @@ const PartnerPreference = ({ email }) => {
     const [socialOrderOptions, setSocialOrderOptions] = useState([])
     const [languageOptions, setLanguageOptions] = useState([])
     const [countryOptions, setCountryOptions] = useState([])
+    const [qualificationOptions, setQualificationOptions] = useState([])
     const dietOptions = [
         { label: 'Open to all', value: 'open_to_all' },
         { label: 'veg', value: 'veg' },
@@ -89,6 +93,7 @@ const PartnerPreference = ({ email }) => {
         }
 
         getPartnerPreferenceInfo()
+        getQualification()
     }, [])
 
     // On Change methods
@@ -100,6 +105,39 @@ const PartnerPreference = ({ email }) => {
     const onChangeMotherTounge = event => setMotherTounge(event.value)
     const onChangeSpokenLanguages = event => setSpokenLanguages({ value: event })
     const onChangeCountries = event => setCountries({ value: event })
+
+    // Get Qualification
+    const getQualification = async () => {
+        try {
+            const response = await axios.get(`${api}admin/qualification`)
+            if (response.status === 200) {
+                setQualificationOptions(response.data.qualifications.map(qualification => ({ label: qualification.title, value: qualification.title })))
+            }
+        } catch (error) {
+            if (error) {
+                toast.warn(error.response.data.message)
+            }
+        }
+    }
+
+    // Create Qualification
+    const createQualification = async (data) => {
+        try {
+            setQualificationCreated(true)
+            const response = await axios.post(`${api}admin/qualification/store`, data)
+            if (response.status === 201) {
+                getQualification()
+                setQualificationCreated(false)
+                setShowQualification(false)
+                toast.success(response.data.message)
+            }
+        } catch (error) {
+            if (error) {
+                setQualificationCreated(false)
+                toast.warn(error.response.data.message)
+            }
+        }
+    }
 
 
     // Submit data to API
@@ -295,7 +333,7 @@ const PartnerPreference = ({ email }) => {
                                 <h6>Education & Profession</h6>
                             </div>
 
-                            <div className="col-12 col-lg-4">
+                            <div className="col-12">
                                 <div className="form-group mb-4">
                                     <p>Qualification</p>
 
@@ -303,10 +341,11 @@ const PartnerPreference = ({ email }) => {
                                         <div className="flex-fill">
                                             <Select
                                                 classNamePrefix="custom-select"
+                                                isMulti
                                                 styles={customStyles}
                                                 placeholder={'Select qualification'}
                                                 components={{ DropdownIndicator: () => null, IndicatorSeparator: () => null }}
-                                                options={countryOptions}
+                                                options={qualificationOptions}
                                             // onChange={onChangeBirthCountry}
                                             // defaultOptions={{ value: user.birthCountry, label: user.birthCountry }}
                                             />
@@ -339,6 +378,16 @@ const PartnerPreference = ({ email }) => {
                     </form>
                 </div>
             </div>
+
+            {/* Qualification create modal */}
+            {showQualification ?
+                <QualificationModal
+                    show={showQualification}
+                    isCreate={isQualificationCreated}
+                    newdata={createQualification}
+                    onHide={() => setShowQualification(false)}
+                />
+                : null}
         </div>
     );
 }
