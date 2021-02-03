@@ -248,7 +248,7 @@ const UpdateProfilePicture = async (req, res, next) => {
             }, { new: true }).exec();
 
             if (updateAccount) {
-                res.status(200).json({ status: true, message: "Successfully profile picture uploaded" });
+                res.status(201).json({ status: true, message: "Successfully profile picture uploaded" });
             }
         }
     } catch (error) {
