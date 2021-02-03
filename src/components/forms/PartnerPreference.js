@@ -253,11 +253,23 @@ const PartnerPreference = ({ email }) => {
                                 </div>
                             </div>
 
+                            {/* location */}
 
+                            {/* Country */}
+                            <div className="col-12 col-lg-4">
+                                <div className="form-group mb-4">
+                                    <p>Country</p>
 
-
-                            {/* Work with location */}
-
+                                    <Select
+                                        classNamePrefix="custom-select"
+                                        isMulti
+                                        styles={customStyles}
+                                        components={{ DropdownIndicator: () => null, IndicatorSeparator: () => null }}
+                                        options={languageOptions}
+                                        onChange={onChangeSpokenLanguages}
+                                    />
+                                </div>
+                            </div>
 
 
                             {/* Submit Button */}

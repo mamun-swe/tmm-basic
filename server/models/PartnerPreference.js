@@ -51,11 +51,11 @@ const PartnerPreferenceSchema = new Schema({
         default: null
     }],
     location: {
-        Country: {
+        Country: [{
             type: String,
             trim: true,
             default: null
-        },
+        }],
         // State: {
         //     type: String,
         //     trim: true,
