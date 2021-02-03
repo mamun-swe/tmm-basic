@@ -372,9 +372,6 @@ const UpdateActivities = async (req, res, next) => {
                     return res.status(201).json({ message: "Successfully Interests saved" });
                 }
 
-            // return res.status(200).json(interests)
-            // return res.status(200).json(field);
-
             case "favouriteMusic":
                 // Check email & Favorite Music
                 if (!email && !favouriteMusic.length)
@@ -403,14 +400,11 @@ const UpdateActivities = async (req, res, next) => {
                 if (saveFavouriteMusic) {
                     return res.status(201).json({ message: "Successfully Favourite Music saved" });
                 }
-            // return res.status(200).json(field);
 
             case "favouriteReads":
                 // Check email & Favourite Reads
                 if (!email && !favouriteReads.length)
                     return res.status(501).json({ status: false, message: "Internat server error" });
-
-
 
                 // Find a user
                 const favouriteReadsUser = await Users.findOne({ email: email }).exec();
@@ -434,14 +428,10 @@ const UpdateActivities = async (req, res, next) => {
                     return res.status(201).json({ message: "Successfully Favourite Reads saved" });
                 }
 
-            // return res.status(200).json(field);
-
             case "preferredMovies":
                 // Check email & Preferred Movies
                 if (!email && !preferredMovies.length)
                     return res.status(501).json({ status: false, message: "Internat server error" });
-
-
 
                 // Find a user
                 const preferredMoviesUser = await Users.findOne({ email: email }).exec();
@@ -473,8 +463,6 @@ const UpdateActivities = async (req, res, next) => {
                 if (!email && !sports.length)
                     return res.status(501).json({ status: false, message: "Internat server error" });
 
-
-
                 // Find a user
                 const sportsUser = await Users.findOne({ email: email }).exec();
 
@@ -504,8 +492,6 @@ const UpdateActivities = async (req, res, next) => {
                 if (!email && !favouriteCuisine.length)
                     return res.status(501).json({ status: false, message: "Internat server error" });
 
-
-
                 // Find a user
                 const favouriteCuisineUser = await Users.findOne({ email: email }).exec();
                 if (!favouriteCuisineUser) {
@@ -527,8 +513,6 @@ const UpdateActivities = async (req, res, next) => {
                 if (savesFavouriteCuisine) {
                     return res.status(201).json({ message: "Successfully Favourite Cuisine saved" });
                 }
-
-            // return res.status(200).json(field);
 
             default:
                 return res.status(422).json({ status: false, message: "Invalid field." });
