@@ -15,7 +15,7 @@ const PartnerPreference = ({ email }) => {
     const [isLoading, setLoading] = useState(false)
 
     // Input States
-    const [ageRange, setAgeRange] = useState({ startFrom: 20, endTo: 50 })
+    const [ageRange, setAgeRange] = useState({ startFrom: 18, endTo: 40 })
     const [heightRange, setHeightRange] = useState({ startFrom: 4, endTo: 6 })
     const [materialStatus, setMaterialStatus] = useState([])
     const [religion, setReligion] = useState([])
@@ -152,7 +152,9 @@ const PartnerPreference = ({ email }) => {
                                     <p>Age range ({ageRange.startFrom}-{ageRange.endTo})</p>
                                     <Slider
                                         range
-                                        defaultValue={[20, 50]}
+                                        min={18}
+                                        max={50}
+                                        defaultValue={[ageRange.startFrom, ageRange.endTo]}
                                         onAfterChange={onAfterAgeChange}
                                     />
                                 </div>
@@ -164,9 +166,9 @@ const PartnerPreference = ({ email }) => {
                                     <p>Height range ({heightRange.startFrom}-{heightRange.endTo})</p>
                                     <Slider
                                         range
-                                        min={1}
-                                        max={10}
-                                        defaultValue={[4, 6]}
+                                        min={4}
+                                        max={7}
+                                        defaultValue={[heightRange.startFrom, heightRange.endTo]}
                                         onAfterChange={onAfterHeightChange}
                                     />
                                 </div>
