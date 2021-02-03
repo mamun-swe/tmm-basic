@@ -22,6 +22,7 @@ const PartnerPreference = ({ email }) => {
     const [socialOrder, setSocialOrder] = useState([])
     const [motherTounge, setMotherTounge] = useState(null)
     const [spokenLanguages, setSpokenLanguages] = useState([])
+    const [country, setCountry] = useState([])
 
     // Material Options
     const materialStatusOptions = [
@@ -39,6 +40,9 @@ const PartnerPreference = ({ email }) => {
 
     // Language options
     const [languageOptions, setLanguageOptions] = useState([])
+
+    // Country options
+    const [countryOptions, setCountryOptions] = useState([])
 
     // Diet options
     const dietOptions = [
@@ -79,6 +83,7 @@ const PartnerPreference = ({ email }) => {
                 setReligionOptions(response.data.religions.map(religion => ({ label: religion, value: religion })))
                 setSocialOrderOptions(response.data.socialOrders.map(order => ({ label: order, value: order })))
                 setLanguageOptions(response.data.languages.map(language => ({ label: language, value: language })))
+                setCountryOptions(response.data.countries.map(country => ({ label: country, value: country })))
                 console.log(response.data)
 
             } catch (error) {
@@ -111,6 +116,9 @@ const PartnerPreference = ({ email }) => {
 
     // On change spoken language
     const onChangeSpokenLanguages = event => setSpokenLanguages({ value: event })
+
+    // On Change country 
+    const onChangeCountry = event => setCountry({ value: event })
 
 
 
@@ -265,8 +273,8 @@ const PartnerPreference = ({ email }) => {
                                         isMulti
                                         styles={customStyles}
                                         components={{ DropdownIndicator: () => null, IndicatorSeparator: () => null }}
-                                        options={languageOptions}
-                                        onChange={onChangeSpokenLanguages}
+                                        options={countryOptions}
+                                        onChange={onChangeCountry}
                                     />
                                 </div>
                             </div>
