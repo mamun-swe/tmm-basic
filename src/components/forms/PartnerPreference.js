@@ -8,11 +8,18 @@ import { api } from '../../utils/api'
 import { useForm } from 'react-hook-form'
 import { toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
+import { Icon } from 'react-icons-kit'
+import { ic_add } from 'react-icons-kit/md'
+
+// Create modals
+import QualificationModal from '../modal/Qualification'
 
 toast.configure({ autoClose: 2000 })
 const PartnerPreference = ({ email }) => {
     const { register, handleSubmit, errors } = useForm()
     const [isLoading, setLoading] = useState(false)
+    // Modal states
+    const [showQualification, setShowQualification] = useState(false)
 
     // Input States
     const [ageRange, setAgeRange] = useState({ startFrom: 18, endTo: 40 })
@@ -22,7 +29,7 @@ const PartnerPreference = ({ email }) => {
     const [socialOrder, setSocialOrder] = useState([])
     const [motherTounge, setMotherTounge] = useState(null)
     const [spokenLanguages, setSpokenLanguages] = useState([])
-    const [country, setCountry] = useState([])
+    const [countries, setCountries] = useState([])
 
     // Material Options
     const materialStatusOptions = [
@@ -32,27 +39,17 @@ const PartnerPreference = ({ email }) => {
         { label: 'Widowed', value: 'widowed' }
     ]
 
-    // Religion options
+    // Options states
     const [religionOptions, setReligionOptions] = useState([])
-
-    // Social order options
     const [socialOrderOptions, setSocialOrderOptions] = useState([])
-
-    // Language options
     const [languageOptions, setLanguageOptions] = useState([])
-
-    // Country options
     const [countryOptions, setCountryOptions] = useState([])
-
-    // Diet options
     const dietOptions = [
         { label: 'Open to all', value: 'open_to_all' },
         { label: 'veg', value: 'veg' },
         { label: 'non-veg', value: 'non-veg' },
         { label: 'vegan', value: 'vegan' }
     ]
-
-    // Blood Group options
     const bloodGroupOptions = [
         { label: 'A(+ev)', value: 'A(+ev)' },
         { label: 'A(-ev)', value: 'A(-ev)' },
@@ -63,8 +60,6 @@ const PartnerPreference = ({ email }) => {
         { label: 'O(+ev)', value: 'O(+ev)' },
         { label: 'O(-ev)', value: 'O(-ev)' },
     ]
-
-    // Health information options
     const healthInfOptions = [
         { label: 'No Health Problem', value: 'No Health Problem' },
         { label: 'HIV positive', value: 'HIV positive' },
@@ -96,30 +91,15 @@ const PartnerPreference = ({ email }) => {
         getPartnerPreferenceInfo()
     }, [])
 
-    // After age change
+    // On Change methods
     const onAfterAgeChange = value => setAgeRange({ startFrom: value[0], endTo: value[1] })
-
-    // After height change
     const onAfterHeightChange = value => setHeightRange({ startFrom: value[0], endTo: value[1] })
-
-    // On change material status handle
     const onChangeMaterialStatus = event => setMaterialStatus({ value: event })
-
-    // On change religion handle
     const onChangeReligion = event => setReligion({ value: event })
-
-    // On change social order
     const onChangeSocialOrder = event => setSocialOrder({ value: event })
-
-    // On change mother tounge
     const onChangeMotherTounge = event => setMotherTounge(event.value)
-
-    // On change spoken language
     const onChangeSpokenLanguages = event => setSpokenLanguages({ value: event })
-
-    // On Change country 
-    const onChangeCountry = event => setCountry({ value: event })
-
+    const onChangeCountries = event => setCountries({ value: event })
 
 
     // Submit data to API
@@ -135,12 +115,13 @@ const PartnerPreference = ({ email }) => {
                 socialOrder: socialOrder.value ? socialOrder.value.map(data => data.value) : null,
                 motherTounge,
                 spokenLanguages: spokenLanguages.value ? spokenLanguages.value.map(data => data.value) : null,
+                country: countries.value ? countries.value.map(data => data.value) : null
             }
 
             console.log(newData)
             setTimeout(() => setLoading(false), 1000)
         } catch (error) {
-            if (error) console.log(error.response)
+            if (error) console.log(error)
         }
     }
 
@@ -261,7 +242,7 @@ const PartnerPreference = ({ email }) => {
                                 </div>
                             </div>
 
-                            {/* location */}
+                            {/* partner location */}
 
                             {/* Country */}
                             <div className="col-12 col-lg-4">
@@ -274,11 +255,75 @@ const PartnerPreference = ({ email }) => {
                                         styles={customStyles}
                                         components={{ DropdownIndicator: () => null, IndicatorSeparator: () => null }}
                                         options={countryOptions}
-                                        onChange={onChangeCountry}
+                                        onChange={onChangeCountries}
                                     />
                                 </div>
                             </div>
 
+                            {/* State / Division */}
+                            <div className="col-12 col-lg-4">
+                                <div className="form-group mb-4">
+                                    <p>State / Division</p>
+
+                                    <input
+                                        type="text"
+                                        name="stateDevision"
+                                        className="form-control shadow-none"
+                                        placeholder="( Dhaka Rajshahi Dinajpur Mymensingh ...)"
+                                        ref={register()}
+                                    />
+                                </div>
+                            </div>
+
+                            {/* City */}
+                            <div className="col-12 col-lg-4">
+                                <div className="form-group mb-4">
+                                    <p>City</p>
+
+                                    <input
+                                        type="text"
+                                        name="city"
+                                        className="form-control shadow-none"
+                                        placeholder="( Dhaka Rajshahi Dinajpur Mymensingh ...)"
+                                        ref={register()}
+                                    />
+                                </div>
+                            </div>
+
+
+                            <div className="col-12">
+                                <h6>Education & Profession</h6>
+                            </div>
+
+                            <div className="col-12 col-lg-4">
+                                <div className="form-group mb-4">
+                                    <p>Qualification</p>
+
+                                    <div className="d-flex">
+                                        <div className="flex-fill">
+                                            <Select
+                                                classNamePrefix="custom-select"
+                                                styles={customStyles}
+                                                placeholder={'Select qualification'}
+                                                components={{ DropdownIndicator: () => null, IndicatorSeparator: () => null }}
+                                                options={countryOptions}
+                                            // onChange={onChangeBirthCountry}
+                                            // defaultOptions={{ value: user.birthCountry, label: user.birthCountry }}
+                                            />
+                                        </div>
+                                        <div className="pl-2 pt-1">
+                                            <button
+                                                type="button"
+                                                style={customStyles.smBtn}
+                                                className="btn shadow-none rounded-circle p-1"
+                                                onClick={() => setShowQualification(true)}
+                                            >
+                                                <Icon icon={ic_add} size={22} />
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
 
                             {/* Submit Button */}
                             <div className="col-12 text-right">

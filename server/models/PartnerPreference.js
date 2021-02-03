@@ -56,16 +56,16 @@ const PartnerPreferenceSchema = new Schema({
             trim: true,
             default: null
         }],
-        // state: {
-        //     type: String,
-        //     trim: true,
-        //     default: null
-        // },
-        city: {
+        stateDevision: [{
             type: String,
             trim: true,
             default: null
-        }
+        }],
+        city: [{
+            type: String,
+            trim: true,
+            default: null
+        }]
     },
     educationAndProfession: {
         qualification: [{
@@ -107,6 +107,24 @@ const PartnerPreferenceSchema = new Schema({
         type: String,
         trim: true,
         default: null
+    }],
+    bloodGroup: [{
+        type: String,
+        trim: true,
+        default: null,
+        enum: [null, "A(+ev)", "A(-ev)", "B(+ev)", "B(-ev)", "AB(+ev)", "AB(-ev)", "O(+ev)", "O(-ev)"]
+    }],
+    healthInformation: [{
+        type: String,
+        trim: true,
+        default: null,
+        enum: [null, 'No Health Problem', 'HIV positive', 'Diabetes', 'Low BP', 'Hight BP', 'Heart Aliments', 'Other']
+    }],
+    disability: [{
+        type: String,
+        trim: true,
+        default: null,
+        enum: [null, 'none', 'physical_disability']
     }]
 },
     {
