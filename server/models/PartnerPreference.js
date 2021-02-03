@@ -56,11 +56,11 @@ const PartnerPreferenceSchema = new Schema({
             trim: true,
             default: null
         },
-        State: {
-            type: String,
-            trim: true,
-            default: null
-        },
+        // State: {
+        //     type: String,
+        //     trim: true,
+        //     default: null
+        // },
         City: {
             type: String,
             trim: true,
