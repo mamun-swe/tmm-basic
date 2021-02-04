@@ -13,7 +13,7 @@ import { ic_add } from 'react-icons-kit/md'
 
 // Create modals
 import QualificationModal from '../modal/Qualification'
-
+import WorkingWithModal from '../modal/WorkingWith'
 
 toast.configure({ autoClose: 2000 })
 const PartnerPreference = ({ email }) => {
@@ -24,6 +24,10 @@ const PartnerPreference = ({ email }) => {
     const [showQualification, setShowQualification] = useState(false)
     const [isQualificationCreated, setQualificationCreated] = useState(false)
 
+    // Working with modal states
+    const [showWorkingWith, setShowWorkingWith] = useState(false)
+    const [isWorkingWithCreated, setWorkingWithCreated] = useState(false)
+
     // Input States
     const [ageRange, setAgeRange] = useState({ startFrom: 18, endTo: 40 })
     const [heightRange, setHeightRange] = useState({ startFrom: 4, endTo: 6 })
@@ -33,6 +37,8 @@ const PartnerPreference = ({ email }) => {
     const [motherTounge, setMotherTounge] = useState(null)
     const [spokenLanguages, setSpokenLanguages] = useState([])
     const [countries, setCountries] = useState([])
+    const [qualifications, setQualifications] = useState([])
+    const [workingWith, setWorkingWith] = useState([])
 
     // Material Options
     const materialStatusOptions = [
@@ -48,6 +54,9 @@ const PartnerPreference = ({ email }) => {
     const [languageOptions, setLanguageOptions] = useState([])
     const [countryOptions, setCountryOptions] = useState([])
     const [qualificationOptions, setQualificationOptions] = useState([])
+    const [workingWithOptions, setWorkingWithOptions] = useState([])
+
+
     const dietOptions = [
         { label: 'Open to all', value: 'open_to_all' },
         { label: 'veg', value: 'veg' },
@@ -83,8 +92,6 @@ const PartnerPreference = ({ email }) => {
                 setSocialOrderOptions(response.data.socialOrders.map(order => ({ label: order, value: order })))
                 setLanguageOptions(response.data.languages.map(language => ({ label: language, value: language })))
                 setCountryOptions(response.data.countries.map(country => ({ label: country, value: country })))
-                console.log(response.data)
-
             } catch (error) {
                 if (error) {
                     toast.warn(error.response.data.message)
@@ -94,6 +101,7 @@ const PartnerPreference = ({ email }) => {
 
         getPartnerPreferenceInfo()
         getQualification()
+        getWorkingWith()
     }, [])
 
     // On Change methods
@@ -105,6 +113,8 @@ const PartnerPreference = ({ email }) => {
     const onChangeMotherTounge = event => setMotherTounge(event.value)
     const onChangeSpokenLanguages = event => setSpokenLanguages({ value: event })
     const onChangeCountries = event => setCountries({ value: event })
+    const onChangeQualification = event => setQualifications({ value: event })
+    const onChangeWorkingWith = event => setWorkingWith({ value: event })
 
     // Get Qualification
     const getQualification = async () => {
@@ -139,6 +149,39 @@ const PartnerPreference = ({ email }) => {
         }
     }
 
+    // Get working with
+    const getWorkingWith = async () => {
+        try {
+            const response = await axios.get(`${api}admin/working-with`)
+            if (response.status === 200) {
+                setWorkingWithOptions(response.data.works.map(work => ({ label: work.title, value: work.title })))
+            }
+        } catch (error) {
+            if (error) {
+                toast.warn(error.response.data)
+            }
+        }
+    }
+
+    // Create working with
+    const createWorkingWith = async (data) => {
+        try {
+            setWorkingWithCreated(true)
+            const response = await axios.post(`${api}admin/working-with/store`, data)
+            if (response.status === 201) {
+                getWorkingWith()
+                setWorkingWithCreated(false)
+                setShowWorkingWith(false)
+                toast.success(response.data.message)
+            }
+        } catch (error) {
+            if (error) {
+                setWorkingWithCreated(false)
+                toast.warn(error.response.data.message)
+            }
+        }
+    }
+
 
     // Submit data to API
     const onSubmit = async (data) => {
@@ -153,7 +196,9 @@ const PartnerPreference = ({ email }) => {
                 socialOrder: socialOrder.value ? socialOrder.value.map(data => data.value) : null,
                 motherTounge,
                 spokenLanguages: spokenLanguages.value ? spokenLanguages.value.map(data => data.value) : null,
-                country: countries.value ? countries.value.map(data => data.value) : null
+                country: countries.value ? countries.value.map(data => data.value) : null,
+                qualifications: qualifications.value ? qualifications.value.map(data => data.value) : null,
+                workingWith: workingWith.value ? workingWith.value.map(data => data.value) : null,
             }
 
             console.log(newData)
@@ -333,6 +378,7 @@ const PartnerPreference = ({ email }) => {
                                 <h6>Education & Profession</h6>
                             </div>
 
+                            {/* Qualification */}
                             <div className="col-12">
                                 <div className="form-group mb-4">
                                     <p>Qualification</p>
@@ -346,7 +392,7 @@ const PartnerPreference = ({ email }) => {
                                                 placeholder={'Select qualification'}
                                                 components={{ DropdownIndicator: () => null, IndicatorSeparator: () => null }}
                                                 options={qualificationOptions}
-                                            // onChange={onChangeBirthCountry}
+                                                onChange={onChangeQualification}
                                             // defaultOptions={{ value: user.birthCountry, label: user.birthCountry }}
                                             />
                                         </div>
@@ -363,6 +409,39 @@ const PartnerPreference = ({ email }) => {
                                     </div>
                                 </div>
                             </div>
+
+                            {/* Working with */}
+                            <div className="col-12">
+                                <div className="form-group mb-4">
+                                    <p>Working with</p>
+
+                                    <div className="d-flex">
+                                        <div className="flex-fill">
+                                            <Select
+                                                classNamePrefix="custom-select"
+                                                isMulti
+                                                styles={customStyles}
+                                                placeholder={'Select working area'}
+                                                components={{ DropdownIndicator: () => null, IndicatorSeparator: () => null }}
+                                                options={workingWithOptions}
+                                                onChange={onChangeWorkingWith}
+                                            // defaultOptions={{ value: user.birthCountry, label: user.birthCountry }}
+                                            />
+                                        </div>
+                                        <div className="pl-2 pt-1">
+                                            <button
+                                                type="button"
+                                                style={customStyles.smBtn}
+                                                className="btn shadow-none rounded-circle p-1"
+                                                onClick={() => setShowWorkingWith(true)}
+                                            >
+                                                <Icon icon={ic_add} size={22} />
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
 
                             {/* Submit Button */}
                             <div className="col-12 text-right">
@@ -388,6 +467,16 @@ const PartnerPreference = ({ email }) => {
                     onHide={() => setShowQualification(false)}
                 />
                 : null}
+
+            {/* Working with create modal */}
+            <WorkingWithModal
+                show={showWorkingWith}
+                isCreate={isWorkingWithCreated}
+                newdata={createWorkingWith}
+                onHide={() => setShowWorkingWith(false)}
+            />
+
+
         </div>
     );
 }

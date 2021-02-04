@@ -8,8 +8,9 @@ const LanguageController = require("../controllers/admin/user/LanguageController
 const BasicAndLifestyleController = require("../controllers/admin/user/BasicAndLifestyleController");
 const ContactInfoController = require("../controllers/admin/user/ContactInfoController");
 const ActivityController = require("../controllers/admin/user/ActivityController");
+const QualificationController = require("../controllers/admin/user/QualificationController");
+const WorkingWithController = require("../controllers/admin/user/WorkingWithController")
 const PartnerPreferenceController = require("../controllers/admin/user/PartnerPreferenceController")
-const QualificationController = require("../controllers/admin/user/QualificationController")
 
 // Users
 router.get('/user/index', UsersController.Index)
@@ -53,9 +54,15 @@ router.post("/activity/store/interest", ActivityController.StoreInterest);
 router.post("/activity/store/music", ActivityController.StoreMusic);
 
 // Partner preference 
-router.post("/create/partnerpreference",PartnerPreferenceController.Create)
+router.post("/create/partnerpreference", PartnerPreferenceController.Create)
+
 // Qualification
 router.get("/qualification", QualificationController.Index)
 router.post("/qualification/store", QualificationController.Store)
+
+// Working with 
+router.get("/working-with", WorkingWithController.Index)
+router.post("/working-with/store", WorkingWithController.Store)
+
 
 module.exports = router;

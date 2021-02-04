@@ -29,12 +29,13 @@ const ProfilePictureDescription = ({ email, profileimages, olddescription, updat
             let file = event.target.files[0]
             let formData = new FormData()
             formData.append('image', file)
-
-            const response = await axios.put(`${api}admin/user/profile-picture/${email}/update`, formData)
-            if (response.status === 201) {
-                updated(true)
-                setUpload(false)
-                toast.success(response.data.message)
+            if (file) {
+                const response = await axios.put(`${api}admin/user/profile-picture/${email}/update`, formData)
+                if (response.status === 201) {
+                    updated(true)
+                    setUpload(false)
+                    toast.success(response.data.message)
+                }
             }
         } catch (error) {
             if (error) {

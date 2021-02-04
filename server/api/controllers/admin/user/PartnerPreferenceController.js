@@ -39,19 +39,21 @@ const Create = async (req, res, next) => {
             disabilit: disability
         })
 
-        const findUser = await PartnerPreference.findOne({ email: email }).exec()
+        const findUser = await PartnerPreference.findOne({ user: email }).exec()
+
         if (!findUser) {
-            let result = await newPreference.save()
+            const result = await newPreference.save()
             if (!result) return res.status(501).json({ status: false, message: "Internat server error" })
+            const preferenceSaveUserTable = await Users.findOneAndUpdate({ email: email }, { $set: { partnerPreference: result._id } }, { new: true }).exec()
+            if (!preferenceSaveUserTable) return res.status(501).json({ status: false, message: "Internat server error" })
             return res.status(201).json({ status: true, message: "Partner Preference Save Successful" })
         }
 
-        await PartnerPreference.findOneAndUpdate({ user: email },
-            {
-                $set: { newPreference }
-            }, { new: true }).exec()
-            
-        return res.status(200).json({ status: true, message: "Partner Preference Update Successful" })
+        const perference = await PartnerPreference.findOneAndUpdate({ user: email }, { $set: { newPreference } }, { new: true }).exec()
+        if (!perference) return res.status(501).json({ status: false, message: "Internat server error" })
+        const preferenceUpdateUserTable = await Users.findOneAndUpdate({ email: email }, { $set: { partnerPreference: perference._id } }, { new: true }).exec()
+        if (!preferenceUpdateUserTable) return res.status(501).json({ status: false, message: "Internat server error" })
+        return res.status(201).json({ status: true, message: "Partner Preference Update Successful" })
 
     } catch (error) {
         if (error) {
