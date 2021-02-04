@@ -8,7 +8,8 @@ const LanguageController = require("../controllers/admin/user/LanguageController
 const BasicAndLifestyleController = require("../controllers/admin/user/BasicAndLifestyleController");
 const ContactInfoController = require("../controllers/admin/user/ContactInfoController");
 const ActivityController = require("../controllers/admin/user/ActivityController");
-const QualificationController = require("../controllers/admin/user/QualificationController")
+const QualificationController = require("../controllers/admin/user/QualificationController");
+const WorkingWithController = require("../controllers/admin/user/WorkingWithController")
 
 // Users
 router.get('/user/index', UsersController.Index)
@@ -54,5 +55,10 @@ router.post("/activity/store/music", ActivityController.StoreMusic);
 // Qualification
 router.get("/qualification", QualificationController.Index)
 router.post("/qualification/store", QualificationController.Store)
+
+// Working with 
+router.get("/working-with", WorkingWithController.Index)
+router.post("/working-with/store", WorkingWithController.Store)
+
 
 module.exports = router;
