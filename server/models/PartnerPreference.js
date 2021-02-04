@@ -84,23 +84,15 @@ const PartnerPreferenceSchema = new Schema({
             default: null
         }],
         annualIncome: {
-            matter: {
+            startFrom: {
                 type: String,
                 trim: true,
-                default: null,
-                enum: [null, "open", "specify"]
+                default: null
             },
-            range: {
-                startFrom: {
-                    type: String,
-                    trim: true,
-                    default: null
-                },
-                endTo: {
-                    type: String,
-                    trim: true,
-                    default: null
-                }
+            endTo: {
+                type: String,
+                trim: true,
+                default: null
             }
         }
     },

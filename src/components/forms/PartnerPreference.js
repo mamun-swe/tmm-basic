@@ -18,7 +18,7 @@ import ProfessionAreaModal from '../modal/ProfessionArea'
 
 toast.configure({ autoClose: 2000 })
 const PartnerPreference = ({ email }) => {
-    const { register, handleSubmit, errors } = useForm()
+    const { register, handleSubmit } = useForm()
     const [isLoading, setLoading] = useState(false)
 
     // Modal states
@@ -41,6 +41,11 @@ const PartnerPreference = ({ email }) => {
     const [qualifications, setQualifications] = useState([])
     const [workingWith, setWorkingWith] = useState([])
     const [professionArea, setProfessionArea] = useState([])
+    const [annualIncome, setAnnualIncome] = useState({ startFrom: 40000, endTo: 60000 })
+    const [diet, setDiet] = useState([])
+    const [bloodGroup, setBloodGroup] = useState([])
+    const [healthInformation, setHealthInformation] = useState([])
+    const [disability, setDisability] = useState([])
 
     // Material Options
     const materialStatusOptions = [
@@ -58,8 +63,6 @@ const PartnerPreference = ({ email }) => {
     const [qualificationOptions, setQualificationOptions] = useState([])
     const [workingWithOptions, setWorkingWithOptions] = useState([])
     const [professionAreaOptions, setProfessionAreaOptions] = useState([])
-
-
     const dietOptions = [
         { label: 'Open to all', value: 'open_to_all' },
         { label: 'veg', value: 'veg' },
@@ -84,6 +87,10 @@ const PartnerPreference = ({ email }) => {
         { label: 'Hight BP', value: 'Hight BP' },
         { label: 'Heart Aliments)', value: 'ABHeart Aliments' },
         { label: 'Other', value: 'Other' },
+    ]
+    const disabilityOptions = [
+        { label: 'None', value: 'none' },
+        { label: 'Physical disability', value: 'physical_disability' }
     ]
 
     useEffect(() => {
@@ -120,6 +127,11 @@ const PartnerPreference = ({ email }) => {
     const onChangeQualification = event => setQualifications({ value: event })
     const onChangeWorkingWith = event => setWorkingWith({ value: event })
     const onChangeProfessionArea = event => setProfessionArea({ value: event })
+    const onChangeAnnualIncome = value => setAnnualIncome({ startFrom: value[0], endTo: value[1] })
+    const onChangeDiet = event => setDiet({ value: event })
+    const onChangeBloodGroup = event => setBloodGroup({ value: event })
+    const onChangeHealthInfo = event => setHealthInformation({ value: event })
+    const onChangeDisability = event => setDisability({ value: event })
 
     // Get Qualification
     const getQualification = async () => {
@@ -225,6 +237,7 @@ const PartnerPreference = ({ email }) => {
         try {
             setLoading(true)
             const newData = {
+                email,
                 ...data,
                 ageRange,
                 heightRange,
@@ -237,6 +250,11 @@ const PartnerPreference = ({ email }) => {
                 qualifications: qualifications.value ? qualifications.value.map(data => data.value) : null,
                 workingWith: workingWith.value ? workingWith.value.map(data => data.value) : null,
                 professionArea: professionArea.value ? professionArea.value.map(data => data.value) : null,
+                annualIncome,
+                diet: diet.value ? diet.value.map(data => data.value) : null,
+                bloodGroup: bloodGroup.value ? bloodGroup.value.map(data => data.value) : null,
+                healthInformation: healthInformation.value ? healthInformation.value.map(data => data.value) : null,
+                disability: disability.value ? disability.value.map(data => data.value) : null
             }
 
             console.log(newData)
@@ -411,7 +429,6 @@ const PartnerPreference = ({ email }) => {
                                 </div>
                             </div>
 
-
                             <div className="col-12">
                                 <h6>Education & Profession</h6>
                             </div>
@@ -512,10 +529,79 @@ const PartnerPreference = ({ email }) => {
                                 </div>
                             </div>
 
-
                             {/* Annual Income */}
                             <div className="col-12">
-                                <div className="annual-income-container p-2 m-2"></div>
+                                <div className="fprm-group">
+                                    <p>Annual Income ({annualIncome.startFrom} USD - {annualIncome.endTo} USD)</p>
+                                    <Slider
+                                        range
+                                        min={1000}
+                                        max={500000}
+                                        defaultValue={[annualIncome.startFrom, annualIncome.endTo]}
+                                        onAfterChange={onChangeAnnualIncome}
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Diet */}
+                            <div className="col-12 col-lg-6">
+                                <div className="form-group mb-4">
+                                    <p>Diet</p>
+
+                                    <Select
+                                        classNamePrefix="custom-select"
+                                        isMulti
+                                        styles={customStyles}
+                                        components={{ DropdownIndicator: () => null, IndicatorSeparator: () => null }}
+                                        options={dietOptions}
+                                        onChange={onChangeDiet}
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Blood Group */}
+                            <div className="col-12 col-lg-6">
+                                <div className="form-group mb-4">
+                                    <p>Blood Group</p>
+                                    <Select
+                                        classNamePrefix="custom-select"
+                                        isMulti
+                                        styles={customStyles}
+                                        components={{ DropdownIndicator: () => null, IndicatorSeparator: () => null }}
+                                        options={bloodGroupOptions}
+                                        onChange={onChangeBloodGroup}
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Health information */}
+                            <div className="col-12">
+                                <div className="form-group mb-4">
+                                    <p>Health information</p>
+                                    <Select
+                                        classNamePrefix="custom-select"
+                                        isMulti
+                                        styles={customStyles}
+                                        components={{ DropdownIndicator: () => null, IndicatorSeparator: () => null }}
+                                        options={healthInfOptions}
+                                        onChange={onChangeHealthInfo}
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Disability */}
+                            <div className="col-12">
+                                <div className="form-group mb-4">
+                                    <p>Disability</p>
+                                    <Select
+                                        classNamePrefix="custom-select"
+                                        isMulti
+                                        styles={customStyles}
+                                        components={{ DropdownIndicator: () => null, IndicatorSeparator: () => null }}
+                                        options={disabilityOptions}
+                                        onChange={onChangeDisability}
+                                    />
+                                </div>
                             </div>
 
 
