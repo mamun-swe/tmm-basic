@@ -11,6 +11,7 @@ const ActivityController = require("../controllers/admin/user/ActivityController
 const QualificationController = require("../controllers/admin/user/QualificationController");
 const WorkingWithController = require("../controllers/admin/user/WorkingWithController")
 const PartnerPreferenceController = require("../controllers/admin/user/PartnerPreferenceController")
+const ProfessionAreaController = require("../controllers/admin/user/ProfessionAreaController")
 
 // Users
 router.get('/user/index', UsersController.Index)
@@ -64,5 +65,8 @@ router.post("/qualification/store", QualificationController.Store)
 router.get("/working-with", WorkingWithController.Index)
 router.post("/working-with/store", WorkingWithController.Store)
 
+// Profession area
+router.get("/profession", ProfessionAreaController.Index)
+router.post("/profession/store", ProfessionAreaController.Store)
 
 module.exports = router;

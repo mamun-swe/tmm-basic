@@ -14,19 +14,20 @@ import { ic_add } from 'react-icons-kit/md'
 // Create modals
 import QualificationModal from '../modal/Qualification'
 import WorkingWithModal from '../modal/WorkingWith'
+import ProfessionAreaModal from '../modal/ProfessionArea'
 
 toast.configure({ autoClose: 2000 })
 const PartnerPreference = ({ email }) => {
     const { register, handleSubmit, errors } = useForm()
     const [isLoading, setLoading] = useState(false)
 
-    // Qualification modal states
+    // Modal states
     const [showQualification, setShowQualification] = useState(false)
     const [isQualificationCreated, setQualificationCreated] = useState(false)
-
-    // Working with modal states
     const [showWorkingWith, setShowWorkingWith] = useState(false)
     const [isWorkingWithCreated, setWorkingWithCreated] = useState(false)
+    const [showProfessionArea, setShowProfessionArea] = useState(false)
+    const [isProfessionAreaCreated, setProfessionAreaCreated] = useState(false)
 
     // Input States
     const [ageRange, setAgeRange] = useState({ startFrom: 18, endTo: 40 })
@@ -39,6 +40,7 @@ const PartnerPreference = ({ email }) => {
     const [countries, setCountries] = useState([])
     const [qualifications, setQualifications] = useState([])
     const [workingWith, setWorkingWith] = useState([])
+    const [professionArea, setProfessionArea] = useState([])
 
     // Material Options
     const materialStatusOptions = [
@@ -55,6 +57,7 @@ const PartnerPreference = ({ email }) => {
     const [countryOptions, setCountryOptions] = useState([])
     const [qualificationOptions, setQualificationOptions] = useState([])
     const [workingWithOptions, setWorkingWithOptions] = useState([])
+    const [professionAreaOptions, setProfessionAreaOptions] = useState([])
 
 
     const dietOptions = [
@@ -102,6 +105,7 @@ const PartnerPreference = ({ email }) => {
         getPartnerPreferenceInfo()
         getQualification()
         getWorkingWith()
+        getProfessionArea()
     }, [])
 
     // On Change methods
@@ -115,6 +119,7 @@ const PartnerPreference = ({ email }) => {
     const onChangeCountries = event => setCountries({ value: event })
     const onChangeQualification = event => setQualifications({ value: event })
     const onChangeWorkingWith = event => setWorkingWith({ value: event })
+    const onChangeProfessionArea = event => setProfessionArea({ value: event })
 
     // Get Qualification
     const getQualification = async () => {
@@ -182,6 +187,38 @@ const PartnerPreference = ({ email }) => {
         }
     }
 
+    // Get profession area
+    const getProfessionArea = async () => {
+        try {
+            const response = await axios.get(`${api}admin/profession`)
+            if (response.status === 200) {
+                setProfessionAreaOptions(response.data.professions.map(profession => ({ label: profession.title, value: profession.title })))
+            }
+        } catch (error) {
+            if (error) {
+                toast.warn(error.response.data)
+            }
+        }
+    }
+
+    // Create profession area
+    const createProfessionArea = async (data) => {
+        try {
+            setProfessionAreaCreated(true)
+            const response = await axios.post(`${api}admin/profession/store`, data)
+            if (response.status === 201) {
+                getProfessionArea()
+                setProfessionAreaCreated(false)
+                setShowProfessionArea(false)
+                toast.success(response.data.message)
+            }
+        } catch (error) {
+            if (error) {
+                setProfessionAreaCreated(false)
+                toast.warn(error.response.data.message)
+            }
+        }
+    }
 
     // Submit data to API
     const onSubmit = async (data) => {
@@ -199,6 +236,7 @@ const PartnerPreference = ({ email }) => {
                 country: countries.value ? countries.value.map(data => data.value) : null,
                 qualifications: qualifications.value ? qualifications.value.map(data => data.value) : null,
                 workingWith: workingWith.value ? workingWith.value.map(data => data.value) : null,
+                professionArea: professionArea.value ? professionArea.value.map(data => data.value) : null,
             }
 
             console.log(newData)
@@ -442,6 +480,44 @@ const PartnerPreference = ({ email }) => {
                                 </div>
                             </div>
 
+                            {/* Profession area */}
+                            <div className="col-12">
+                                <div className="form-group mb-4">
+                                    <p>Profession area</p>
+
+                                    <div className="d-flex">
+                                        <div className="flex-fill">
+                                            <Select
+                                                classNamePrefix="custom-select"
+                                                isMulti
+                                                styles={customStyles}
+                                                placeholder={'Select profession area'}
+                                                components={{ DropdownIndicator: () => null, IndicatorSeparator: () => null }}
+                                                options={professionAreaOptions}
+                                                onChange={onChangeProfessionArea}
+                                            // defaultOptions={{ value: user.birthCountry, label: user.birthCountry }}
+                                            />
+                                        </div>
+                                        <div className="pl-2 pt-1">
+                                            <button
+                                                type="button"
+                                                style={customStyles.smBtn}
+                                                className="btn shadow-none rounded-circle p-1"
+                                                onClick={() => setShowProfessionArea(true)}
+                                            >
+                                                <Icon icon={ic_add} size={22} />
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            {/* Annual Income */}
+                            <div className="col-12">
+                                
+                            </div>
+
 
                             {/* Submit Button */}
                             <div className="col-12 text-right">
@@ -474,6 +550,14 @@ const PartnerPreference = ({ email }) => {
                 isCreate={isWorkingWithCreated}
                 newdata={createWorkingWith}
                 onHide={() => setShowWorkingWith(false)}
+            />
+
+            {/* Profession area create modal */}
+            <ProfessionAreaModal
+                show={showProfessionArea}
+                isCreate={isProfessionAreaCreated}
+                newdata={createProfessionArea}
+                onHide={() => setShowProfessionArea(false)}
             />
 
 

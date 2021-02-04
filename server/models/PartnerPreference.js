@@ -87,7 +87,8 @@ const PartnerPreferenceSchema = new Schema({
             matter: {
                 type: String,
                 trim: true,
-                default: null
+                default: null,
+                enum: [null, "open", "specify"]
             },
             range: {
                 startFrom: {
