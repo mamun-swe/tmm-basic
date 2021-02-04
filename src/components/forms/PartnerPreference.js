@@ -274,6 +274,7 @@ const PartnerPreference = ({ email, updated }) => {
             }
         }
     }
+    
 
     return (
         <div className="partner-preference">
