@@ -515,7 +515,7 @@ const PartnerPreference = ({ email }) => {
 
                             {/* Annual Income */}
                             <div className="col-12">
-                                
+                                <div className="annual-income-container p-2 m-2"></div>
                             </div>
 
 
