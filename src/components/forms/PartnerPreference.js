@@ -257,17 +257,20 @@ const PartnerPreference = ({ email, updated }) => {
                 disability: disability.value ? disability.value.map(data => data.value) : null
             }
 
+            // console.log(newData);
+
             const response = await axios.post(`${api}admin/partnerpreference/create`, newData)
-            console.log(response)
             if (response.status === 201) {
                 updated(true)
                 setLoading(false)
+                toast.success(response.data.message)
             }
 
         } catch (error) {
             if (error) {
                 setLoading(false)
                 console.log(error.response)
+                toast.warn(error.response.message)
             }
         }
     }

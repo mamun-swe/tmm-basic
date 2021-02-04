@@ -34,7 +34,7 @@ const Create = async (req, res, next) => {
             motherTounge: motherTounge,
             location: location,
             educationAndProfession: educationAndProfession,
-            annualIncome:annualIncome,
+            annualIncome: annualIncome,
             diet: diet,
             bloodGroup: bloodGroup,
             healthInformation: healthInformation,
@@ -68,8 +68,13 @@ const Create = async (req, res, next) => {
         return res.status(201).json({ status: true, message: "Partner Preference Update Successful" })
 
     } catch (error) {
-        if (error) {
-            console.log(error)
+        if (error.name == "ValidationError") {
+            let message = [];
+            for (field in error.errors) {
+                message.push(error.errors[field].message);
+            }
+
+            return res.status(500).json({ success: false, message });
         }
         next(error)
     }
