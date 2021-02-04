@@ -40,7 +40,7 @@ const PartnerPreferenceSchema = new Schema({
         trim: true,
         default: null
     }],
-    community: [{
+    socialOrder: [{
         type: String,
         trim: true,
         default: null
