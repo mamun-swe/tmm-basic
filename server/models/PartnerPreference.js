@@ -7,12 +7,12 @@ const PartnerPreferenceSchema = new Schema({
     },
     ageRange: {
         startFrom: {
-            type: String,
+            type: Number,
             trim: true,
             default: null
         },
         endTo: {
-            type: String,
+            type: Number,
             trim: true,
             default: null
         }
@@ -83,17 +83,18 @@ const PartnerPreferenceSchema = new Schema({
             trim: true,
             default: null
         }],
-        annualIncome: {
-            startFrom: {
-                type: String,
-                trim: true,
-                default: null
-            },
-            endTo: {
-                type: String,
-                trim: true,
-                default: null
-            }
+
+    },
+    annualIncome: {
+        startFrom: {
+            type: Number,
+            trim: true,
+            default: null
+        },
+        endTo: {
+            type: Number,
+            trim: true,
+            default: null
         }
     },
     diet: [{
