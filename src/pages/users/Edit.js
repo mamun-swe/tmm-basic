@@ -136,7 +136,7 @@ const Edit = () => {
         </div>
 
         {/* Partner preference */}
-        <PartnerPreferenceForm email={email} />
+        <PartnerPreferenceForm email={email}  updated={reFetch} />
 
     </div>);
 }

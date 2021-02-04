@@ -32,8 +32,8 @@ const PartnerPreferenceSchema = new Schema({
     materialStatus: [{
         type: String,
         trim: true,
-        default: "unmarried",
-        enum: ["unmarried", "divorced"]
+        default: "never_married",
+        enum: ["never_married", "divorced", "annulled", "widowed"]
     }],
     religion: [{
         type: String,
@@ -45,11 +45,11 @@ const PartnerPreferenceSchema = new Schema({
         trim: true,
         default: null
     }],
-    motherTounge: [{
+    motherTounge: {
         type: String,
         trim: true,
         default: null
-    }],
+    },
     location: {
         country: [{
             type: String,

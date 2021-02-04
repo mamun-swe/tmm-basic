@@ -17,7 +17,7 @@ import WorkingWithModal from '../modal/WorkingWith'
 import ProfessionAreaModal from '../modal/ProfessionArea'
 
 toast.configure({ autoClose: 2000 })
-const PartnerPreference = ({ email }) => {
+const PartnerPreference = ({ email, updated }) => {
     const { register, handleSubmit } = useForm()
     const [isLoading, setLoading] = useState(false)
 
@@ -257,10 +257,18 @@ const PartnerPreference = ({ email }) => {
                 disability: disability.value ? disability.value.map(data => data.value) : null
             }
 
-            console.log(newData)
-            setTimeout(() => setLoading(false), 1000)
+            const response = await axios.post(`${api}admin/partnerpreference/create`, newData)
+            console.log(response)
+            if (response.status === 201) {
+                updated(true)
+                setLoading(false)
+            }
+
         } catch (error) {
-            if (error) console.log(error)
+            if (error) {
+                setLoading(false)
+                console.log(error.response)
+            }
         }
     }
 

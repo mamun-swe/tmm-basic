@@ -55,7 +55,7 @@ router.post("/activity/store/interest", ActivityController.StoreInterest);
 router.post("/activity/store/music", ActivityController.StoreMusic);
 
 // Partner preference 
-router.post("/create/partnerpreference", PartnerPreferenceController.Create)
+router.post("/partnerpreference/create", PartnerPreferenceController.Create)
 
 // Qualification
 router.get("/qualification", QualificationController.Index)
