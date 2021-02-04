@@ -111,7 +111,13 @@ const Show = async (req, res, next) => {
     try {
         const { email } = req.params;
 
-        let result = await Users.findOne({ email: email }).populate("basicAndLifestyleInformation", "user age materialStatus height bodyWeight diet bloodGroup healthInformation disability").populate("contactInformation").exec();
+        let result = await Users.findOne({ email: email })
+            .populate(
+                "basicAndLifestyleInformation",
+                "user age materialStatus height bodyWeight diet bloodGroup healthInformation disability")
+            .populate("contactInformation")
+            .populate("partnerPreference")
+            .exec();
         if (!result) {
             return res.status(404).json({ status: false, message: "User not found." });
         }
