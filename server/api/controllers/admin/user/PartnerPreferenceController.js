@@ -2,85 +2,69 @@ const hostURL = require("../../../utils/url");
 const Users = require("../../../../models/Users");
 const PartnerPreference = require("../../../../models/PartnerPreference")
 
-const Create = async (req,res,next) => {
-    try{
+const Create = async (req, res, next) => {
+    try {
+        const {
+            email,
+            ageRange,
+            heightRange,
+            materialStatus,
+            religion,
+            socialOrder,
+            motherTounge,
+            location,
+            educationAndProfession,
+            diet,
+            bloodGroup,
+            healthInformation,
+            disability
+        } = req.body
 
-       const {
-        email,
-        ageRange,
-        heightRange,
-        materialStatus,
-        religion,
-        socialOrder,
-        motherTounge,
-        location,
-        educationAndProfession,
-        diet,
-        bloodGroup,
-        healthInformation,
-        disability
-        }= req.body
+        const validUser = await Users.findOne({ email: email })
+        if (!validUser) return res.status(404).json({ status: false, message: "User not found" })
 
-        const findUser = PartnerPreference.findOne({email:email})
-        if(!findUser){
-            const savePreference = new PartnerPreference({
-                'user':email,
-                'ageRange':ageRange,
-                'heightRange':heightRange,
-                'materialStatus':materialStatus,
-                'religion':religion,
-                'socialOrder':socialOrder,
-                'motherTounge':motherTounge,
-                'location':location,
-                'educationAndProfession':educationAndProfession,
-                'diet':diet,
-                'bloodGroup':bloodGroup,
-                'healthInformation':healthInformation,
-                'disabilit':disability
-                })
+        const newPreference = await new PartnerPreference({
+            user: email,
+            ageRange: ageRange,
+            heightRange: heightRange,
+            materialStatus: materialStatus,
+            religion: religion,
+            socialOrder: socialOrder,
+            motherTounge: motherTounge,
+            location: location,
+            educationAndProfession: educationAndProfession,
+            diet: diet,
+            bloodGroup: bloodGroup,
+            healthInformation: healthInformation,
+            disabilit: disability
+        })
 
-                let result = savePreference.save()
-                if(!result){
-                    return res.status(501).json({
-                        status:false,
-                        message:"Internat server error"
-                    })
-                }
-                return res.status(200).json({
-                    status:true,
-                    message:"Partner Preference Save Successful"
-                })   
+        const findUser = await PartnerPreference.findOne({ user: email }).exec()
+
+        if (!findUser) {
+            const result = await newPreference.save()
+            if (!result) return res.status(501).json({ status: false, message: "Internat server error" })
+
+            const preferenceSaveUserTable = await Users.findOneAndUpdate({ email: email }, { $set: { partnerPreference: result._id } }, { new: true }).exec()
+
+            if (!preferenceSaveUserTable) return res.status(501).json({ status: false, message: "Internat server error" })
+
+            return res.status(201).json({ status: true, message: "Partner Preference Save Successful" })
         }
-        
-        const updatePreference = PartnerPreference.findOneAndUpdate({user:email},{
-            'ageRange':ageRange,
-            'heightRange':heightRange,
-            'materialStatus':materialStatus,
-            'religion':religion,
-            'socialOrder':socialOrder,
-            'motherTounge':motherTounge,
-            'location':location,
-            'educationAndProfession':educationAndProfession,
-            'diet':diet,
-            'bloodGroup':bloodGroup,
-            'healthInformation':healthInformation,
-            'disabilit':disability
-        },{new:true})
 
-        if(!updatePreference){
-            return res.status(501).json({
-                status:false,
-                message:"Internat server error"
-            })
-        }
-        return res.status(200).json({
-            status:true,
-            message:"Partner Preference Update Successful"
-        }) 
-        
-    }catch(error){
-        if(error){
-            return console.log(error)
+        const perference = await PartnerPreference.findOneAndUpdate({ user: email }, { $set: { newPreference } }, { new: true }).exec()
+
+        if (!perference) return res.status(501).json({ status: false, message: "Internat server error" })
+
+        const preferenceUpdateUserTable = await Users.findOneAndUpdate({ email: email }, { $set: { partnerPreference: perference._id } }, { new: true }).exec()
+
+        if (!preferenceUpdateUserTable) return res.status(501).json({ status: false, message: "Internat server error" })
+
+        return res.status(201).json({ status: true, message: "Partner Preference Update Successful" })
+
+    } catch (error) {
+        if (error) {
+            console.log(error)
         }
         next(error)
     }

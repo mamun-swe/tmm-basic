@@ -220,7 +220,6 @@ const PartnerPreference = ({ email }) => {
         }
     }
 
-
     // Submit data to API
     const onSubmit = async (data) => {
         try {
@@ -511,6 +510,12 @@ const PartnerPreference = ({ email }) => {
                                         </div>
                                     </div>
                                 </div>
+                            </div>
+
+
+                            {/* Annual Income */}
+                            <div className="col-12">
+                                
                             </div>
 
 
