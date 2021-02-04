@@ -19,12 +19,12 @@ const PartnerPreferenceSchema = new Schema({
     },
     heightRange: {
         startFrom: {
-            type: String,
+            type: Number,
             trim: true,
             default: null
         },
         endTo: {
-            type: String,
+            type: Number,
             trim: true,
             default: null
         }
@@ -56,7 +56,7 @@ const PartnerPreferenceSchema = new Schema({
             trim: true,
             default: null
         }],
-        stateDevision: [{
+        stateDivision: [{
             type: String,
             trim: true,
             default: null

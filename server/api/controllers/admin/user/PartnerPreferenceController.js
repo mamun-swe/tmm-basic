@@ -12,8 +12,12 @@ const Create = async (req, res, next) => {
             religion,
             socialOrder,
             motherTounge,
-            location,
-            educationAndProfession,
+            country,
+            stateDivision,
+            city,
+            qualification,
+            workingWith,
+            professionArea,
             annualIncome,
             diet,
             bloodGroup,
@@ -32,13 +36,13 @@ const Create = async (req, res, next) => {
             religion: religion,
             socialOrder: socialOrder,
             motherTounge: motherTounge,
-            location: location,
-            educationAndProfession: educationAndProfession,
+            location: { country, stateDivision, city },
+            educationAndProfession: { qualification, workingWith, professionArea },
             annualIncome: annualIncome,
             diet: diet,
             bloodGroup: bloodGroup,
             healthInformation: healthInformation,
-            disabilit: disability
+            disability: disability
         })
 
         // find user have any preference
