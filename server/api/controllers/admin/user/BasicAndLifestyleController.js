@@ -2,7 +2,7 @@ const Users = require('../../../../models/Users')
 const BasicAndLifestyle = require('../../../../models/BasicAndLifestyle')
 
 // Store basic & lifestyle info for an user
-const Store = async(req, res, next) => {
+const Store = async (req, res, next) => {
     try {
         const {
             email,
@@ -43,7 +43,11 @@ const Store = async(req, res, next) => {
             }
 
             // Find registered user from users collection and update
-            const updateUser = await Users.findOneAndUpdate({ 'email': email }, { $set: { 'basicAndLifestyleInformation': createInformation._id } }, { new: true }).exec()
+            const updateUser = await Users.findOneAndUpdate(
+                { 'email': email },
+                { $set: { 'basicAndLifestyleInformation': createInformation._id } },
+                { new: true })
+                .exec()
 
             if (!updateUser) {
                 return res.status(501).json({
@@ -59,7 +63,11 @@ const Store = async(req, res, next) => {
         }
 
         // if user already added her/his information
-        const updateExistUserInfo = await BasicAndLifestyle.findOneAndUpdate({ user: email }, { $set: req.body }, { new: true }).exec()
+        const updateExistUserInfo = await BasicAndLifestyle.findOneAndUpdate(
+            { user: email },
+            { $set: req.body },
+            { new: true })
+            .exec()
 
         if (!updateExistUserInfo) {
             return res.status(501).json({
