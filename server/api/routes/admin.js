@@ -12,6 +12,11 @@ const QualificationController = require("../controllers/admin/user/Qualification
 const WorkingWithController = require("../controllers/admin/user/WorkingWithController")
 const PartnerPreferenceController = require("../controllers/admin/user/PartnerPreferenceController")
 const ProfessionAreaController = require("../controllers/admin/user/ProfessionAreaController")
+const AuthController = require("../controllers/admin/Auth/AuthController")
+
+// registration
+router.post('/register',AuthController.RegisterUser)
+
 
 // Users
 router.get('/user/index', UsersController.Index)
