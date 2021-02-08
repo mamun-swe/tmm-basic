@@ -86,26 +86,28 @@ const userSchema = new Schema(
             trim: true,
             required: true
         },
+        // language
+        language: {
+            motherTongue: {
+                type: String,
+                trim: true,
+                default: null
+            },
+            spokenLanguage: [{
+                type: String,
+                trim: true,
+                default: null
+            }]
+        },
 
-        // language: {
-        //     motherTongue: {
-        //         type: String,
-        //         trim: true,
-        //         default: null
-        //     },
-        //     spokenLanguage: [{
-        //         type: String,
-        //         trim: true,
-        //         default: null
-        //     }]
-        // },
-        // profileCreatedFor: {
-        //     type: String,
-        //     trim: true,
-        //     default: "own",
-        //     enum: ["own", "sister", "brother", "daughter", "son", "friend", "other"]
-        // },
-
+        // profile Created For
+        profileCreatedFor: {
+            type: String,
+            trim: true,
+            default: "self",
+            enum: ["self", "sister", "brother", "daughter", "son", "friend", "other"]
+        },
+        // profile picture 
         profilePicture: {
             blurImage: {
                 type: String,

@@ -169,6 +169,7 @@ const SearchUser = async (req, res, next) => {
 const UpdatePrimaryInfo = async (req, res, next) => {
     try {
         const {
+            baranchId,
             name,
             phone,
             email,
@@ -178,13 +179,19 @@ const UpdatePrimaryInfo = async (req, res, next) => {
             religion,
             socialOrder,
             birthCountry,
-            livingCountry
+            livingCountry,
+            stateDevision,
+            city,
+            motherTongue,
+            spokenLanguage,
+            profileCreatedFor,
         } = req.body;
-
+// update Primary Informations 
         const updatePrimar = await Users.findOneAndUpdate({
             email: email
         }, {
             $set: {
+                baranchId:baranchId,
                 name: name,
                 phone: phone,
                 email: email,
@@ -194,7 +201,11 @@ const UpdatePrimaryInfo = async (req, res, next) => {
                 religion: religion,
                 socialOrder: socialOrder,
                 birthCountry: birthCountry,
-                livingCountry: livingCountry
+                livingCountry: livingCountry,
+                stateDevision:stateDevision,
+                city:city,
+                language:{motherTongue:motherTongue, spokenLanguage:spokenLanguage },
+                profileCreatedFor:profileCreatedFor,
             }
         }, { new: true }).exec();
 
@@ -228,7 +239,6 @@ const UpdateProfilePicture = async (req, res, next) => {
 
         if (!checkedUser)
             return res.status(404).json({ status: false, message: "User not found" });
-
 
 
         // Remove Blur image

@@ -418,7 +418,7 @@ const PartnerPreference = ({ email, updated }) => {
 
                                     <input
                                         type="text"
-                                        name="stateDevision"
+                                        name="stateDivision"
                                         className="form-control shadow-none"
                                         placeholder="( Dhaka Rajshahi Dinajpur Mymensingh ...)"
                                         ref={register()}
