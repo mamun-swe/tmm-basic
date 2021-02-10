@@ -11,16 +11,16 @@ import 'react-toastify/dist/ReactToastify.css'
 
 toast.configure({ autoClose: 2000 })
 const ProfilePictureDescription = ({ email, profileimages, olddescription, updated }) => {
-    const [show, setShow] = useState(false)
+    // const [show, setShow] = useState(false)
     const [isUpload, setUpload] = useState(false)
     const [isLoading, setLoading] = useState(false)
     const [description, setDescription] = useState({ value: null, error: null })
 
-    useEffect(() => {
-        setTimeout(() => {
-            setShow(true)
-        }, 1000)
-    }, [])
+    // useEffect(() => {
+    //     setTimeout(() => {
+    //         setShow(true)
+    //     }, 1000)
+    // }, [])
 
     // Image onChange & upload
     const imageChangeHandeller = async (event) => {
@@ -112,18 +112,18 @@ const ProfilePictureDescription = ({ email, profileimages, olddescription, updat
                             </div>
 
                             {/* Short Description */}
-                            {show ?
-                                <div className="col-12 col-lg-6">
-                                    {description.error ? <p className="text-danger">Short description is required.</p> : <p>Short description.</p>}
 
-                                    <CKEditor
-                                        data={olddescription ? olddescription : description.value ? description.value : 'Write about of you'}
-                                        onReady={editor => editor}
-                                        onChange={evt => setDescription({ value: evt.editor.getData(), error: null })}
-                                    />
+                            <div className="col-12 col-lg-6">
+                                {description.error ? <p className="text-danger">Short description is required.</p> : <p>Short description.</p>}
 
-                                </div>
-                                : null}
+                                <CKEditor
+                                    data={olddescription ? olddescription : description.value ? description.value : 'Write about of you'}
+                                    onReady={editor => editor}
+                                    onChange={evt => setDescription({ value: evt.editor.getData(), error: null })}
+                                />
+
+                            </div>
+
 
                         </div>
 

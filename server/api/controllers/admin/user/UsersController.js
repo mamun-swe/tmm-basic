@@ -186,12 +186,12 @@ const UpdatePrimaryInfo = async (req, res, next) => {
             spokenLanguage,
             profileCreatedFor,
         } = req.body;
-// update Primary Informations 
+        // update Primary Informations 
         const updatePrimar = await Users.findOneAndUpdate({
             email: email
         }, {
             $set: {
-                baranchId:baranchId,
+                baranchId: baranchId,
                 name: name,
                 phone: phone,
                 email: email,
@@ -202,23 +202,19 @@ const UpdatePrimaryInfo = async (req, res, next) => {
                 socialOrder: socialOrder,
                 birthCountry: birthCountry,
                 livingCountry: livingCountry,
-                stateDevision:stateDevision,
-                city:city,
-                language:{motherTongue:motherTongue, spokenLanguage:spokenLanguage },
-                profileCreatedFor:profileCreatedFor,
+                stateDevision: stateDevision,
+                city: city,
+                language: { motherTongue: motherTongue, spokenLanguage: spokenLanguage },
+                profileCreatedFor: profileCreatedFor,
             }
         }, { new: true }).exec();
 
-        if (!updatePrimar) {
+        if (!updatePrimar)
             return res.status(500).json({ status: false, message: "Internal Server Error " });
-        }
 
         res.status(201).json({ status: true, message: "User Basic Informaiton Update Success !!" });
     } catch (error) {
-        if (error) {
-            console.log(error);
-            next(error);
-        }
+        if (error) next(error)
     }
 };
 

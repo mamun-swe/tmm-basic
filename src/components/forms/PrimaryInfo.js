@@ -17,9 +17,7 @@ import LanguageCreateModal from '../../components/modal/Language'
 toast.configure({ autoClose: 2000 })
 const PrimaryInfo = ({ email, user, updated }) => {
     const { register, handleSubmit, errors } = useForm()
-
     const [isUpdate, setUpdate] = useState(false)
-    const [isLoading, setLoading] = useState(true)
 
     // Input states
     const [branch, setBranch] = useState({ value: null, error: null })
@@ -261,23 +259,34 @@ const PrimaryInfo = ({ email, user, updated }) => {
         // Check Mother Toungue
         if (!motherTongue.value) return setMotherTongue({ error: true })
 
-        const regData = {
+        const primaryData = {
             ...data,
-            branch: branch.value,
-            religion: religion.value,
-            socialOrder: socialOrder.value,
-            birthCountry: birthCountry.value,
-            livingCountry: livingCountry.value ? livingCountry.value : null,
-            motherTongue: motherTongue.value,
-            spokenLanguage: spokenLanguage.value ? spokenLanguage.value : null
+            email: email,
+            baranchId: branch.value ? branch.value : user.baranchId,
+            religion: religion.value ? religion.value : user.religion,
+            socialOrder: socialOrder.value ? socialOrder.value : user.socialOrder,
+            birthCountry: birthCountry.value ? birthCountry.value : user.birthCountry,
+            livingCountry: livingCountry.value ? livingCountry.value : user.livingCountry,
+            motherTongue: motherTongue.value ? motherTongue.value : user.language.motherTongue,
+            spokenLanguage: spokenLanguage.value ? spokenLanguage.value.map(data => data.value) : null
         }
 
-        console.log(regData)
-        updated(true)
-        // setUpdate(true)
-        // toast.success('Successfully account updated.')
-    }
+        try {
+            setUpdate(true)
+            const response = await axios.put(`${api}admin/user/primaryinfo/update`, primaryData)
+            if (response.status === 201) {
+                updated(true)
+                setUpdate(false)
+                toast.success(response.data.message)
+            }
 
+        } catch (error) {
+            if (error) {
+                setUpdate(false)
+                toast.warn(error.response.data.message)
+            }
+        }
+    }
 
     return (
         <div>
@@ -296,13 +305,13 @@ const PrimaryInfo = ({ email, user, updated }) => {
                             <div className="d-flex">
                                 <div className="flex-fill">
                                     <Select
+                                        value={{ value: user.baranchId, label: 'TMM Dhaka' }}
                                         classNamePrefix="custom-select"
                                         styles={customStyles}
                                         placeholder={'Select branch'}
                                         components={{ DropdownIndicator: () => null, IndicatorSeparator: () => null }}
                                         options={branchOptions}
                                         onChange={onChangeBranch}
-                                    // defaultOptions={{ value: user.birthCountry, label: user.birthCountry }}
                                     />
                                 </div>
                                 <div className="pl-2 pt-1">
@@ -332,7 +341,7 @@ const PrimaryInfo = ({ email, user, updated }) => {
                             <input
                                 type="text"
                                 name="name"
-                                defaultValue={user.name ? user.name : null}
+                                defaultValue={user.name}
                                 className={errors.name ? "form-control shadow-none danger-border" : "form-control shadow-none"}
                                 placeholder="Your name"
                                 ref={register({
@@ -356,7 +365,7 @@ const PrimaryInfo = ({ email, user, updated }) => {
                             <input
                                 type="text"
                                 name="phone"
-                                defaultValue={user.phone ? user.phone : null}
+                                defaultValue={user.phone}
                                 className={errors.phone ? "form-control shadow-none danger-border" : "form-control shadow-none"}
                                 placeholder="( 01X-XXXX-XXXX )"
                                 ref={register({
@@ -377,7 +386,7 @@ const PrimaryInfo = ({ email, user, updated }) => {
                             <input
                                 type="text"
                                 disabled
-                                defaultValue={user.email ? user.email : null}
+                                defaultValue={user.email}
                                 className="form-control shadow-none"
                             />
                         </div>
@@ -397,6 +406,7 @@ const PrimaryInfo = ({ email, user, updated }) => {
                                 ref={register({
                                     required: "Gender is required."
                                 })}
+                                defaultValue={user.gender}
                             >
                                 <option value="male">Male</option>
                                 <option value="female">Female</option>
@@ -418,6 +428,7 @@ const PrimaryInfo = ({ email, user, updated }) => {
                                 ref={register({
                                     required: "Select what you want."
                                 })}
+                                defaultValue={user.lookingFor}
                             >
                                 <option value="groom">Groom</option>
                                 <option value="female">Female</option>
@@ -436,6 +447,7 @@ const PrimaryInfo = ({ email, user, updated }) => {
                             <input
                                 type="date"
                                 name="dob"
+                                defaultValue={user.dob}
                                 className={errors.dob ? "form-control shadow-none danger-border" : "form-control shadow-none"}
                                 ref={register({
                                     required: "Date of birth is required"
@@ -456,13 +468,13 @@ const PrimaryInfo = ({ email, user, updated }) => {
                             <div className="d-flex">
                                 <div className="flex-fill">
                                     <Select
+                                        defaultValue={{ value: user.religion, label: user.religion }}
                                         classNamePrefix="custom-select"
                                         styles={customStyles}
                                         placeholder={'Select religion'}
                                         components={{ DropdownIndicator: () => null, IndicatorSeparator: () => null }}
                                         options={religionOptions}
                                         onChange={onChangeReligion}
-                                    // defaultOptions={{ value: user.religion, label: user.religion }}
                                     />
                                 </div>
                                 <div className="pl-2 pt-1">
@@ -490,6 +502,7 @@ const PrimaryInfo = ({ email, user, updated }) => {
                             <div className="d-flex">
                                 <div className="flex-fill">
                                     <Select
+                                        defaultValue={{ value: user.socialOrder, label: user.socialOrder }}
                                         classNamePrefix="custom-select"
                                         styles={customStyles}
                                         placeholder={'Social order'}
@@ -523,13 +536,13 @@ const PrimaryInfo = ({ email, user, updated }) => {
                             <div className="d-flex">
                                 <div className="flex-fill">
                                     <Select
+                                        defaultValue={{ value: user.birthCountry, label: user.birthCountry }}
                                         classNamePrefix="custom-select"
                                         styles={customStyles}
                                         placeholder={'Select birth country'}
                                         components={{ DropdownIndicator: () => null, IndicatorSeparator: () => null }}
                                         options={countryOptions}
                                         onChange={onChangeBirthCountry}
-                                        defaultOptions={{ value: user.birthCountry, label: user.birthCountry }}
                                     />
                                 </div>
                                 <div className="pl-2 pt-1">
@@ -554,6 +567,7 @@ const PrimaryInfo = ({ email, user, updated }) => {
                             <div className="d-flex">
                                 <div className="flex-fill">
                                     <Select
+                                        defaultValue={{ value: user.livingCountry, label: user.livingCountry }}
                                         classNamePrefix="custom-select"
                                         styles={customStyles}
                                         placeholder={'Social order'}
@@ -588,6 +602,7 @@ const PrimaryInfo = ({ email, user, updated }) => {
                             <div className="d-flex">
                                 <div className="flex-fill">
                                     <Select
+                                        defaultValue={{ value: user.language.motherTongue, label: user.language.motherTongue }}
                                         classNamePrefix="custom-select"
                                         styles={customStyles}
                                         placeholder={'Select mother tounge'}
@@ -619,6 +634,7 @@ const PrimaryInfo = ({ email, user, updated }) => {
                             <div className="d-flex">
                                 <div className="flex-fill">
                                     <Select
+                                        defaultValue={user.language.spokenLanguage ? user.language.spokenLanguage.map(item => ({ value: item, label: item })) : null}
                                         isMulti
                                         styles={customStyles}
                                         classNamePrefix="custom-select"

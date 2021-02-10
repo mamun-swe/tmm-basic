@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import './style.scss'
 import axios from 'axios'
 import { api } from '../../utils/api'
@@ -23,19 +23,16 @@ const Edit = () => {
     const [user, setUser] = useState({})
     const [isLoading, setLoading] = useState(true)
 
-
-    useEffect(() => {
-        fetchUser()
-    }, [email])
-
     // Fetch User
-    const fetchUser = async () => {
+    const fetchUser = useCallback(async () => {
         try {
             const response = await axios.get(`${api}admin/user/show/${email}`)
             if (response.status === 200) {
-                setLoading(false)
                 setUser(response.data.user)
-                console.log(response.data.user)
+                // console.log(response.data.user)
+                setTimeout(() => {
+                    setLoading(false)
+                }, 2000)
             }
         } catch (error) {
             if (error) {
@@ -43,7 +40,14 @@ const Edit = () => {
                 // toast.warn(error.response.data.message)
             }
         }
-    }
+    }, [email])
+
+
+    useEffect(() => {
+        fetchUser()
+    }, [email, fetchUser])
+
+
 
     // re fetch data after updated
     const reFetch = data => {
@@ -89,46 +93,47 @@ const Edit = () => {
         </div>
 
         {/* Profile Picture & Description form */}
-        <PictureAndDescUpdateForm
+        {/* <PictureAndDescUpdateForm
             email={email}
             profileimages={user.profilePicture ? user.profilePicture : null}
             olddescription={user.shortDescription ? user.shortDescription : null}
             updated={reFetch}
-        />
+        /> */}
 
         {/* Basic and lifestyle information form */}
-        <BasicAndLifestyleUpdateForm
+        {/* <BasicAndLifestyleUpdateForm
             email={email}
             basicandlifeinfo={user.basicAndLifestyleInformation ? user.basicAndLifestyleInformation : null}
-        />
+        /> */}
 
         {/* Contact information form */}
-        <ContactInfoCreateForm
+        {/* <ContactInfoCreateForm
             email={email}
             contact={user.contactInformation ? user.contactInformation : null}
-        />
+        /> */}
         {/* Personal activities */}
         <div className="card my-lg-4">
             <div className="card-header bg-white">
                 <h6 className="mb-0">Personal Activities</h6>
             </div>
             <div className="card-body p-4">
-                <div className="row"> {/* Hobbi create form */}
+                <div className="row">
+                    {/* Hobbi create form */}
                     <div className="col-12 col-lg-6 pr-lg-4 border-bottom pb-4 mb-4">
-                        <HobbiForm
+                        {/* <HobbiForm
                             email={email}
                             activities={user.personalActivities ? user.personalActivities : null}
-                        />
+                        /> */}
                     </div>
 
                     {/* Interests create form */}
                     <div className="col-12 col-lg-6 pl-lg-4 border-bottom pb-4 mb-4">
-                        <InterestForm email={email} />
+                        {/* <InterestForm email={email} /> */}
                     </div>
 
                     {/* Music create form */}
                     <div className="col-12 col-lg-6 pl-lg-4 border-bottom pb-4 mb-4">
-                        <MusicForm email={email} />
+                        {/* <MusicForm email={email} /> */}
                     </div>
 
                 </div>
@@ -136,7 +141,7 @@ const Edit = () => {
         </div>
 
         {/* Partner preference */}
-        <PartnerPreferenceForm email={email}  updated={reFetch} />
+        {/* <PartnerPreferenceForm email={email} updated={reFetch} /> */}
 
     </div>);
 }
