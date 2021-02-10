@@ -1,4 +1,4 @@
-import React, { createRef, useEffect, useState } from "react";
+import React, { createRef, useEffect, useState, useCallback } from "react";
 import "./style.scss";
 import axios from "axios";
 import Icon from "react-icons-kit";
@@ -18,14 +18,10 @@ const Index = () => {
     const [isLoading, setLoading] = useState(true);
     const [users, setUsers] = useState([]);
     const [filteredUsers, setFilteredUsers] = useState(users);
-    const fakeArr = [...Array(12).keys()]
-
-    useEffect(() => {
-        fetchUsers();
-    }, [page]);
+    const fakeArr = [...Array(30).keys()]
 
     // Fetch Users
-    const fetchUsers = async () => {
+    const fetchUsers = useCallback(async () => {
         try {
             const response = await axios.get(`${api}admin/user/index?_page=${page}&_limit=36`);
             if (response.status === 200) {
@@ -44,7 +40,11 @@ const Index = () => {
                 console.log(error.response);
             }
         }
-    };
+    }, [page])
+
+    useEffect(() => {
+        fetchUsers()
+    }, [page, fetchUsers])
 
     // Submit to filter user
     const onSubmit = async (data) => {
@@ -90,9 +90,8 @@ const Index = () => {
 
                     {/* Users */}
                     <div className="col-12 px-2 profile-column"> {/* User Card */}
-                        {
-                            fakeArr.map((i) => (<div className="card border-0"
-                                key={i}>
+                        {fakeArr.map((i) => (
+                            <div className="card border-0" key={i}>
                                 <div className="card-body text-center">
                                     <div className="photo-container rounded-circle">
                                         <Skeleton circle={true}
@@ -118,8 +117,9 @@ const Index = () => {
                                             height={20} />
                                     </div>
                                 </div>
-                            </div>))
-                        } </div>
+                            </div>
+                        ))}
+                    </div>
                 </div>
             </div>
         </div>);

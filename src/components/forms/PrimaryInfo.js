@@ -245,19 +245,35 @@ const PrimaryInfo = ({ email, user, updated }) => {
     const onSubmit = async (data) => {
 
         // Check Branch
-        if (!branch.value) return setBranch({ error: true })
+        if ((branch.value === "") && (user.baranchId === "")) {
+            setBranch({ error: true })
+            return false
+        }
 
         // Check Religion
-        if (!religion.value) return setReligion({ error: true })
+        if ((religion.value === null || religion.value === "" || religion.value === undefined) && (user.religion === null || user.religion === "" || user.religion === undefined)) {
+            setReligion({ error: true })
+            return false
+        }
 
         // Check Social Order
-        if (!socialOrder.value) return setSocialOrder({ error: true })
+        if ((socialOrder.value === null || socialOrder.value === "" || socialOrder.value === undefined) && (user.socialOrder === null || user.socialOrder === "" || user.socialOrder === undefined)) {
+            setSocialOrder({ error: true })
+            return false
+        }
 
         // Check Birth Country
-        if (!birthCountry.value) return setBirthCountry({ error: true })
+        if ((birthCountry.value === null || birthCountry.value === "" || birthCountry.value === undefined) && (user.birthCountry === null || user.birthCountry === "" || user.birthCountry === undefined)) {
+            setBirthCountry({ error: true })
+            return false
+        }
 
         // Check Mother Toungue
-        if (!motherTongue.value) return setMotherTongue({ error: true })
+        if ((motherTongue.value === null || motherTongue.value === "" || motherTongue.value === undefined) && (user.language.motherTongue === null || user.language.motherTongue === "" || user.language.motherTongue === undefined)) {
+            setMotherTongue({ error: true })
+            return false
+        }
+
 
         const primaryData = {
             ...data,
@@ -293,8 +309,8 @@ const PrimaryInfo = ({ email, user, updated }) => {
             {/* Form 1 */}
             <form onSubmit={handleSubmit(onSubmit)}>
 
+                {/* Branch */}
                 <div className="row">
-                    {/* Branch */}
                     <div className="col-12 col-lg-4 ml-auto">
                         <div className="form-group mb-4">
                             {branch.error ?

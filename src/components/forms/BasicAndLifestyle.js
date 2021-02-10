@@ -17,7 +17,7 @@ const BasicAndLifestyle = ({ email, basicandlifeinfo }) => {
 
     // Diet options
     const dietOptions = [
-        { label: 'Open to all', value: 'open_to_all' },
+        { label: 'Open to all', value: 'open to all' },
         { label: 'veg', value: 'veg' },
         { label: 'non-veg', value: 'non-veg' },
         { label: 'vegan', value: 'vegan' }
@@ -59,20 +59,35 @@ const BasicAndLifestyle = ({ email, basicandlifeinfo }) => {
     const onSubmit = async (data) => {
         try {
             // Check diet
-            if (diet.value && !diet.value.length) return setDiet({ error: true })
+            if ((diet.value === null || diet.value === "" || diet.value === undefined) &&
+                (basicandlifeinfo.diet === null || basicandlifeinfo.diet === "" || basicandlifeinfo.diet === undefined)
+            ) {
+                setDiet({ error: true })
+                return false
+            }
 
             // Check blood group
-            if (!bloodGroup.value) return setBloodGroup({ error: true })
+            if ((bloodGroup.value === null || bloodGroup.value === "" || bloodGroup.value === undefined) &&
+                (basicandlifeinfo.bloodGroup === null || basicandlifeinfo.bloodGroup === "" || basicandlifeinfo.bloodGroup === undefined)
+            ) {
+                setBloodGroup({ error: true })
+                return false
+            }
 
             // Check health information
-            if (!healthInformation.value) return setHealthInformation({ error: true })
+            if ((bloodGroup.value === null || bloodGroup.value === "" || bloodGroup.value === undefined) &&
+                (basicandlifeinfo.bloodGroup === null || basicandlifeinfo.bloodGroup === "" || basicandlifeinfo.bloodGroup === undefined)
+            ) {
+                setHealthInformation({ error: true })
+                return false
+            }
 
             const newData = {
                 ...data,
                 email: email,
-                diet: diet.value.map(diet => diet.value),
-                bloodGroup: bloodGroup.value,
-                healthInformation: healthInformation.value
+                diet: diet.value.length ? diet.value.map(diet => diet.value) : basicandlifeinfo.diet,
+                bloodGroup: bloodGroup.value ? bloodGroup.value : basicandlifeinfo.bloodGroup,
+                healthInformation: healthInformation.value ? healthInformation.value : basicandlifeinfo.healthInformation
             }
 
             setLoading(true)
@@ -137,8 +152,9 @@ const BasicAndLifestyle = ({ email, basicandlifeinfo }) => {
                                         ref={register({
                                             required: "Material status is required."
                                         })}
+                                        defaultValue={basicandlifeinfo ? basicandlifeinfo.materialStatus : null}
                                     >
-                                        <option value="never_married">Never married</option>
+                                        <option value="never married">Never married</option>
                                         <option value="divorced">Divorced</option>
                                         <option value="annulled">Annulled</option>
                                         <option value="widowed">Widowed</option>
@@ -201,6 +217,7 @@ const BasicAndLifestyle = ({ email, basicandlifeinfo }) => {
                                         : <small>Diet</small>}
 
                                     <Select
+                                        defaultValue={basicandlifeinfo ? basicandlifeinfo.diet.map(item => ({ value: item, label: item })) : null}
                                         classNamePrefix="custom-select"
                                         isMulti
                                         styles={customStyles}
@@ -219,6 +236,7 @@ const BasicAndLifestyle = ({ email, basicandlifeinfo }) => {
                                         : <small>Blood group</small>}
 
                                     <Select
+                                        defaultValue={basicandlifeinfo ? { value: basicandlifeinfo.bloodGroup, label: basicandlifeinfo.bloodGroup } : null}
                                         classNamePrefix="custom-select"
                                         styles={customStyles}
                                         placeholder={'Select blood group'}
@@ -236,6 +254,7 @@ const BasicAndLifestyle = ({ email, basicandlifeinfo }) => {
                                         : <small>Health information</small>}
 
                                     <Select
+                                        defaultValue={basicandlifeinfo ? { value: basicandlifeinfo.healthInformation, label: basicandlifeinfo.healthInformation } : null}
                                         classNamePrefix="custom-select"
                                         styles={customStyles}
                                         placeholder={'Select option'}
@@ -258,9 +277,10 @@ const BasicAndLifestyle = ({ email, basicandlifeinfo }) => {
                                         name="disability"
                                         className={errors.disability ? "form-control shadow-none danger-border" : "form-control shadow-none"}
                                         ref={register({ required: "Disability is required." })}
+                                        defaultValue={basicandlifeinfo ? basicandlifeinfo.disability : null}
                                     >
                                         <option value="none">None</option>
-                                        <option value="physical_disability">Physical disability</option>
+                                        <option value="physical disability">Physical disability</option>
                                     </select>
                                 </div>
                             </div>

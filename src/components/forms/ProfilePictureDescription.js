@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import './style.scss'
 import axios from 'axios'
 import { api } from '../../utils/api'
@@ -15,12 +15,6 @@ const ProfilePictureDescription = ({ email, profileimages, olddescription, updat
     const [isUpload, setUpload] = useState(false)
     const [isLoading, setLoading] = useState(false)
     const [description, setDescription] = useState({ value: null, error: null })
-
-    // useEffect(() => {
-    //     setTimeout(() => {
-    //         setShow(true)
-    //     }, 1000)
-    // }, [])
 
     // Image onChange & upload
     const imageChangeHandeller = async (event) => {

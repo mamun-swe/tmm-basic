@@ -14,7 +14,7 @@ const basicAndLifestyleSchema = new Schema({
         type: String,
         trim: true,
         required: true,
-        enum: ['never_married', 'divorced', 'annulled', 'widowed']
+        enum: ['never married', 'divorced', 'annulled', 'widowed']
     },
     height: {
         type: String,
@@ -30,7 +30,7 @@ const basicAndLifestyleSchema = new Schema({
         type: String,
         trim: true,
         required: true,
-        enum: ['open_to_all', 'veg', 'non-veg', 'vegan']
+        enum: ['open to all', 'veg', 'non-veg', 'vegan']
     }],
     bloodGroup: {
         type: String,
@@ -48,7 +48,7 @@ const basicAndLifestyleSchema = new Schema({
         type: String,
         trim: true,
         default: 'none',
-        enum: ['none', 'physical_disability']
+        enum: ['none', 'physical disability']
     }
 }, {
     timestamps: true

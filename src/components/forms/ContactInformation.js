@@ -13,10 +13,7 @@ const ContactInformation = ({ email, contact }) => {
 
     const onSubmit = async (data) => {
         try {
-            const newData = {
-                ...data,
-                email
-            }
+            const newData = { ...data, email }
 
             setLoading(true)
             const response = await axios.post(`${api}admin/contactinfo/store`, newData)
