@@ -3,15 +3,15 @@ import './style.scss'
 import axios from 'axios'
 import { api } from '../../utils/api'
 import { toast } from 'react-toastify'
-import 'react-toastify/dist/ReactToastify.css'
 import Icon from 'react-icons-kit'
-import { ic_add } from 'react-icons-kit/md'
 import { Form } from 'react-bootstrap'
+import { ic_add } from 'react-icons-kit/md'
+import 'react-toastify/dist/ReactToastify.css'
 
 import MusicCreateModal from '../modal/Music'
 
 toast.configure({ autoClose: 2000 })
-const FavouriteMusic = ({ email }) => {
+const FavouriteMusic = ({ email, header }) => {
     // const [isLoading, setLoading] = useState(false)
     const [musics, setMusics] = useState([])
 
@@ -40,7 +40,7 @@ const FavouriteMusic = ({ email }) => {
     // Fetch mesics
     const fetchMusics = async () => {
         try {
-            const response = await axios.get(`${api}admin/activity/index`)
+            const response = await axios.get(`${api}admin/activity/index`, header)
             if (response.status === 200) {
                 setMusics(response.data.activities.musics)
             }
@@ -55,7 +55,7 @@ const FavouriteMusic = ({ email }) => {
     const createMusic = async (data) => {
         try {
             setCreated(true)
-            const response = await axios.post(`${api}admin/activity/store/music`, data)
+            const response = await axios.post(`${api}admin/activity/store/music`, data, header)
             if (response.status === 201) {
                 fetchMusics()
                 setCreated(false)
@@ -69,7 +69,6 @@ const FavouriteMusic = ({ email }) => {
             }
         }
     }
-
 
 
     // Check states

@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const Permission = require('../middleware/Permession')
 const UsersController = require("../controllers/admin/user/UsersController");
 const ReligionController = require("../controllers/admin/user/ReligionController");
 const CountryController = require("../controllers/admin/user/CountryController");
@@ -14,64 +15,65 @@ const PartnerPreferenceController = require("../controllers/admin/user/PartnerPr
 const ProfessionAreaController = require("../controllers/admin/user/ProfessionAreaController")
 const AuthController = require("../controllers/admin/Auth/AuthController")
 
-// registration
-router.post('/register',AuthController.RegisterUser)
-
+// Authentication
+router.get('/auth/index', Permission.isAdmin, AuthController.Index)
+router.post('/auth/register', AuthController.Register)
+router.post('/auth/login', AuthController.Login)
+router.get('/auth/logout', AuthController.Logout)
 
 // Users
-router.get('/user/index', UsersController.Index)
-router.get('/user/create', UsersController.CreateUser)
-router.get('/user/show/:email', UsersController.Show)
-router.get('/user/search', UsersController.SearchUser)
-router.put('/user/primaryinfo/update', UsersController.UpdatePrimaryInfo);
-router.put('/user/profile-picture/:email/update', UsersController.UpdateProfilePicture);
-router.put('/user/profile/description/:email/update', UsersController.UpdateShortDescription)
-router.put('/user/profile/activity', UsersController.UpdateActivities)
-router.get('/user/partner-preference/info', UsersController.PartnerPreferenceData)
-
+router.get('/user/index', Permission.isAdmin, UsersController.Index)
+router.get('/user/create', Permission.isAdmin, UsersController.CreateUser)
+router.get('/user/show/:email', Permission.isAdmin, UsersController.Show)
+router.get('/user/search', Permission.isAdmin, UsersController.SearchUser)
+router.put('/user/primaryinfo/update', Permission.isAdmin, UsersController.UpdatePrimaryInfo);
+router.put('/user/profile-picture/:email/update', Permission.isAdmin, UsersController.UpdateProfilePicture);
+router.put('/user/profile/description/:email/update', Permission.isAdmin, UsersController.UpdateShortDescription)
+router.put('/user/profile/activity', Permission.isAdmin, UsersController.UpdateActivities)
+router.get('/user/partner-preference/info', Permission.isAdmin, UsersController.PartnerPreferenceData)
 
 // Religion
-router.get("/religion", ReligionController.Index);
-router.post("/religion", ReligionController.Create);
-router.post("/religion/socialorder", ReligionController.CreateSocialOrder);
+router.get("/religion", Permission.isAdmin, ReligionController.Index);
+router.post("/religion", Permission.isAdmin, ReligionController.Create);
+router.post("/religion/socialorder", Permission.isAdmin, ReligionController.CreateSocialOrder);
 
 // Country
-router.get("/country", CountryController.Index);
-router.post("/country", CountryController.Create);
+router.get("/country", Permission.isAdmin, CountryController.Index);
+router.post("/country", Permission.isAdmin, CountryController.Create);
 
 // Branch
-router.get("/branch", BranchController.Index);
-router.post("/branch", BranchController.Store);
+router.get("/branch", Permission.isAdmin, BranchController.Index);
+router.post("/branch", Permission.isAdmin, BranchController.Store);
 
 // Language
-router.get("/language/index", LanguageController.Index);
-router.post("/language/store", LanguageController.Store);
+router.get("/language/index", Permission.isAdmin, LanguageController.Index);
+router.post("/language/store", Permission.isAdmin, LanguageController.Store);
 
 // Basic & Lifestyle
-router.post("/basic-and-lifestle/store", BasicAndLifestyleController.Store);
+router.post("/basic-and-lifestle/store", Permission.isAdmin, BasicAndLifestyleController.Store);
 
 // Contact Information
-router.post("/contactinfo/store", ContactInfoController.Store);
+router.post("/contactinfo/store", Permission.isAdmin, ContactInfoController.Store);
 
 // Activity
-router.get("/activity/index", ActivityController.Index);
-router.post("/activity/store/hobbi", ActivityController.StoreHobbi);
-router.post("/activity/store/interest", ActivityController.StoreInterest);
-router.post("/activity/store/music", ActivityController.StoreMusic);
+router.get("/activity/index", Permission.isAdmin, ActivityController.Index);
+router.post("/activity/store/hobbi", Permission.isAdmin, ActivityController.StoreHobbi);
+router.post("/activity/store/interest", Permission.isAdmin, ActivityController.StoreInterest);
+router.post("/activity/store/music", Permission.isAdmin, ActivityController.StoreMusic);
 
 // Partner preference 
 router.post("/partnerpreference/create", PartnerPreferenceController.Create)
 
 // Qualification
-router.get("/qualification", QualificationController.Index)
-router.post("/qualification/store", QualificationController.Store)
+router.get("/qualification", Permission.isAdmin, QualificationController.Index)
+router.post("/qualification/store", Permission.isAdmin, QualificationController.Store)
 
 // Working with 
-router.get("/working-with", WorkingWithController.Index)
-router.post("/working-with/store", WorkingWithController.Store)
+router.get("/working-with", Permission.isAdmin, WorkingWithController.Index)
+router.post("/working-with/store", Permission.isAdmin, WorkingWithController.Store)
 
 // Profession area
-router.get("/profession", ProfessionAreaController.Index)
-router.post("/profession/store", ProfessionAreaController.Store)
+router.get("/profession", Permission.isAdmin, ProfessionAreaController.Index)
+router.post("/profession/store", Permission.isAdmin, ProfessionAreaController.Store)
 
 module.exports = router;

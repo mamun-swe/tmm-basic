@@ -2,28 +2,34 @@ import React, { createRef, useEffect, useState, useCallback } from "react";
 import "./style.scss";
 import axios from "axios";
 import Icon from "react-icons-kit";
-import { api } from "../../utils/api";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import { useForm } from "react-hook-form";
-import { Images } from "../../utils/Images";
+import { api } from "../../../utils/api";
+import { Images } from "../../../utils/Images";
 import Skeleton from "react-loading-skeleton";
-import { ic_create } from "react-icons-kit/md";
+import { loadC } from 'react-icons-kit/ionicons';
+import { ic_create, ic_lock } from "react-icons-kit/md";
 import InfiniteScroll from "react-infinite-scroll-component";
 
 const Index = () => {
     const refs = createRef();
+    const history = useHistory()
     const windowWidth = window.innerWidth;
     const { register, handleSubmit } = useForm();
     const [page, setPage] = useState(0);
     const [isLoading, setLoading] = useState(true);
     const [users, setUsers] = useState([]);
+    const [isLoggingOut, setLoggingOut] = useState(false)
     const [filteredUsers, setFilteredUsers] = useState(users);
     const fakeArr = [...Array(30).keys()]
+    const [header] = useState({
+        headers: { Authorization: "Bearer " + localStorage.getItem("token") }
+    })
 
     // Fetch Users
     const fetchUsers = useCallback(async () => {
         try {
-            const response = await axios.get(`${api}admin/user/index?_page=${page}&_limit=36`);
+            const response = await axios.get(`${api}admin/user/index?_page=${page}&_limit=36`, header);
             if (response.status === 200) {
                 setUsers([
                     ...users,
@@ -55,8 +61,7 @@ const Index = () => {
                 setFilteredUsers(result);
             } else {
                 // Find from server
-                const serverResult = await axios.get(`${api}admin/user/search?query=${data.query
-                    }`);
+                const serverResult = await axios.get(`${api}admin/user/search?query=${data.query}`, header);
                 if (serverResult.status === 200 && serverResult.data) {
                     setFilteredUsers(serverResult.data);
                 } else {
@@ -78,6 +83,27 @@ const Index = () => {
             fetchUsers();
         }
     };
+
+    // Logout
+    const doLogout = async () => {
+        try {
+            setLoggingOut(true)
+            const response = await axios.get(`${api}admin/auth/logout`, header)
+            if (response.status === 200) {
+                localStorage.clear()
+                setTimeout(() => {
+                    history.push('/')
+                }, 2000)
+            }
+        } catch (error) {
+            if (error) {
+                localStorage.clear()
+                setTimeout(() => {
+                    history.push('/')
+                }, 2000)
+            }
+        }
+    }
 
     // is loading from fetch API data
     if (isLoading) {
@@ -105,15 +131,11 @@ const Index = () => {
                                         <Skeleton className="mb-1"
                                             animation={true}
                                             count={1}
-                                            width={
-                                                refs.innerWidth
-                                            }
+                                            width={refs.innerWidth}
                                             height={28} />
                                         <Skeleton animation={true}
                                             count={1}
-                                            width={
-                                                windowWidth > 576 ? 150 : 80
-                                            }
+                                            width={windowWidth > 576 ? 150 : 80}
                                             height={20} />
                                     </div>
                                 </div>
@@ -175,7 +197,7 @@ const Index = () => {
                                             <h6 className="text-capitalize">{user.name ? user.name : null}</h6>
                                             <p> {user.email ? user.email : null}</p>
                                         </div>
-                                        <Link to={`/users/${user.email}/edit`}
+                                        <Link to={`/dashboard/user/${user.email}`}
                                             type="button"
                                             className="btn shadow-none rounded-circle">
                                             <Icon icon={ic_create} size={20} />
@@ -196,6 +218,17 @@ const Index = () => {
                 </div>
             </div>
         </div>
+
+        {/* Float logout button */}
+        {isLoggingOut ? <Icon icon={loadC} className="spin" size={40} /> :
+            <button
+                type="button"
+                className="btn float-logout-btn shadow-lg rounded-circle"
+                onClick={doLogout}
+            >
+                <Icon icon={ic_lock} size={20} />
+            </button>
+        }
     </div>);
 };
 

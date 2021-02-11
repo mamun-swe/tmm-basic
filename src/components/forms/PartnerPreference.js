@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import './style.scss'
 import 'antd/dist/antd.css'
 import axios from 'axios'
@@ -7,9 +7,9 @@ import Select from 'react-select'
 import { api } from '../../utils/api'
 import { useForm } from 'react-hook-form'
 import { toast } from 'react-toastify'
-import 'react-toastify/dist/ReactToastify.css'
 import { Icon } from 'react-icons-kit'
 import { ic_add } from 'react-icons-kit/md'
+import 'react-toastify/dist/ReactToastify.css'
 import CreatableSelect from 'react-select/creatable'
 
 // Create modals
@@ -18,7 +18,7 @@ import WorkingWithModal from '../modal/WorkingWith'
 import ProfessionAreaModal from '../modal/ProfessionArea'
 
 toast.configure({ autoClose: 2000 })
-const PartnerPreference = ({ email, updated, preference }) => {
+const PartnerPreference = ({ email, updated, preference, header }) => {
     const { handleSubmit } = useForm()
     const [isLoading, setLoading] = useState(false)
 
@@ -106,27 +106,70 @@ const PartnerPreference = ({ email, updated, preference }) => {
         { label: 'Physical disability', value: 'physical disability' }
     ]
 
-    useEffect(() => {
-        // Get Religion
-        const getPartnerPreferenceInfo = async () => {
-            try {
-                const response = await axios.get(`${api}admin/user/partner-preference/info`)
-                setReligionOptions(response.data.religions.map(religion => ({ label: religion, value: religion })))
-                setSocialOrderOptions(response.data.socialOrders.map(order => ({ label: order, value: order })))
-                setLanguageOptions(response.data.languages.map(language => ({ label: language, value: language })))
-                setCountryOptions(response.data.countries.map(country => ({ label: country, value: country })))
-            } catch (error) {
-                if (error) {
-                    toast.warn(error.response.data.message)
-                }
+    // Get Religion
+    const getPartnerPreferenceInfo = useCallback(async () => {
+        try {
+            const response = await axios.get(`${api}admin/user/partner-preference/info`, header)
+            setReligionOptions(response.data.religions.map(religion => ({ label: religion, value: religion })))
+            setSocialOrderOptions(response.data.socialOrders.map(order => ({ label: order, value: order })))
+            setLanguageOptions(response.data.languages.map(language => ({ label: language, value: language })))
+            setCountryOptions(response.data.countries.map(country => ({ label: country, value: country })))
+        } catch (error) {
+            if (error) {
+                toast.warn(error.response.data.message)
             }
         }
+    }, [header])
 
+    // Get Qualification
+    const getQualification = useCallback(async () => {
+        try {
+            const response = await axios.get(`${api}admin/qualification`, header)
+            if (response.status === 200) {
+                setQualificationOptions(response.data.qualifications.map(qualification => ({ label: qualification.title, value: qualification.title })))
+            }
+        } catch (error) {
+            if (error) {
+                toast.warn(error.response.data.message)
+            }
+        }
+    }, [header])
+
+    // Get working with
+    const getWorkingWith = useCallback(async () => {
+        try {
+            const response = await axios.get(`${api}admin/working-with`, header)
+            if (response.status === 200) {
+                setWorkingWithOptions(response.data.works.map(work => ({ label: work.title, value: work.title })))
+            }
+        } catch (error) {
+            if (error) {
+                toast.warn(error.response.data)
+            }
+        }
+    }, [header])
+
+    // Get profession area
+    const getProfessionArea = useCallback(async () => {
+        try {
+            const response = await axios.get(`${api}admin/profession`, header)
+            if (response.status === 200) {
+                setProfessionAreaOptions(response.data.professions.map(profession => ({ label: profession.title, value: profession.title })))
+            }
+        } catch (error) {
+            if (error) {
+                toast.warn(error.response.data)
+            }
+        }
+    }, [header])
+
+
+    useEffect(() => {
         getPartnerPreferenceInfo()
         getQualification()
         getWorkingWith()
         getProfessionArea()
-    }, [])
+    }, [header, getPartnerPreferenceInfo, getQualification, getWorkingWith, getProfessionArea])
 
     // On Change methods
     const onAfterAgeChange = value => setAgeRange({ startFrom: value[0], endTo: value[1] })
@@ -149,25 +192,11 @@ const PartnerPreference = ({ email, updated, preference }) => {
     const onChangeHealthInfo = event => setHealthInformation({ value: event })
     const onChangeDisability = event => setDisability({ value: event })
 
-    // Get Qualification
-    const getQualification = async () => {
-        try {
-            const response = await axios.get(`${api}admin/qualification`)
-            if (response.status === 200) {
-                setQualificationOptions(response.data.qualifications.map(qualification => ({ label: qualification.title, value: qualification.title })))
-            }
-        } catch (error) {
-            if (error) {
-                toast.warn(error.response.data.message)
-            }
-        }
-    }
-
     // Create Qualification
     const createQualification = async (data) => {
         try {
             setQualificationCreated(true)
-            const response = await axios.post(`${api}admin/qualification/store`, data)
+            const response = await axios.post(`${api}admin/qualification/store`, data, header)
             if (response.status === 201) {
                 getQualification()
                 setQualificationCreated(false)
@@ -182,25 +211,11 @@ const PartnerPreference = ({ email, updated, preference }) => {
         }
     }
 
-    // Get working with
-    const getWorkingWith = async () => {
-        try {
-            const response = await axios.get(`${api}admin/working-with`)
-            if (response.status === 200) {
-                setWorkingWithOptions(response.data.works.map(work => ({ label: work.title, value: work.title })))
-            }
-        } catch (error) {
-            if (error) {
-                toast.warn(error.response.data)
-            }
-        }
-    }
-
     // Create working with
     const createWorkingWith = async (data) => {
         try {
             setWorkingWithCreated(true)
-            const response = await axios.post(`${api}admin/working-with/store`, data)
+            const response = await axios.post(`${api}admin/working-with/store`, data, header)
             if (response.status === 201) {
                 getWorkingWith()
                 setWorkingWithCreated(false)
@@ -215,25 +230,11 @@ const PartnerPreference = ({ email, updated, preference }) => {
         }
     }
 
-    // Get profession area
-    const getProfessionArea = async () => {
-        try {
-            const response = await axios.get(`${api}admin/profession`)
-            if (response.status === 200) {
-                setProfessionAreaOptions(response.data.professions.map(profession => ({ label: profession.title, value: profession.title })))
-            }
-        } catch (error) {
-            if (error) {
-                toast.warn(error.response.data)
-            }
-        }
-    }
-
     // Create profession area
     const createProfessionArea = async (data) => {
         try {
             setProfessionAreaCreated(true)
-            const response = await axios.post(`${api}admin/profession/store`, data)
+            const response = await axios.post(`${api}admin/profession/store`, data, header)
             if (response.status === 201) {
                 getProfessionArea()
                 setProfessionAreaCreated(false)
@@ -257,27 +258,27 @@ const PartnerPreference = ({ email, updated, preference }) => {
                 ...data,
                 ageRange,
                 heightRange,
-                materialStatus: materialStatus.value ? materialStatus.value.map(data => data.value) : preference.materialStatus,
-                religion: religion.value ? religion.value.map(data => data.value) : preference.religion,
-                socialOrder: socialOrder.value ? socialOrder.value.map(data => data.value) : preference.socialOrder,
-                motherTounge: motherTounge ? motherTounge : preference.motherTounge,
-                spokenLanguages: spokenLanguages.value ? spokenLanguages.value.map(data => data.value) : preference.spokenLanguages,
-                country: countries.value ? countries.value.map(data => data.value) : preference.location.country,
-                stateDivision: stateDivision.value ? stateDivision.value.map(data => data.value) : preference.location.stateDivision,
-                city: city.value ? city.value.map(data => data.value) : preference.location.city,
+                materialStatus: materialStatus.value ? materialStatus.value.map(data => data.value) : preference ? preference.materialStatus : null,
+                religion: religion.value ? religion.value.map(data => data.value) : preference ? preference.religion : null,
+                socialOrder: socialOrder.value ? socialOrder.value.map(data => data.value) : preference ? preference.socialOrder : null,
+                motherTounge: motherTounge ? motherTounge : preference ? preference.motherTounge : null,
+                spokenLanguages: spokenLanguages.value ? spokenLanguages.value.map(data => data.value) : preference ? preference.spokenLanguages : null,
+                country: countries.value ? countries.value.map(data => data.value) : preference ? preference.location.country : null,
+                stateDivision: stateDivision.value ? stateDivision.value.map(data => data.value) : preference ? preference.location.stateDivision : null,
+                city: city.value ? city.value.map(data => data.value) : preference ? preference.location.city : null,
 
-                qualifications: qualifications.value ? qualifications.value.map(data => data.value) : preference.educationAndProfession.qualification,
-                workingWith: workingWith.value ? workingWith.value.map(data => data.value) : preference.educationAndProfession.workingWith,
-                professionArea: professionArea.value ? professionArea.value.map(data => data.value) : preference.educationAndProfession.professionArea,
+                qualifications: qualifications.value ? qualifications.value.map(data => data.value) : preference ? preference.educationAndProfession.qualification : null,
+                workingWith: workingWith.value ? workingWith.value.map(data => data.value) : preference ? preference.educationAndProfession.workingWith : null,
+                professionArea: professionArea.value ? professionArea.value.map(data => data.value) : preference ? preference.educationAndProfession.professionArea : null,
                 annualIncome,
 
-                diet: diet.value ? diet.value.map(data => data.value) : preference.diet,
-                bloodGroup: bloodGroup.value ? bloodGroup.value.map(data => data.value) : preference.bloodGroup,
-                healthInformation: healthInformation.value ? healthInformation.value.map(data => data.value) : preference.healthInformation,
-                disability: disability.value ? disability.value.map(data => data.value) : preference.disability
+                diet: diet.value ? diet.value.map(data => data.value) : preference ? preference.diet : null,
+                bloodGroup: bloodGroup.value ? bloodGroup.value.map(data => data.value) : preference ? preference.bloodGroup : null,
+                healthInformation: healthInformation.value ? healthInformation.value.map(data => data.value) : preference ? preference.healthInformation : null,
+                disability: disability.value ? disability.value.map(data => data.value) : preference ? preference.disability : null
             }
 
-            const response = await axios.post(`${api}admin/partnerpreference/create`, newData)
+            const response = await axios.post(`${api}admin/partnerpreference/create`, newData, header)
             if (response.status === 201) {
                 updated(true)
                 setLoading(false)
@@ -337,7 +338,7 @@ const PartnerPreference = ({ email, updated, preference }) => {
                                     <p>Material status</p>
 
                                     <Select
-                                        defaultValue={preference ? preference.materialStatus.map(item => ({ value: item, label: item })) : null}
+                                        defaultValue={preference ? preference.materialStatus && preference.materialStatus.map(item => ({ value: item, label: item })) : null}
                                         classNamePrefix="custom-select"
                                         isMulti
                                         styles={customStyles}
@@ -354,7 +355,7 @@ const PartnerPreference = ({ email, updated, preference }) => {
                                     <p>Religion</p>
 
                                     <Select
-                                        defaultValue={preference ? preference.religion.map(item => ({ value: item, label: item })) : null}
+                                        defaultValue={preference ? preference.religion && preference.religion.map(item => ({ value: item, label: item })) : null}
                                         classNamePrefix="custom-select"
                                         isMulti
                                         styles={customStyles}
@@ -371,7 +372,7 @@ const PartnerPreference = ({ email, updated, preference }) => {
                                     <p>Social order</p>
 
                                     <Select
-                                        defaultValue={preference ? preference.socialOrder.map(item => ({ value: item, label: item })) : null}
+                                        defaultValue={preference ? preference.socialOrder && preference.socialOrder.map(item => ({ value: item, label: item })) : null}
                                         classNamePrefix="custom-select"
                                         isMulti
                                         styles={customStyles}
@@ -388,7 +389,7 @@ const PartnerPreference = ({ email, updated, preference }) => {
                                     <p>Mother tounge</p>
 
                                     <Select
-                                        defaultValue={preference ? { value: preference.motherTounge, label: preference.motherTounge } : null}
+                                        defaultValue={preference && preference.motherTounge ? { value: preference.motherTounge, label: preference.motherTounge } : null}
                                         classNamePrefix="custom-select"
                                         styles={customStyles}
                                         components={{ DropdownIndicator: () => null, IndicatorSeparator: () => null }}
@@ -404,7 +405,7 @@ const PartnerPreference = ({ email, updated, preference }) => {
                                     <p>Spoken language</p>
 
                                     <Select
-                                        defaultValue={preference ? preference.spokenLanguages.map(item => ({ value: item, label: item })) : null}
+                                        defaultValue={preference && preference.spokenLanguages ? preference.spokenLanguages.map(item => ({ value: item, label: item })) : null}
                                         classNamePrefix="custom-select"
                                         isMulti
                                         styles={customStyles}
@@ -423,7 +424,7 @@ const PartnerPreference = ({ email, updated, preference }) => {
                                     <p>Country</p>
 
                                     <Select
-                                        defaultValue={preference ? preference.location.country.map(item => ({ value: item, label: item })) : null}
+                                        defaultValue={preference ? preference.location.country && preference.location.country.map(item => ({ value: item, label: item })) : null}
                                         classNamePrefix="custom-select"
                                         isMulti
                                         styles={customStyles}
@@ -440,7 +441,7 @@ const PartnerPreference = ({ email, updated, preference }) => {
                                     <p>State / Division</p>
 
                                     <CreatableSelect
-                                        defaultValue={preference ? preference.location.stateDivision.map(item => ({ value: item, label: item })) : null}
+                                        defaultValue={preference ? preference.location.stateDivision && preference.location.stateDivision.map(item => ({ value: item, label: item })) : null}
                                         isMulti
                                         styles={customStyles}
                                         onChange={onChangeStateDivision}
@@ -454,7 +455,7 @@ const PartnerPreference = ({ email, updated, preference }) => {
                                     <p>City</p>
 
                                     <CreatableSelect
-                                        defaultValue={preference ? preference.location.city.map(item => ({ value: item, label: item })) : null}
+                                        defaultValue={preference ? preference.location.city && preference.location.city.map(item => ({ value: item, label: item })) : null}
                                         isMulti
                                         styles={customStyles}
                                         onChange={onChangeCity}
@@ -474,7 +475,7 @@ const PartnerPreference = ({ email, updated, preference }) => {
                                     <div className="d-flex">
                                         <div className="flex-fill">
                                             <Select
-                                                defaultValue={preference ?
+                                                defaultValue={preference ? preference.educationAndProfession.qualification &&
                                                     preference.educationAndProfession.qualification.map(item => ({ value: item, label: item }))
                                                     : null}
                                                 classNamePrefix="custom-select"
@@ -508,7 +509,7 @@ const PartnerPreference = ({ email, updated, preference }) => {
                                     <div className="d-flex">
                                         <div className="flex-fill">
                                             <Select
-                                                defaultValue={preference ?
+                                                defaultValue={preference ? preference.educationAndProfession.workingWith &&
                                                     preference.educationAndProfession.workingWith.map(item => ({ value: item, label: item }))
                                                     : null}
                                                 classNamePrefix="custom-select"
@@ -543,7 +544,7 @@ const PartnerPreference = ({ email, updated, preference }) => {
                                         <div className="flex-fill">
                                             <Select
                                                 defaultValue={
-                                                    preference ?
+                                                    preference ? preference.educationAndProfession.professionArea &&
                                                         preference.educationAndProfession.professionArea.map(item => ({ value: item, label: item }))
                                                         : null}
                                                 classNamePrefix="custom-select"
@@ -589,7 +590,7 @@ const PartnerPreference = ({ email, updated, preference }) => {
                                     <p>Diet</p>
 
                                     <Select
-                                        defaultValue={preference ? preference.diet.map(item => ({ value: item, label: item })) : null}
+                                        defaultValue={preference ? preference.diet && preference.diet.map(item => ({ value: item, label: item })) : null}
                                         classNamePrefix="custom-select"
                                         isMulti
                                         styles={customStyles}
@@ -605,7 +606,7 @@ const PartnerPreference = ({ email, updated, preference }) => {
                                 <div className="form-group mb-4">
                                     <p>Blood Group</p>
                                     <Select
-                                        defaultValue={preference ? preference.bloodGroup.map(item => ({ value: item, label: item })) : null}
+                                        defaultValue={preference ? preference.bloodGroup && preference.bloodGroup.map(item => ({ value: item, label: item })) : null}
                                         classNamePrefix="custom-select"
                                         isMulti
                                         styles={customStyles}
@@ -621,7 +622,7 @@ const PartnerPreference = ({ email, updated, preference }) => {
                                 <div className="form-group mb-4">
                                     <p>Health information</p>
                                     <Select
-                                        defaultValue={preference ? preference.healthInformation.map(item => ({ value: item, label: item })) : null}
+                                        defaultValue={preference ? preference.healthInformation && preference.healthInformation.map(item => ({ value: item, label: item })) : null}
                                         classNamePrefix="custom-select"
                                         isMulti
                                         styles={customStyles}
@@ -637,7 +638,7 @@ const PartnerPreference = ({ email, updated, preference }) => {
                                 <div className="form-group mb-4">
                                     <p>Disability</p>
                                     <Select
-                                        defaultValue={preference ? preference.disability.map(item => ({ value: item, label: item })) : null}
+                                        defaultValue={preference ? preference.disability && preference.disability.map(item => ({ value: item, label: item })) : null}
                                         classNamePrefix="custom-select"
                                         isMulti
                                         styles={customStyles}

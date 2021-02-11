@@ -1,4 +1,4 @@
-@import "../../App.scss";
+@import "../../../App.scss";
 
 // Index
 .users-index {
@@ -175,5 +175,42 @@
 
     @media (min-width: 768px) {
         padding: 30px;
+    }
+}
+
+// Float logout button
+.float-logout-btn {
+    right: 10px;
+    bottom: 10px;
+    position: fixed;
+    padding: 8px 10px !important;
+    color: #fff !important;
+    background: $theme-color !important;
+
+    @media (min-width: 992px) {
+        right: 20px;
+        bottom: 20px;
+    }
+}
+
+.spin {
+    right: 10px;
+    bottom: 10px;
+    position: fixed;
+    color: $theme-color;
+    animation: spin 1s linear infinite;
+
+    @media (min-width: 992px) {
+        right: 20px;
+        bottom: 20px;
+    }
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
     }
 }

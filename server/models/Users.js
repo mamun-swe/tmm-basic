@@ -7,12 +7,12 @@ const validateEmail = function (email) {
 
 const userSchema = new Schema(
     {
-        profileId: {
-            type: String,
-            unique: true,
-            trim: true,
-            required: true,
-        },
+        // profileId: {
+        //     type: String,
+        //     unique: true,
+        //     trim: true,
+        //     required: true,
+        // },
         baranchId: {
             type: Schema.Types.ObjectId,
             ref: "Branch",

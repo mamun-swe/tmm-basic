@@ -7,7 +7,7 @@ import { toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 
 toast.configure({ autoClose: 2000 })
-const ContactInformation = ({ email, contact }) => {
+const ContactInformation = ({ email, contact, header }) => {
     const { register, handleSubmit, errors } = useForm()
     const [isLoading, setLoading] = useState(false)
 
@@ -16,7 +16,7 @@ const ContactInformation = ({ email, contact }) => {
             const newData = { ...data, email }
 
             setLoading(true)
-            const response = await axios.post(`${api}admin/contactinfo/store`, newData)
+            const response = await axios.post(`${api}admin/contactinfo/store`, newData, header)
             if (response.status === 201) {
                 setLoading(false)
                 toast.success(response.data.message)

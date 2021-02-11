@@ -10,7 +10,7 @@ import { Images } from '../../utils/Images'
 import 'react-toastify/dist/ReactToastify.css'
 
 toast.configure({ autoClose: 2000 })
-const ProfilePictureDescription = ({ email, profileimages, olddescription, updated }) => {
+const ProfilePictureDescription = ({ email, profileimages, olddescription, updated, header }) => {
     // const [show, setShow] = useState(false)
     const [isUpload, setUpload] = useState(false)
     const [isLoading, setLoading] = useState(false)
@@ -24,7 +24,7 @@ const ProfilePictureDescription = ({ email, profileimages, olddescription, updat
             let formData = new FormData()
             formData.append('image', file)
             if (file) {
-                const response = await axios.put(`${api}admin/user/profile-picture/${email}/update`, formData)
+                const response = await axios.put(`${api}admin/user/profile-picture/${email}/update`, formData, header)
                 if (response.status === 201) {
                     updated(true)
                     setUpload(false)
@@ -50,7 +50,7 @@ const ProfilePictureDescription = ({ email, profileimages, olddescription, updat
             const data = { description: description.value }
 
             setLoading(true)
-            const response = await axios.put(`${api}admin/user/profile/description/${email}/update`, data)
+            const response = await axios.put(`${api}admin/user/profile/description/${email}/update`, data, header)
             if (response.status === 201) {
                 updated(true)
                 setLoading(false)

@@ -3,15 +3,14 @@ import './style.scss'
 import axios from 'axios'
 import { api } from '../../utils/api'
 import { toast } from 'react-toastify'
-import 'react-toastify/dist/ReactToastify.css'
 import Icon from 'react-icons-kit'
 import { ic_add } from 'react-icons-kit/md'
 import { Form } from 'react-bootstrap'
-
+import 'react-toastify/dist/ReactToastify.css'
 import InterestCreateModal from '../modal/Interest'
 
 toast.configure({ autoClose: 2000 })
-const Interests = ({ email }) => {
+const Interests = ({ email, header }) => {
     // const [isLoading, setLoading] = useState(false)
     const [interests, setInterests] = useState([])
 
@@ -40,7 +39,7 @@ const Interests = ({ email }) => {
     // Fetch interests
     const fetchInterests = async () => {
         try {
-            const response = await axios.get(`${api}admin/activity/index`)
+            const response = await axios.get(`${api}admin/activity/index`, header)
             if (response.status === 200) {
                 setInterests(response.data.activities.interests)
             }
@@ -55,7 +54,7 @@ const Interests = ({ email }) => {
     const createInterests = async (data) => {
         try {
             setCreated(true)
-            const response = await axios.post(`${api}admin/activity/store/interest`, data)
+            const response = await axios.post(`${api}admin/activity/store/interest`, data, header)
             if (response.status === 201) {
                 fetchInterests()
                 setCreated(false)

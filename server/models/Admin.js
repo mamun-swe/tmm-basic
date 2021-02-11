@@ -1,35 +1,54 @@
-const {Schema, model} = require("mongoose")
-//email validate
+const { Schema, model } = require("mongoose")
+
 const validateEmail = function (email) {
     const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    return re.test(email);
-};
-// create schema
-const AdminSchema = new Schema({
-    name:{
-        type:String,
-        required:true,
-        maxlength:50,
-        trim:true
+    return re.test(email)
+}
 
+const adminSchema = new Schema({
+    name: {
+        type: String,
+        trim: true,
+        maxlength: 50,
+        required: true
     },
-    email:{
-        type:String,
-        unique:true,
-        trim:true,
-        lowercase:true,
-        validate: [validateEmail, "Please provide a valid email address"]
+    email: {
+        type: String,
+        required: true,
+        unique: true,
+        trim: true,
+        lowercase: true,
+        validate: [validateEmail, 'Please provide a valid email address']
     },
-    role:{
-        type:String,
-        required:true,
-        unique:true,
-        default:"admin",
-        enum:["admin","supper-admin"]
+    role: {
+        type: String,
+        default: "super_admin",
+        enum: ["super_admin", "admin", "manager"]
     },
-    token:{
-        type:String,
-        default:null,
-        trim:true
+    status: {
+        type: String,
+        default: "offline",
+        enum: ["online", "offline"]
+    },
+    password: {
+        type: String,
+        trim: true,
+        required: true
+    },
+    image: {
+        type: String,
+        trim: true,
+        default: null
+    },
+    access_token: {
+        type: String,
+        trim: true,
+        default: null
     }
+}, {
+    timestamps: true
 })
+
+const Admin = model('Admin', adminSchema)
+
+module.exports = Admin;

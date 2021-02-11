@@ -8,7 +8,7 @@ import { useForm } from 'react-hook-form'
 import 'react-toastify/dist/ReactToastify.css'
 
 toast.configure({ autoClose: 2000 })
-const BasicAndLifestyle = ({ email, basicandlifeinfo }) => {
+const BasicAndLifestyle = ({ email, basicandlifeinfo, header }) => {
     const { register, handleSubmit, errors } = useForm()
     const [diet, setDiet] = useState({ value: [], error: null })
     const [bloodGroup, setBloodGroup] = useState({ value: null, error: null })
@@ -91,7 +91,7 @@ const BasicAndLifestyle = ({ email, basicandlifeinfo }) => {
             }
 
             setLoading(true)
-            const response = await axios.post(`${api}admin/basic-and-lifestle/store`, newData)
+            const response = await axios.post(`${api}admin/basic-and-lifestle/store`, newData, header)
             if (response.status === 201) {
                 setLoading(false)
                 toast.success(response.data.message)

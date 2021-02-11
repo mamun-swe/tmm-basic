@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import axios from 'axios'
 import Select from 'react-select'
 import Icon from 'react-icons-kit'
@@ -15,7 +15,7 @@ import CountryCreateModal from '../../components/modal/Country'
 import LanguageCreateModal from '../../components/modal/Language'
 
 toast.configure({ autoClose: 2000 })
-const PrimaryInfo = ({ email, user, updated }) => {
+const PrimaryInfo = ({ email, user, updated, header }) => {
     const { register, handleSubmit, errors } = useForm()
     const [isUpdate, setUpdate] = useState(false)
 
@@ -55,12 +55,68 @@ const PrimaryInfo = ({ email, user, updated }) => {
     const [languageOptions, setLanguageOptions] = useState([])
 
 
+    // Get Religion
+    const getReligion = useCallback(async () => {
+        try {
+            const response = await axios.get(`${api}admin/religion`, header)
+            setServerReligions(response.data.religions)
+            setReligionOptions(response.data.religions.map(data => ({ label: data.name, value: data.name })))
+        } catch (error) {
+            if (error) {
+                toast.warn(error.response.data.message)
+            }
+        }
+    }, [header])
+
+    // Get Branch
+    const getBranches = useCallback(async () => {
+        try {
+            const response = await axios.get(`${api}admin/branch`, header)
+            if (response.status === 200) {
+                setBranchOptions(response.data.branches.map(branch => ({ label: branch.name, value: branch._id })))
+            }
+        } catch (error) {
+            if (error) {
+                console.log(error.response)
+            }
+        }
+    }, [header])
+
+
+    // Get Country
+    const getCountry = useCallback(async () => {
+        try {
+            const response = await axios.get(`${api}admin/country`, header)
+            if (response.status === 200) {
+                setCountryOptions(response.data.countries.map(country => ({ label: country.name, value: country.name })))
+            }
+        } catch (error) {
+            if (error) {
+                toast.warn(error.response.data.message)
+            }
+        }
+    }, [header])
+
+
+    // Get Language
+    const getLanguage = useCallback(async () => {
+        try {
+            const response = await axios.get(`${api}admin/language/index`, header)
+            if (response.status === 200) {
+                setLanguageOptions(response.data.languages.map(language => ({ label: language.name, value: language.name })))
+            }
+        } catch (error) {
+            if (error) console.log(error.response)
+        }
+    }, [header])
+
+
     useEffect(() => {
         getReligion()
         getCountry()
         getBranches()
         getLanguage()
-    }, [])
+    }, [header, getReligion, getBranches, getCountry, getLanguage])
 
     // onChange branch
     const onChangeBranch = event => setBranch({ value: event.value, error: null })
@@ -89,26 +145,11 @@ const PrimaryInfo = ({ email, user, updated }) => {
     // OnChange Spoken Language
     const onChangeSpokenLanguage = event => setSpokenLanguage({ value: event, error: null })
 
-
-    // Get Branch
-    const getBranches = async () => {
-        try {
-            const response = await axios.get(`${api}admin/branch`)
-            if (response.status === 200) {
-                setBranchOptions(response.data.branches.map(branch => ({ label: branch.name, value: branch._id })))
-            }
-        } catch (error) {
-            if (error) {
-                console.log(error.response)
-            }
-        }
-    }
-
     // Create Branch
     const createBranch = async (data) => {
         try {
             setBranchCreated(true)
-            const response = await axios.post(`${api}admin/branch`, data)
+            const response = await axios.post(`${api}admin/branch`, data, header)
             if (response.status === 201) {
                 getBranches()
                 setBranchCreated(false)
@@ -123,24 +164,11 @@ const PrimaryInfo = ({ email, user, updated }) => {
         }
     }
 
-    // Get Religion
-    const getReligion = async () => {
-        try {
-            const response = await axios.get(`${api}admin/religion`)
-            setServerReligions(response.data.religions)
-            setReligionOptions(response.data.religions.map(data => ({ label: data.name, value: data.name })))
-        } catch (error) {
-            if (error) {
-                toast.warn(error.response.data.message)
-            }
-        }
-    }
-
     // Create Religion
     const createReligion = async (data) => {
         try {
             setCreateReligion(true)
-            const response = await axios.post(`${api}admin/religion`, data)
+            const response = await axios.post(`${api}admin/religion`, data, header)
             if (response.status === 201) {
                 getReligion()
                 setCreateReligion(false)
@@ -160,7 +188,7 @@ const PrimaryInfo = ({ email, user, updated }) => {
     const createSocialOrder = async (data) => {
         try {
             setCreateSocialOrder(true)
-            const response = await axios.post(`${api}admin/religion/socialorder`, data)
+            const response = await axios.post(`${api}admin/religion/socialorder`, data, header)
             if (response.status === 201) {
                 getReligion()
                 setCreateSocialOrder(false)
@@ -176,25 +204,12 @@ const PrimaryInfo = ({ email, user, updated }) => {
         }
     }
 
-    // Get Country
-    const getCountry = async () => {
-        try {
-            const response = await axios.get(`${api}admin/country`)
-            if (response.status === 200) {
-                setCountryOptions(response.data.countries.map(country => ({ label: country.name, value: country.name })))
-            }
-        } catch (error) {
-            if (error) {
-                toast.warn(error.response.data.message)
-            }
-        }
-    }
 
     // Create Country
     const createCountry = async (data) => {
         try {
             setCountryCreate(true)
-            const response = await axios.post(`${api}admin/country`, data)
+            const response = await axios.post(`${api}admin/country`, data, header)
             if (response.status === 201) {
                 getCountry()
                 setCountryCreate(false)
@@ -209,23 +224,12 @@ const PrimaryInfo = ({ email, user, updated }) => {
         }
     }
 
-    // Get Language
-    const getLanguage = async () => {
-        try {
-            const response = await axios.get(`${api}admin/language/index`)
-            if (response.status === 200) {
-                setLanguageOptions(response.data.languages.map(language => ({ label: language.name, value: language.name })))
-            }
-        } catch (error) {
-            if (error) console.log(error.response)
-        }
-    }
 
     // Create Language
     const createLanguage = async (data) => {
         try {
             setLanguageCreated(true)
-            const response = await axios.post(`${api}admin/language/store`, data)
+            const response = await axios.post(`${api}admin/language/store`, data, header)
             if (response.status === 201) {
                 getLanguage()
                 setLanguageCreated(false)
@@ -289,7 +293,7 @@ const PrimaryInfo = ({ email, user, updated }) => {
 
         try {
             setUpdate(true)
-            const response = await axios.put(`${api}admin/user/primaryinfo/update`, primaryData)
+            const response = await axios.put(`${api}admin/user/primaryinfo/update`, primaryData, header)
             if (response.status === 201) {
                 updated(true)
                 setUpdate(false)

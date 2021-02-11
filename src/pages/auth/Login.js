@@ -1,22 +1,46 @@
 import React, { useState } from 'react'
 import './style.scss'
+import axios from 'axios'
+import jwt_decode from 'jwt-decode'
+import { api } from '../../utils/api'
+import { toast } from 'react-toastify'
 import { useForm } from 'react-hook-form'
 import { Images } from '../../utils/Images'
+import 'react-toastify/dist/ReactToastify.css'
 import { Link, useHistory } from 'react-router-dom'
 
+toast.configure({ autoClose: 2000 })
 const Login = () => {
     const history = useHistory()
     const { register, handleSubmit, errors } = useForm()
     const [isLogging, setLogging] = useState(false)
+    const token = localStorage.getItem('token')
+
+    const checkRole = (token) => {
+        const decode = jwt_decode(token)
+        const role = decode.role
+        if (role === 'super_admin') {
+            return history.push('/dashboard')
+        }
+    }
+
+    if (token) return checkRole(token)
 
     // Submit Form
     const onSubmit = async (data) => {
         try {
             setLogging(true)
-            console.log(data)
-            history.push('/users')
+            const response = await axios.post(`${api}admin/auth/login`, data)
+            if (response.status === 200) {
+                localStorage.setItem('token', response.data.token)
+                checkRole(response.data.token)
+                setLogging(false)
+            }
         } catch (error) {
-            console.log(error)
+            if (error) {
+                setLogging(false)
+                toast.warn(error.response.data.message)
+            }
         }
     }
 

@@ -1,19 +1,16 @@
 import React, { useEffect, useState } from 'react'
 import './style.scss'
 import axios from 'axios'
+import Icon from 'react-icons-kit'
 import { api } from '../../utils/api'
 import { toast } from 'react-toastify'
-import 'react-toastify/dist/ReactToastify.css'
-import Icon from 'react-icons-kit'
-import { ic_add } from 'react-icons-kit/md'
 import { Form } from 'react-bootstrap'
-
+import { ic_add } from 'react-icons-kit/md'
+import 'react-toastify/dist/ReactToastify.css'
 import HobbiCreateModal from '../modal/Hobbi'
 
-import { removeItem } from '../../utils/helpers'
-
 toast.configure({ autoClose: 2000 })
-const PersonalActivities = ({ email, activities }) => {
+const PersonalActivities = ({ email, activities, header }) => {
     const [isLoading, setLoading] = useState(false)
     const [hobbies, setHobbies] = useState([])
 
@@ -43,7 +40,7 @@ const PersonalActivities = ({ email, activities }) => {
     // Fetch Hobbi
     const fetchHobbi = async () => {
         try {
-            const response = await axios.get(`${api}admin/activity/index`)
+            const response = await axios.get(`${api}admin/activity/index`, header)
             if (response.status === 200) {
                 setHobbies(response.data.activities.hobbies)
             }
@@ -58,7 +55,7 @@ const PersonalActivities = ({ email, activities }) => {
     const createHobbi = async (data) => {
         try {
             setCreated(true)
-            const response = await axios.post(`${api}admin/activity/store/hobbi`, data)
+            const response = await axios.post(`${api}admin/activity/store/hobbi`, data, header)
             if (response.status === 201) {
                 fetchHobbi()
                 setCreated(false)
