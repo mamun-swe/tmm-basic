@@ -15,8 +15,8 @@ const Index = async (req, res, next) => {
         const totalItems = await Users.countDocuments().exec();
         let results = await Users.find({}, { name: 1, email: 1, profilePicture: 1 })
             .sort({ _id: -1 })
-            .skip(parseInt(_page) * parseInt(_limit))
-            .limit(parseInt(_limit))
+            .skip(parseInt(_page ? _page : 0) * parseInt(_limit ? _limit : 36))
+            .limit(parseInt(_limit ? _limit : 36))
             .exec();
 
 

@@ -49,7 +49,7 @@ const Edit = () => {
                 toast.warn(error.response.data.message)
             }
         }
-    }, [email])
+    }, [email, header])
 
     useEffect(() => {
         fetchUser()

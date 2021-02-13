@@ -63,7 +63,7 @@ const PrimaryInfo = ({ email, user, updated, header }) => {
             setReligionOptions(response.data.religions.map(data => ({ label: data.name, value: data.name })))
         } catch (error) {
             if (error) {
-                toast.warn(error.response.data.message)
+                console.log(error.response)
             }
         }
     }, [header])
@@ -92,7 +92,7 @@ const PrimaryInfo = ({ email, user, updated, header }) => {
             }
         } catch (error) {
             if (error) {
-                toast.warn(error.response.data.message)
+                console.log(error.response)
             }
         }
     }, [header])

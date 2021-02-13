@@ -116,7 +116,7 @@ const PartnerPreference = ({ email, updated, preference, header }) => {
             setCountryOptions(response.data.countries.map(country => ({ label: country, value: country })))
         } catch (error) {
             if (error) {
-                toast.warn(error.response.data.message)
+                console.log(error.response)
             }
         }
     }, [header])
@@ -130,7 +130,7 @@ const PartnerPreference = ({ email, updated, preference, header }) => {
             }
         } catch (error) {
             if (error) {
-                toast.warn(error.response.data.message)
+                console.log(error.response)
             }
         }
     }, [header])
@@ -144,7 +144,7 @@ const PartnerPreference = ({ email, updated, preference, header }) => {
             }
         } catch (error) {
             if (error) {
-                toast.warn(error.response.data)
+                console.log(error.response)
             }
         }
     }, [header])
@@ -158,7 +158,7 @@ const PartnerPreference = ({ email, updated, preference, header }) => {
             }
         } catch (error) {
             if (error) {
-                toast.warn(error.response.data)
+                console.log(error.response)
             }
         }
     }, [header])

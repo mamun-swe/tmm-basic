@@ -11,6 +11,8 @@ import { loadC } from 'react-icons-kit/ionicons';
 import { ic_create, ic_lock } from "react-icons-kit/md";
 import InfiniteScroll from "react-infinite-scroll-component";
 
+import ErrorModal from '../../../components/errorModal/Index'
+
 const Index = () => {
     const refs = createRef();
     const history = useHistory()
@@ -22,6 +24,7 @@ const Index = () => {
     const [isLoggingOut, setLoggingOut] = useState(false)
     const [filteredUsers, setFilteredUsers] = useState(users);
     const fakeArr = [...Array(30).keys()]
+    const [isError, setError] = useState({ value: null, status: false })
     const [header] = useState({
         headers: { Authorization: "Bearer " + localStorage.getItem("token") }
     })
@@ -29,7 +32,7 @@ const Index = () => {
     // Fetch Users
     const fetchUsers = useCallback(async () => {
         try {
-            const response = await axios.get(`${api}admin/user/index?_page=${page}&_limit=36`, header);
+            const response = await axios.get(`${api}admin/user/index?_page=${page}&_limit=36`, header)
             if (response.status === 200) {
                 setUsers([
                     ...users,
@@ -43,14 +46,15 @@ const Index = () => {
             }
         } catch (error) {
             if (error) {
-                console.log(error.response);
+                setLoading(false)
+                setError({ value: error.response, status: true })
             }
         }
-    }, [page])
+    }, [page, header])
 
     useEffect(() => {
         fetchUsers()
-    }, [page, fetchUsers])
+    }, [page, header, fetchUsers])
 
     // Submit to filter user
     const onSubmit = async (data) => {
@@ -70,7 +74,7 @@ const Index = () => {
             }
         } catch (error) {
             if (error) {
-                console.log(error.response);
+                // handleError(error);
             }
         }
     };
@@ -145,6 +149,11 @@ const Index = () => {
                 </div>
             </div>
         </div>);
+    }
+
+    // Showing Error
+    if (isError.status) {
+        return (<ErrorModal message={isError.value} header={header} />)
     }
 
     return (<div className="users-index">

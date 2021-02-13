@@ -1,6 +1,7 @@
-const Admin = require('../../../../models/Admin')
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcryptjs')
+const Admin = require('../../../../models/Admin')
+const validation = require('../../../validator/AuthValidation')
 
 // Index of admin
 const Index = async (req, res, next) => {
@@ -22,6 +23,12 @@ const Index = async (req, res, next) => {
 const Register = async (req, res, next) => {
     try {
         const { name, email, password, role } = req.body
+
+        // validate check
+        const validate = await validation.RegisterValidation({ name, email, password, role })
+        if (!validate.isValid) {
+            return res.status(400).json(validate.error)
+        }
 
         // Find exist admin
         const existAdmin = await Admin.findOne({ email: email }).exec()
@@ -56,8 +63,14 @@ const Login = async (req, res, next) => {
     try {
         const { email, password } = req.body
 
+        // validate check
+        const validate = await validation.LoginValidation({ email, password })
+        if (!validate.isValid) {
+            return res.status(400).json(validate.error)
+        }
+
         // Account find using email 
-        let account = await Admin.findOne({ email }).exec()
+        const account = await Admin.findOne({ email }).exec()
 
         // Compare with password
         if (account) {
@@ -97,7 +110,7 @@ const Login = async (req, res, next) => {
             status: false,
             message: 'Invalid e-mail or password'
         })
-        
+
     } catch (error) {
         if (error) next(error)
     }
