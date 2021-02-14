@@ -7,11 +7,11 @@ const fileUpload = require("express-fileupload");
 
 const app = express();
 app.use(morgan("dev"));
-app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(cors());
 app.use(fileUpload());
-app.use(express.json({limit: "50mb"}));
+app.use(express.json({ limit: "50mb" }));
 
 // use static files folder
 app.use("/uploads/blur", express.static("uploads/blur/"));
@@ -31,12 +31,12 @@ app.use((req, res, next) => {
 
 app.use((error, req, res, next) => {
     if (error.status == 404) {
-        return res.status(404).json({message: error.message});
+        return res.status(404).json({ message: error.message });
     }
     if (error.status == 400) {
-        return res.status(400).json({message: "Bad request"});
+        return res.status(400).json({ message: "Bad request" });
     }
-    return res.status(500).json({message: "Internal Server Error"});
+    return res.status(500).json({ message: "Internal Server Error" });
 });
 
 app.get("/", (req, res) => {
@@ -44,8 +44,8 @@ app.get("/", (req, res) => {
 });
 
 // DB Connection
-mongoose.connect('mongodb://localhost:27017/tmm', {
-// mongoose.connect('mongodb+srv://mamun166009:1118964208@cluster0-lkz2b.mongodb.net/mytmm?retryWrites=true&w=majority', {
+// mongoose.connect('mongodb://localhost:27017/tmm', {
+mongoose.connect('mongodb+srv://mamun166009:1118964208@cluster0-lkz2b.mongodb.net/mytmm?retryWrites=true&w=majority', {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useCreateIndex: true,

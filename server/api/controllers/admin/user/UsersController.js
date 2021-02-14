@@ -520,7 +520,10 @@ const PartnerPreferenceData = async (req, res, next) => {
             languages: languageResults
         })
     } catch (error) {
-        if (error) next(error)
+        if (error) {
+            console.log(error)
+            next(error)
+        }
     }
 }
 
@@ -536,12 +539,3 @@ module.exports = {
     UpdateActivities,
     PartnerPreferenceData
 };
-
-// Update field name
-// db.users.update({"country": {$exists: true}}, {$rename: {"country": "livingCountry"}}, false, true)
-
-// Drop Field
-// db.users.update({}, {$unset: {livingCountry:1}}, false, true)
-
-// Create Field
-// db.collection.update({ defaulted: { $exists: false }},{ $set: { defaulted: 0 }},{ multi: true })
