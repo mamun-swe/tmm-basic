@@ -328,8 +328,6 @@ const UpdateActivities = async (req, res, next) => {
                 if (!email && !hobbies.length)
                     return res.status(501).json({ status: false, message: "Internat server error" });
 
-
-
                 // Find a user
                 const user = await Users.findOne({ email: email }).exec();
                 if (!user) {
@@ -337,30 +335,22 @@ const UpdateActivities = async (req, res, next) => {
                 }
 
                 // Save Hobbies
-                const saveHobbi = Users.findOneAndUpdate({
-                    email: email
-                }, {
-                    $set: {
-                        personalActivities: {
-                            hobbies: hobbies
-                        }
-                    }
-                }, { new: true }).exec();
+                const saveHobbi = Users.findOneAndUpdate(
+                    { email: email },
+                    {
+                        $set: { "personalActivities.hobbies": hobbies }
+                    }, { new: true }).exec();
 
                 // Send success message
                 if (saveHobbi) {
                     return res.status(201).json({ message: "Successfully hobbies saved" });
                 }
 
-            // return res.status(200).json(hobbies)
-
             // Interest
             case "interests":
                 // Check email & Interests
                 if (!email && !interests.length)
                     return res.status(501).json({ status: false, message: "Internat server error" });
-
-
 
                 // Find a user
                 const interestsUser = await Users.findOne({ email: email }).exec();
@@ -369,15 +359,11 @@ const UpdateActivities = async (req, res, next) => {
                 }
 
                 // Save interests
-                const saveinterests = Users.findOneAndUpdate({
-                    email: email
-                }, {
-                    $set: {
-                        personalActivities: {
-                            interests: interests
-                        }
-                    }
-                }, { new: true }).exec();
+                const saveinterests = Users.findOneAndUpdate(
+                    { email: email },
+                    {
+                        $set: { "personalActivities.interests": interests }
+                    }, { new: true }).exec();
 
                 // Send success message
                 if (saveinterests) {
@@ -389,8 +375,6 @@ const UpdateActivities = async (req, res, next) => {
                 if (!email && !favouriteMusic.length)
                     return res.status(501).json({ status: false, message: "Internat server error" });
 
-
-
                 // Find a user
                 const favouriteMusicUser = await Users.findOne({ email: email }).exec();
                 if (!favouriteMusicUser) {
@@ -398,14 +382,11 @@ const UpdateActivities = async (req, res, next) => {
                 }
 
                 // Save Favourite Music
-                const saveFavouriteMusic = Users.findOneAndUpdate({
-                    email: email
-                }, {
-                    $set: {
-                        personalActivities: {
-                            favouriteMusic: favouriteMusic
-                        }
-                    }
+                const saveFavouriteMusic = Users.findOneAndUpdate(
+                    {
+                        email: email
+                    }, {
+                    $set: { "personalActivities.favouriteMusic": favouriteMusic }
                 }, { new: true }).exec();
 
                 // Send success message
@@ -428,11 +409,7 @@ const UpdateActivities = async (req, res, next) => {
                 const saveFavouriteReads = Users.findOneAndUpdate({
                     email: email
                 }, {
-                    $set: {
-                        personalActivities: {
-                            favouriteReads: favouriteReads
-                        }
-                    }
+                    $set: { "personalActivities.favouriteReads": favouriteReads }
                 }, { new: true }).exec();
 
                 // Send success message
@@ -456,19 +433,13 @@ const UpdateActivities = async (req, res, next) => {
                 const savepreferredMovies = Users.findOneAndUpdate({
                     email: email
                 }, {
-                    $set: {
-                        personalActivities: {
-                            preferredMovies: preferredMovies
-                        }
-                    }
+                    $set: { "personalActivities.preferredMovies": preferredMovies }
                 }, { new: true }).exec();
 
                 // Send success message
                 if (savepreferredMovies) {
                     return res.status(201).json({ message: "Successfully Preferred Movies saved" });
                 }
-
-            // return res.status(200).json(field);
 
             case "sports":
                 // Check email & Interests
@@ -486,11 +457,7 @@ const UpdateActivities = async (req, res, next) => {
                 const savesports = Users.findOneAndUpdate({
                     email: email
                 }, {
-                    $set: {
-                        personalActivities: {
-                            sports: sports
-                        }
-                    }
+                    $set: { "personalActivities.sports": sports }
                 }, { new: true }).exec();
 
                 // Send success message
@@ -514,11 +481,7 @@ const UpdateActivities = async (req, res, next) => {
                 const savesFavouriteCuisine = Users.findOneAndUpdate({
                     email: email
                 }, {
-                    $set: {
-                        personalActivities: {
-                            favouriteCuisine: favouriteCuisine
-                        }
-                    }
+                    $set: { "personalActivities.favouriteCuisine": favouriteCuisine }
                 }, { new: true }).exec();
 
                 // Send success message

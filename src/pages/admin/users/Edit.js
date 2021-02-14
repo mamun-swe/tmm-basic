@@ -4,10 +4,10 @@ import axios from 'axios'
 import Icon from "react-icons-kit"
 import { toast } from 'react-toastify'
 import { api } from '../../../utils/api'
-import { ic_lock } from 'react-icons-kit/md'
 import 'react-toastify/dist/ReactToastify.css'
 import { Images } from '../../../utils/Images'
 import { loadC } from 'react-icons-kit/ionicons'
+import { ic_lock } from 'react-icons-kit/md'
 import { Link, useHistory, useParams } from 'react-router-dom'
 
 import PrimaryInfoForm from '../../../components/forms/PrimaryInfo'
@@ -17,6 +17,8 @@ import ContactInfoCreateForm from '../../../components/forms/ContactInformation'
 import HobbiForm from '../../../components/forms/Hobbi'
 import InterestForm from '../../../components/forms/Interests'
 import MusicForm from '../../../components/forms/FavouriteMusic'
+import ReadsForm from '../../../components/forms/FavouriteRead'
+import MovieForm from '../../../components/forms/PrefferedMovies'
 import PartnerPreferenceForm from '../../../components/forms/PartnerPreference'
 
 import GhostLoader from '../../../components/ghostLoader/Index'
@@ -37,15 +39,14 @@ const Edit = () => {
         try {
             const response = await axios.get(`${api}admin/user/show/${email}`, header)
             if (response.status === 200) {
-                setUser(response.data.user)
                 // console.log(response.data.user)
+                setUser(response.data.user)
                 setTimeout(() => {
                     setLoading(false)
                 }, 2000)
             }
         } catch (error) {
             if (error) {
-                console.log(error.response)
                 toast.warn(error.response.data.message)
             }
         }
@@ -161,12 +162,38 @@ const Edit = () => {
 
                         {/* Interests create form */}
                         <div className="col-12 col-lg-6 pl-lg-4 border-bottom pb-4 mb-4">
-                            <InterestForm email={email} header={header} />
+                            <InterestForm
+                                email={email}
+                                header={header}
+                                activities={user.personalActivities ? user.personalActivities : null}
+                            />
                         </div>
 
                         {/* Music create form */}
                         <div className="col-12 col-lg-6 pl-lg-4 border-bottom pb-4 mb-4">
-                            <MusicForm email={email} header={header} />
+                            <MusicForm
+                                email={email}
+                                header={header}
+                                activities={user.personalActivities ? user.personalActivities : null}
+                            />
+                        </div>
+
+                        {/* Read create form */}
+                        <div className="col-12 col-lg-6 pl-lg-4 border-bottom pb-4 mb-4">
+                            <ReadsForm
+                                email={email}
+                                header={header}
+                                activities={user.personalActivities ? user.personalActivities : null}
+                            />
+                        </div>
+
+                        {/* Movie create form */}
+                        <div className="col-12 col-lg-6 pl-lg-4 border-bottom pb-4 mb-4">
+                            <MovieForm
+                                email={email}
+                                header={header}
+                                activities={user.personalActivities ? user.personalActivities : null}
+                            />
                         </div>
 
                     </div>
@@ -176,9 +203,9 @@ const Edit = () => {
             {/* Partner preference */}
             <PartnerPreferenceForm
                 email={email}
+                header={header}
                 updated={reFetch}
                 preference={user.partnerPreference}
-                header={header}
             />
 
 
@@ -192,6 +219,7 @@ const Edit = () => {
                     <Icon icon={ic_lock} size={20} />
                 </button>
             }
+
         </div>);
 }
 

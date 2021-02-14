@@ -63,7 +63,15 @@ const PrimaryInfo = ({ email, user, updated, header }) => {
             setReligionOptions(response.data.religions.map(data => ({ label: data.name, value: data.name })))
         } catch (error) {
             if (error) {
-                console.log(error.response)
+                toast.error(`${error.response.data.message}`, {
+                    position: "bottom-right",
+                    autoClose: false,
+                    hideProgressBar: true,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                })
             }
         }
     }, [header])
@@ -77,7 +85,15 @@ const PrimaryInfo = ({ email, user, updated, header }) => {
             }
         } catch (error) {
             if (error) {
-                console.log(error.response)
+                toast.error(`${error.response.data.message}`, {
+                    position: "bottom-right",
+                    autoClose: false,
+                    hideProgressBar: true,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                })
             }
         }
     }, [header])
@@ -92,7 +108,15 @@ const PrimaryInfo = ({ email, user, updated, header }) => {
             }
         } catch (error) {
             if (error) {
-                console.log(error.response)
+                toast.error(`${error.response.data.message}`, {
+                    position: "bottom-right",
+                    autoClose: false,
+                    hideProgressBar: true,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                })
             }
         }
     }, [header])
@@ -106,7 +130,17 @@ const PrimaryInfo = ({ email, user, updated, header }) => {
                 setLanguageOptions(response.data.languages.map(language => ({ label: language.name, value: language.name })))
             }
         } catch (error) {
-            if (error) console.log(error.response)
+            if (error) {
+                toast.error(`${error.response.data.message}`, {
+                    position: "bottom-right",
+                    autoClose: false,
+                    hideProgressBar: true,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                })
+            }
         }
     }, [header])
 

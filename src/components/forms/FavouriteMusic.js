@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import './style.scss'
 import axios from 'axios'
 import { api } from '../../utils/api'
@@ -11,34 +11,20 @@ import 'react-toastify/dist/ReactToastify.css'
 import MusicCreateModal from '../modal/Music'
 
 toast.configure({ autoClose: 2000 })
-const FavouriteMusic = ({ email, header }) => {
-    // const [isLoading, setLoading] = useState(false)
+const FavouriteMusic = ({ email, header, activities }) => {
+    const [isLoading, setLoading] = useState(false)
     const [musics, setMusics] = useState([])
 
     // Input states
     const [selectedMusics, setSelectedMusics] = useState([])
+    const [isEmpty, setEmpty] = useState(false)
 
     // Interest create states
     const [show, setShow] = useState(false)
     const [created, setCreated] = useState(false)
 
-    useEffect(() => {
-        fetchMusics()
-    }, [])
-
-    // Handle musics
-    const handleMusic = event => {
-        const newMusic = event.target.value
-        const exMusic = selectedMusics.find((music) => music === newMusic)
-        if (exMusic) {
-            const newArr = selectedMusics.filter(e => e !== newMusic)
-            return setSelectedMusics(newArr)
-        }
-        setSelectedMusics([...selectedMusics, newMusic])
-    }
-
     // Fetch mesics
-    const fetchMusics = async () => {
+    const fetchMusics = useCallback(async () => {
         try {
             const response = await axios.get(`${api}admin/activity/index`, header)
             if (response.status === 200) {
@@ -46,10 +32,26 @@ const FavouriteMusic = ({ email, header }) => {
             }
         } catch (error) {
             if (error) {
-                console.log(error.response)
+                if (error) {
+                    toast.error(`${error.response.data.message}`, {
+                        position: "bottom-right",
+                        autoClose: false,
+                        hideProgressBar: true,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                    })
+                }
             }
         }
-    }
+    }, [header])
+
+    useEffect(() => {
+        fetchMusics()
+        setSelectedMusics(activities.favouriteMusic)
+    }, [header, fetchMusics])
+
 
     // Create Music
     const createMusic = async (data) => {
@@ -70,10 +72,50 @@ const FavouriteMusic = ({ email, header }) => {
         }
     }
 
+    // Active sellected options
+    const checkedMusics = music => {
+        if (activities) {
+            const activity = activities.favouriteMusic.find(data => data === music)
+            if (activity)
+                return activity
+            return false
+        }
+    }
 
-    // Check states
-    const checkState = () => {
-        console.log(selectedMusics)
+    // Handle checkbox with toggle
+    const toggleCheckbox = event => {
+        const item = event.target
+
+        if (item.checked === true) {
+            setSelectedMusics([...selectedMusics, item.value])
+            setEmpty(false)
+        } else {
+            const findItem = selectedMusics.filter(e => e !== item.value)
+            setSelectedMusics([])
+            setSelectedMusics(findItem)
+        }
+    }
+
+
+
+    // Add music
+    const addMusic = async () => {
+        try {
+            if (!selectedMusics.length) return setEmpty(true)
+            const data = { email: email, favouriteMusic: selectedMusics }
+
+            setLoading(true)
+            const response = await axios.put(`${api}admin/user/profile/activity?field=favouriteMusic`, data, header)
+            if (response.status === 201) {
+                setLoading(false)
+                toast.success(response.data.message)
+            }
+        } catch (error) {
+            if (error) {
+                setLoading(false)
+                toast.warn(error.response.data.message)
+            }
+        }
     }
 
     return (
@@ -90,7 +132,11 @@ const FavouriteMusic = ({ email, header }) => {
                         <Icon icon={ic_add} size={22} />
                     </button>
                 </div>
-                <div ><p className="section-title">Favourite Music</p></div>
+                <div >
+                    <p className="section-title">
+                        {isEmpty ? <span className="text-danger">Select music first</span> : <span>Favourite Music</span>}
+                    </p>
+                </div>
             </div>
 
             {/* Section body */}
@@ -98,12 +144,13 @@ const FavouriteMusic = ({ email, header }) => {
                 <div className="row">
                     {musics && musics.map((music, i) =>
                         <div className="col-6 col-sm-4 col-md-3" key={i}>
-                            <Form.Group controlId={i}>
+                            <Form.Group controlId={music}>
                                 <Form.Check
                                     type="checkbox"
                                     label={music}
                                     value={music}
-                                    onChange={handleMusic}
+                                    onChange={toggleCheckbox}
+                                    defaultChecked={checkedMusics(music)}
                                 />
                             </Form.Group>
                         </div>
@@ -111,7 +158,9 @@ const FavouriteMusic = ({ email, header }) => {
 
                     {musics && musics.length ?
                         <div className="col-12 text-right">
-                            <button type="button" className="btn shadow-none" onClick={checkState}>Add Music</button>
+                            <button type="button" className="btn shadow-none" onClick={addMusic}>
+                                {isLoading ? 'Adding...' : 'Add Music'}
+                            </button>
                         </div>
                         : null}
                 </div>

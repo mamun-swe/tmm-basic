@@ -44,7 +44,8 @@ app.get("/", (req, res) => {
 });
 
 // DB Connection
-mongoose.connect('mongodb+srv://mamun166009:1118964208@cluster0-lkz2b.mongodb.net/mytmm?retryWrites=true&w=majority', {
+mongoose.connect('mongodb://localhost:27017/tmm', {
+// mongoose.connect('mongodb+srv://mamun166009:1118964208@cluster0-lkz2b.mongodb.net/mytmm?retryWrites=true&w=majority', {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useCreateIndex: true,

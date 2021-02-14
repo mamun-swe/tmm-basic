@@ -106,7 +106,7 @@ const PartnerPreference = ({ email, updated, preference, header }) => {
         { label: 'Physical disability', value: 'physical disability' }
     ]
 
-    // Get Religion
+    // Get partner preference
     const getPartnerPreferenceInfo = useCallback(async () => {
         try {
             const response = await axios.get(`${api}admin/user/partner-preference/info`, header)
@@ -130,7 +130,17 @@ const PartnerPreference = ({ email, updated, preference, header }) => {
             }
         } catch (error) {
             if (error) {
-                console.log(error.response)
+                if (error) {
+                    toast.error(`${error.response.data.message}`, {
+                        position: "bottom-right",
+                        autoClose: false,
+                        hideProgressBar: true,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                    })
+                }
             }
         }
     }, [header])
@@ -144,7 +154,17 @@ const PartnerPreference = ({ email, updated, preference, header }) => {
             }
         } catch (error) {
             if (error) {
-                console.log(error.response)
+                if (error) {
+                    toast.error(`${error.response.data.message}`, {
+                        position: "bottom-right",
+                        autoClose: false,
+                        hideProgressBar: true,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                    })
+                }
             }
         }
     }, [header])
@@ -158,7 +178,17 @@ const PartnerPreference = ({ email, updated, preference, header }) => {
             }
         } catch (error) {
             if (error) {
-                console.log(error.response)
+                if (error) {
+                    toast.error(`${error.response.data.message}`, {
+                        position: "bottom-right",
+                        autoClose: false,
+                        hideProgressBar: true,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                    })
+                }
             }
         }
     }, [header])

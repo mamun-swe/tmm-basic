@@ -150,9 +150,96 @@ const StoreMusic = async (req, res, next) => {
     }
 }
 
+// Store Read
+const StoreRead = async (req, res, next) => {
+    try {
+        const { readTitle } = req.body
+
+        // Check activity avilable or not
+        const exitActivity = await Activity.find().limit(1).exec()
+
+        if (!exitActivity.length) {
+            const newActivity = new Activity({
+                reads: readTitle
+            })
+
+            await newActivity.save()
+            return res.status(201).json({
+                status: true,
+                message: `${readTitle} created.`
+            })
+        }
+
+        // Activity already saved
+        const checkMusic = exitActivity[0].reads.find(title => title.toLowerCase() === readTitle.toLowerCase())
+        if (checkMusic) {
+            return res.status(409).json({
+                status: false,
+                message: `${readTitle} already created`
+            })
+        }
+
+        // Update reads
+        const updateRead = await exitActivity[0].update({ $push: { reads: readTitle } }, { new: true }).exec()
+        if (updateRead) {
+            return res.status(201).json({
+                status: true,
+                message: `${readTitle} created.`
+            })
+        }
+    } catch (error) {
+        if (error) next(error)
+    }
+}
+
+// Store Movie
+const StoreMovie = async (req, res, next) => {
+    try {
+        const { movieType } = req.body
+
+        // Check activity avilable or not
+        const exitActivity = await Activity.find().limit(1).exec()
+
+        if (!exitActivity.length) {
+            const newActivity = new Activity({
+                movies: movieType
+            })
+
+            await newActivity.save()
+            return res.status(201).json({
+                status: true,
+                message: `${movieType} created.`
+            })
+        }
+
+        // Activity already saved
+        const checkMusic = exitActivity[0].movies.find(title => title.toLowerCase() === movieType.toLowerCase())
+        if (checkMusic) {
+            return res.status(409).json({
+                status: false,
+                message: `${movieType} already created`
+            })
+        }
+
+        // Update movies
+        const updateMovie = await exitActivity[0].update({ $push: { movies: movieType } }, { new: true }).exec()
+        if (updateMovie) {
+            return res.status(201).json({
+                status: true,
+                message: `${movieType} created.`
+            })
+        }
+    } catch (error) {
+        if (error) next(error)
+    }
+}
+
+
 module.exports = {
     Index,
     StoreHobbi,
     StoreInterest,
-    StoreMusic
+    StoreMusic,
+    StoreRead,
+    StoreMovie
 }

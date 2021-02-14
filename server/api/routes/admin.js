@@ -60,6 +60,8 @@ router.get("/activity/index", Permission.isAdmin, ActivityController.Index);
 router.post("/activity/store/hobbi", Permission.isAdmin, ActivityController.StoreHobbi);
 router.post("/activity/store/interest", Permission.isAdmin, ActivityController.StoreInterest);
 router.post("/activity/store/music", Permission.isAdmin, ActivityController.StoreMusic);
+router.post("/activity/store/read", Permission.isAdmin, ActivityController.StoreRead);
+router.post("/activity/store/movie", Permission.isAdmin, ActivityController.StoreMovie);
 
 // Partner preference 
 router.post("/partnerpreference/create", PartnerPreferenceController.Create)

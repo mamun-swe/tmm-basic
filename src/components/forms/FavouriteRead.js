@@ -1,33 +1,34 @@
 import React, { useEffect, useState, useCallback } from 'react'
 import './style.scss'
 import axios from 'axios'
-import Icon from 'react-icons-kit'
 import { api } from '../../utils/api'
 import { toast } from 'react-toastify'
+import Icon from 'react-icons-kit'
 import { Form } from 'react-bootstrap'
 import { ic_add } from 'react-icons-kit/md'
 import 'react-toastify/dist/ReactToastify.css'
-import HobbiCreateModal from '../modal/Hobbi'
+
+import ReadCreateModal from '../modal/Read'
 
 toast.configure({ autoClose: 2000 })
-const PersonalActivities = ({ email, activities, header }) => {
+const FavouriteRead = ({ email, header, activities }) => {
     const [isLoading, setLoading] = useState(false)
-    const [hobbies, setHobbies] = useState([])
+    const [reads, setReads] = useState([])
 
     // Input states
-    const [selectedHobbies, setSelectedHobbies] = useState([])
+    const [selectedReads, setSelectedReads] = useState([])
     const [isEmpty, setEmpty] = useState(false)
 
-    // Hobbi create states
+    // Interest create states
     const [show, setShow] = useState(false)
     const [created, setCreated] = useState(false)
 
-    // Fetch Hobbi
-    const fetchHobbi = useCallback(async () => {
+    // Fetch reads
+    const getReads = useCallback(async () => {
         try {
             const response = await axios.get(`${api}admin/activity/index`, header)
             if (response.status === 200) {
-                setHobbies(response.data.activities.hobbies)
+                setReads(response.data.activities.reads)
             }
         } catch (error) {
             if (error) {
@@ -47,17 +48,18 @@ const PersonalActivities = ({ email, activities, header }) => {
     }, [header])
 
     useEffect(() => {
-        fetchHobbi()
-        setSelectedHobbies(activities.hobbies)
-    }, [header, fetchHobbi])
+        getReads()
+        setSelectedReads(activities.favouriteReads)
+    }, [header, getReads])
 
-    // Create Hobbi
-    const createHobbi = async (data) => {
+
+    // Create Read
+    const createRead = async (data) => {
         try {
             setCreated(true)
-            const response = await axios.post(`${api}admin/activity/store/hobbi`, data, header)
+            const response = await axios.post(`${api}admin/activity/store/read`, data, header)
             if (response.status === 201) {
-                fetchHobbi()
+                getReads()
                 setCreated(false)
                 setShow(false)
                 toast.success(response.data.message)
@@ -71,9 +73,9 @@ const PersonalActivities = ({ email, activities, header }) => {
     }
 
     // Active sellected options
-    const checkedHobbi = hobbi => {
+    const checkedReads = read => {
         if (activities) {
-            const activity = activities.hobbies.find(data => data === hobbi)
+            const activity = activities.favouriteReads.find(data => data === read)
             if (activity)
                 return activity
             return false
@@ -85,22 +87,25 @@ const PersonalActivities = ({ email, activities, header }) => {
         const item = event.target
 
         if (item.checked === true) {
-            setSelectedHobbies([...selectedHobbies, item.value])
+            setSelectedReads([...selectedReads, item.value])
+            setEmpty(false)
         } else {
-            const findItem = selectedHobbies.filter(e => e !== item.value)
-            setSelectedHobbies([])
-            setSelectedHobbies(findItem)
+            const findItem = selectedReads.filter(e => e !== item.value)
+            setSelectedReads([])
+            setSelectedReads(findItem)
         }
     }
 
-    // Add hobbi
-    const addHobbi = async () => {
+
+
+    // Add read
+    const addRead = async () => {
         try {
-            if (!selectedHobbies.length) return setEmpty(true)
-            const data = { email: email, hobbies: selectedHobbies }
+            if (!selectedReads.length) return setEmpty(true)
+            const data = { email: email, favouriteReads: selectedReads }
 
             setLoading(true)
-            const response = await axios.put(`${api}admin/user/profile/activity?field=hobbies`, data, header)
+            const response = await axios.put(`${api}admin/user/profile/activity?field=favouriteReads`, data, header)
             if (response.status === 201) {
                 setLoading(false)
                 toast.success(response.data.message)
@@ -112,7 +117,6 @@ const PersonalActivities = ({ email, activities, header }) => {
             }
         }
     }
-
 
     return (
         <div className="section">
@@ -128,9 +132,9 @@ const PersonalActivities = ({ email, activities, header }) => {
                         <Icon icon={ic_add} size={22} />
                     </button>
                 </div>
-                <div>
+                <div >
                     <p className="section-title">
-                        {isEmpty ? <span className="text-danger">Please select hobbies</span> : <span>Hobbies</span>}
+                        {isEmpty ? <span className="text-danger">Select first</span> : <span>Favourite Reads</span>}
                     </p>
                 </div>
             </div>
@@ -138,24 +142,24 @@ const PersonalActivities = ({ email, activities, header }) => {
             {/* Section body */}
             <div className="section-body">
                 <div className="row">
-                    {hobbies && hobbies.map((hobbie, i) =>
+                    {reads && reads.map((read, i) =>
                         <div className="col-6 col-sm-4 col-md-3" key={i}>
-                            <Form.Group controlId={i}>
+                            <Form.Group controlId={read}>
                                 <Form.Check
                                     type="checkbox"
-                                    label={hobbie}
-                                    value={hobbie}
+                                    label={read}
+                                    value={read}
                                     onChange={toggleCheckbox}
-                                    defaultChecked={checkedHobbi(hobbie)}
+                                    defaultChecked={checkedReads(read)}
                                 />
                             </Form.Group>
                         </div>
                     )}
 
-                    {hobbies && hobbies.length ?
+                    {reads && reads.length ?
                         <div className="col-12 text-right">
-                            <button type="button" className="btn shadow-none" onClick={addHobbi} disabled={isLoading}>
-                                {isLoading ? 'Adding...' : 'Add Hobbies'}
+                            <button type="button" className="btn shadow-none" onClick={addRead}>
+                                {isLoading ? 'Adding...' : 'Add Read'}
                             </button>
                         </div>
                         : null}
@@ -163,11 +167,11 @@ const PersonalActivities = ({ email, activities, header }) => {
             </div>
 
             {/* Modals */}
-            {/* Hobbi Create */}
+            {/* Interest Create */}
             {show ?
-                <HobbiCreateModal
+                <ReadCreateModal
                     show={show}
-                    newdata={createHobbi}
+                    newdata={createRead}
                     isCreate={created}
                     onHide={() => setShow(false)}
                 />
@@ -176,8 +180,7 @@ const PersonalActivities = ({ email, activities, header }) => {
     );
 }
 
-export default PersonalActivities;
-
+export default FavouriteRead;
 const customStyles = {
     smBtn: {
         width: 33,
