@@ -120,6 +120,25 @@
     }
 }
 
+// Create User
+.create-user {
+    .card {
+        border-radius: 6px;
+        overflow: hidden;
+
+        .card-header {
+            p {
+                font-size: 14px;
+            }
+
+            .btn {
+                padding: 4px;
+                background: #dfdfdf;
+            }
+        }
+    }
+}
+
 // Edit
 .user-edit {
     padding: 0px;
