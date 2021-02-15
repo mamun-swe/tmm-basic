@@ -16,8 +16,6 @@ function App() {
           <Switch>
             <Route exact path="/" component={LoginPage} />
 
-            {/* <Route path="/dashboard" component={AdminMaster} /> */}
-
             {/* Admin master page */}
             <PrivateRoute path="/dashboard" role="super_admin">
               <AdminMaster />

@@ -8,58 +8,56 @@ import { Form } from 'react-bootstrap'
 import { ic_add } from 'react-icons-kit/md'
 import 'react-toastify/dist/ReactToastify.css'
 
-import ReadCreateModal from '../modal/Read'
+import SportCreateModal from '../modal/Sport'
 
 toast.configure({ autoClose: 2000 })
-const FavouriteRead = ({ email, header, activities }) => {
+const FavouriteSports = ({ email, header, activities }) => {
     const [isLoading, setLoading] = useState(false)
-    const [reads, setReads] = useState([])
+    const [sports, setSports] = useState([])
 
     // Input states
-    const [selectedReads, setSelectedReads] = useState([])
+    const [selectedSports, setSelectedSports] = useState([])
     const [isEmpty, setEmpty] = useState(false)
 
     // Interest create states
     const [show, setShow] = useState(false)
     const [created, setCreated] = useState(false)
 
-    // Fetch reads
-    const getReads = useCallback(async () => {
+    // get sports
+    const getSports = useCallback(async () => {
         try {
             const response = await axios.get(`${api}admin/activity/index`, header)
             if (response.status === 200) {
-                setReads(response.data.activities.reads)
+                setSports(response.data.activities.sports)
             }
         } catch (error) {
             if (error) {
-                if (error) {
-                    toast.error(`${error.response.data.message}`, {
-                        position: "bottom-right",
-                        autoClose: false,
-                        hideProgressBar: true,
-                        closeOnClick: true,
-                        pauseOnHover: true,
-                        draggable: true,
-                        progress: undefined,
-                    })
-                }
+                toast.error(`${error.response.data.message}`, {
+                    position: "bottom-right",
+                    autoClose: false,
+                    hideProgressBar: true,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                })
             }
         }
     }, [header])
 
     useEffect(() => {
-        getReads()
-        setSelectedReads(activities.favouriteReads)
-    }, [header, getReads])
+        getSports()
+        setSelectedSports(activities.sports)
+    }, [header, getSports])
 
 
-    // Create Read
-    const createRead = async (data) => {
+    // Create Sport
+    const createSport = async (data) => {
         try {
             setCreated(true)
-            const response = await axios.post(`${api}admin/activity/store/read`, data, header)
+            const response = await axios.post(`${api}admin/activity/store/sport`, data, header)
             if (response.status === 201) {
-                getReads()
+                getSports()
                 setCreated(false)
                 setShow(false)
                 toast.success(response.data.message)
@@ -73,9 +71,9 @@ const FavouriteRead = ({ email, header, activities }) => {
     }
 
     // Active sellected options
-    const checkedReads = read => {
+    const checkedSports = read => {
         if (activities) {
-            const activity = activities.favouriteReads.find(data => data === read)
+            const activity = activities.sports.find(data => data === read)
             if (activity)
                 return activity
             return false
@@ -87,25 +85,23 @@ const FavouriteRead = ({ email, header, activities }) => {
         const item = event.target
 
         if (item.checked === true) {
-            setSelectedReads([...selectedReads, item.value])
+            setSelectedSports([...selectedSports, item.value])
             setEmpty(false)
         } else {
-            const findItem = selectedReads.filter(e => e !== item.value)
-            setSelectedReads([])
-            setSelectedReads(findItem)
+            const findItem = selectedSports.filter(e => e !== item.value)
+            setSelectedSports([])
+            setSelectedSports(findItem)
         }
     }
 
-
-
-    // Add read
-    const addRead = async () => {
+    // Add sport
+    const addFavouriteSport = async () => {
         try {
-            if (!selectedReads.length) return setEmpty(true)
-            const data = { email: email, favouriteReads: selectedReads }
+            if (!selectedSports.length) return setEmpty(true)
+            const data = { email: email, sports: selectedSports }
 
             setLoading(true)
-            const response = await axios.put(`${api}admin/user/profile/activity?field=favouriteReads`, data, header)
+            const response = await axios.put(`${api}admin/user/profile/activity?field=sports`, data, header)
             if (response.status === 201) {
                 setLoading(false)
                 toast.success(response.data.message)
@@ -134,7 +130,7 @@ const FavouriteRead = ({ email, header, activities }) => {
                 </div>
                 <div >
                     <p className="section-title">
-                        {isEmpty ? <span className="text-danger">Select first</span> : <span>Favourite Reads</span>}
+                        {isEmpty ? <span className="text-danger">Select first</span> : <span>Favourite sports</span>}
                     </p>
                 </div>
             </div>
@@ -142,7 +138,7 @@ const FavouriteRead = ({ email, header, activities }) => {
             {/* Section body */}
             <div className="section-body">
                 <div className="row">
-                    {reads && reads.map((read, i) =>
+                    {sports && sports.map((read, i) =>
                         <div className="col-6 col-sm-4 col-md-3" key={i}>
                             <Form.Group controlId={read}>
                                 <Form.Check
@@ -150,16 +146,16 @@ const FavouriteRead = ({ email, header, activities }) => {
                                     label={read}
                                     value={read}
                                     onChange={toggleCheckbox}
-                                    defaultChecked={checkedReads(read)}
+                                    defaultChecked={checkedSports(read)}
                                 />
                             </Form.Group>
                         </div>
                     )}
 
-                    {reads && reads.length ?
+                    {sports && sports.length ?
                         <div className="col-12 text-right">
-                            <button type="button" className="btn shadow-none" onClick={addRead} disabled={isLoading}>
-                                {isLoading ? 'Adding...' : 'Add Read'}
+                            <button type="button" className="btn shadow-none" onClick={addFavouriteSport} disabled={isLoading}>
+                                {isLoading ? 'Adding...' : 'Add sports'}
                             </button>
                         </div>
                         : null}
@@ -169,9 +165,9 @@ const FavouriteRead = ({ email, header, activities }) => {
             {/* Modals */}
             {/* Interest Create */}
             {show ?
-                <ReadCreateModal
+                <SportCreateModal
                     show={show}
-                    newdata={createRead}
+                    newdata={createSport}
                     isCreate={created}
                     onHide={() => setShow(false)}
                 />
@@ -180,7 +176,7 @@ const FavouriteRead = ({ email, header, activities }) => {
     );
 }
 
-export default FavouriteRead;
+export default FavouriteSports;
 const customStyles = {
     smBtn: {
         width: 33,

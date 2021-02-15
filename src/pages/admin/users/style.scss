@@ -178,6 +178,21 @@
     }
 }
 
+// Float add button
+.float-add-btn {
+    top: 10px;
+    right: 10px;
+    position: fixed;
+    padding: 8px 9px !important;
+    color: #fff !important;
+    background: $theme-color !important;
+
+    @media (min-width: 992px) {
+        top: 20px;
+        right: 20px;
+    }
+}
+
 // Float logout button
 .float-logout-btn {
     right: 10px;

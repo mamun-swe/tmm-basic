@@ -8,7 +8,7 @@ import { api } from "../../../utils/api";
 import { Images } from "../../../utils/Images";
 import Skeleton from "react-loading-skeleton";
 import { loadC } from 'react-icons-kit/ionicons';
-import { ic_create, ic_lock } from "react-icons-kit/md";
+import { ic_create, ic_lock, ic_add } from "react-icons-kit/md";
 import InfiniteScroll from "react-infinite-scroll-component";
 
 import ErrorModal from '../../../components/errorModal/Index'
@@ -227,6 +227,13 @@ const Index = () => {
                 </div>
             </div>
         </div>
+
+        {/* Float add button */}
+        <Link
+            to="/dashboard/create"
+            type="button"
+            className="btn float-add-btn shadow-lg rounded-circle"
+        ><Icon icon={ic_add} size={22} /></Link>
 
         {/* Float logout button */}
         {isLoggingOut ? <Icon icon={loadC} className="spin" size={40} /> :

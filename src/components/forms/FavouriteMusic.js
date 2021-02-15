@@ -158,7 +158,7 @@ const FavouriteMusic = ({ email, header, activities }) => {
 
                     {musics && musics.length ?
                         <div className="col-12 text-right">
-                            <button type="button" className="btn shadow-none" onClick={addMusic}>
+                            <button type="button" className="btn shadow-none" onClick={addMusic} disabled={isLoading}>
                                 {isLoading ? 'Adding...' : 'Add Music'}
                             </button>
                         </div>

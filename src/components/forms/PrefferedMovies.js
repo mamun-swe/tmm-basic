@@ -156,7 +156,7 @@ const PrefferedMovies = ({ email, header, activities }) => {
 
                     {movies && movies.length ?
                         <div className="col-12 text-right">
-                            <button type="button" className="btn shadow-none" onClick={addMovie}>
+                            <button type="button" className="btn shadow-none" onClick={addMovie} disabled={isLoading}>
                                 {isLoading ? 'Adding...' : 'Add Movies'}
                             </button>
                         </div>

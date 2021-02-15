@@ -19,6 +19,8 @@ import InterestForm from '../../../components/forms/Interests'
 import MusicForm from '../../../components/forms/FavouriteMusic'
 import ReadsForm from '../../../components/forms/FavouriteRead'
 import MovieForm from '../../../components/forms/PrefferedMovies'
+import SportsForm from '../../../components/forms/FavouriteSports'
+import CuisineForm from '../../../components/forms/FavouriteCuisine'
 import PartnerPreferenceForm from '../../../components/forms/PartnerPreference'
 
 import GhostLoader from '../../../components/ghostLoader/Index'
@@ -39,7 +41,6 @@ const Edit = () => {
         try {
             const response = await axios.get(`${api}admin/user/show/${email}`, header)
             if (response.status === 200) {
-                // console.log(response.data.user)
                 setUser(response.data.user)
                 setTimeout(() => {
                     setLoading(false)
@@ -190,6 +191,24 @@ const Edit = () => {
                         {/* Movie create form */}
                         <div className="col-12 col-lg-6 pl-lg-4 border-bottom pb-4 mb-4">
                             <MovieForm
+                                email={email}
+                                header={header}
+                                activities={user.personalActivities ? user.personalActivities : null}
+                            />
+                        </div>
+
+                        {/* Sports create form */}
+                        <div className="col-12 col-lg-6 pl-lg-4 border-bottom pb-4 mb-4">
+                            <SportsForm
+                                email={email}
+                                header={header}
+                                activities={user.personalActivities ? user.personalActivities : null}
+                            />
+                        </div>
+
+                        {/* Cuisine create form */}
+                        <div className="col-12 pb-4 mb-4">
+                            <CuisineForm
                                 email={email}
                                 header={header}
                                 activities={user.personalActivities ? user.personalActivities : null}

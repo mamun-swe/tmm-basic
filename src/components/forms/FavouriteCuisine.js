@@ -8,58 +8,56 @@ import { Form } from 'react-bootstrap'
 import { ic_add } from 'react-icons-kit/md'
 import 'react-toastify/dist/ReactToastify.css'
 
-import ReadCreateModal from '../modal/Read'
+import CuisineCreateModal from '../modal/Cuisine'
 
 toast.configure({ autoClose: 2000 })
-const FavouriteRead = ({ email, header, activities }) => {
+const FavouriteCuisine = ({ email, header, activities }) => {
     const [isLoading, setLoading] = useState(false)
-    const [reads, setReads] = useState([])
+    const [cuisines, setCuisine] = useState([])
 
     // Input states
-    const [selectedReads, setSelectedReads] = useState([])
+    const [selectedCuisine, setSelectedCuisine] = useState([])
     const [isEmpty, setEmpty] = useState(false)
 
     // Interest create states
     const [show, setShow] = useState(false)
     const [created, setCreated] = useState(false)
 
-    // Fetch reads
-    const getReads = useCallback(async () => {
+    // get cuisine
+    const getCuisine = useCallback(async () => {
         try {
             const response = await axios.get(`${api}admin/activity/index`, header)
             if (response.status === 200) {
-                setReads(response.data.activities.reads)
+                setCuisine(response.data.activities.cuisines)
             }
         } catch (error) {
             if (error) {
-                if (error) {
-                    toast.error(`${error.response.data.message}`, {
-                        position: "bottom-right",
-                        autoClose: false,
-                        hideProgressBar: true,
-                        closeOnClick: true,
-                        pauseOnHover: true,
-                        draggable: true,
-                        progress: undefined,
-                    })
-                }
+                toast.error(`${error.response.data.message}`, {
+                    position: "bottom-right",
+                    autoClose: false,
+                    hideProgressBar: true,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                })
             }
         }
     }, [header])
 
     useEffect(() => {
-        getReads()
-        setSelectedReads(activities.favouriteReads)
-    }, [header, getReads])
+        getCuisine()
+        setSelectedCuisine(activities.favouriteCuisine)
+    }, [header, getCuisine])
 
 
-    // Create Read
-    const createRead = async (data) => {
+    // Create Cuisine
+    const createCuisine = async (data) => {
         try {
             setCreated(true)
-            const response = await axios.post(`${api}admin/activity/store/read`, data, header)
+            const response = await axios.post(`${api}admin/activity/store/cuisine`, data, header)
             if (response.status === 201) {
-                getReads()
+                getCuisine()
                 setCreated(false)
                 setShow(false)
                 toast.success(response.data.message)
@@ -73,9 +71,9 @@ const FavouriteRead = ({ email, header, activities }) => {
     }
 
     // Active sellected options
-    const checkedReads = read => {
+    const checkedCuisines = cuisine => {
         if (activities) {
-            const activity = activities.favouriteReads.find(data => data === read)
+            const activity = activities.favouriteCuisine.find(data => data === cuisine)
             if (activity)
                 return activity
             return false
@@ -87,25 +85,23 @@ const FavouriteRead = ({ email, header, activities }) => {
         const item = event.target
 
         if (item.checked === true) {
-            setSelectedReads([...selectedReads, item.value])
+            setSelectedCuisine([...selectedCuisine, item.value])
             setEmpty(false)
         } else {
-            const findItem = selectedReads.filter(e => e !== item.value)
-            setSelectedReads([])
-            setSelectedReads(findItem)
+            const findItem = selectedCuisine.filter(e => e !== item.value)
+            setSelectedCuisine([])
+            setSelectedCuisine(findItem)
         }
     }
 
-
-
-    // Add read
-    const addRead = async () => {
+    // Add cuisine
+    const addCuisine = async () => {
         try {
-            if (!selectedReads.length) return setEmpty(true)
-            const data = { email: email, favouriteReads: selectedReads }
+            if (!selectedCuisine.length) return setEmpty(true)
+            const data = { email: email, favouriteCuisine: selectedCuisine }
 
             setLoading(true)
-            const response = await axios.put(`${api}admin/user/profile/activity?field=favouriteReads`, data, header)
+            const response = await axios.put(`${api}admin/user/profile/activity?field=favouriteCuisine`, data, header)
             if (response.status === 201) {
                 setLoading(false)
                 toast.success(response.data.message)
@@ -134,7 +130,7 @@ const FavouriteRead = ({ email, header, activities }) => {
                 </div>
                 <div >
                     <p className="section-title">
-                        {isEmpty ? <span className="text-danger">Select first</span> : <span>Favourite Reads</span>}
+                        {isEmpty ? <span className="text-danger">Select first</span> : <span>Favourite cuisine</span>}
                     </p>
                 </div>
             </div>
@@ -142,24 +138,24 @@ const FavouriteRead = ({ email, header, activities }) => {
             {/* Section body */}
             <div className="section-body">
                 <div className="row">
-                    {reads && reads.map((read, i) =>
-                        <div className="col-6 col-sm-4 col-md-3" key={i}>
-                            <Form.Group controlId={read}>
+                    {cuisines && cuisines.map((cuisine, i) =>
+                        <div className="col-6 col-sm-4 col-md-3 col-lg-2" key={i}>
+                            <Form.Group controlId={cuisine}>
                                 <Form.Check
                                     type="checkbox"
-                                    label={read}
-                                    value={read}
+                                    label={cuisine}
+                                    value={cuisine}
                                     onChange={toggleCheckbox}
-                                    defaultChecked={checkedReads(read)}
+                                    defaultChecked={checkedCuisines(cuisine)}
                                 />
                             </Form.Group>
                         </div>
                     )}
 
-                    {reads && reads.length ?
+                    {cuisines && cuisines.length ?
                         <div className="col-12 text-right">
-                            <button type="button" className="btn shadow-none" onClick={addRead} disabled={isLoading}>
-                                {isLoading ? 'Adding...' : 'Add Read'}
+                            <button type="button" className="btn shadow-none" onClick={addCuisine} disabled={isLoading}>
+                                {isLoading ? 'Adding...' : 'Add cuisines'}
                             </button>
                         </div>
                         : null}
@@ -169,9 +165,9 @@ const FavouriteRead = ({ email, header, activities }) => {
             {/* Modals */}
             {/* Interest Create */}
             {show ?
-                <ReadCreateModal
+                <CuisineCreateModal
                     show={show}
-                    newdata={createRead}
+                    newdata={createCuisine}
                     isCreate={created}
                     onHide={() => setShow(false)}
                 />
@@ -180,7 +176,7 @@ const FavouriteRead = ({ email, header, activities }) => {
     );
 }
 
-export default FavouriteRead;
+export default FavouriteCuisine;
 const customStyles = {
     smBtn: {
         width: 33,
