@@ -484,8 +484,8 @@ const PrimaryInfo = ({ email, user, updated, header }) => {
                                 })}
                                 defaultValue={user.lookingFor}
                             >
+                                <option value="bride">Bride</option>
                                 <option value="groom">Groom</option>
-                                <option value="female">Female</option>
                             </select>
                         </div>
                     </div>

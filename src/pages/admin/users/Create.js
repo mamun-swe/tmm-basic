@@ -523,8 +523,8 @@ const Create = () => {
                                                         className={errors.lookingFor ? "form-control shadow-none danger-border" : "form-control shadow-none"}
                                                         ref={register({ required: "Select what you want." })}
                                                     >
-                                                        <option value="bride">Groom</option>
-                                                        <option value="groom">Female</option>
+                                                        <option value="bride">Bride</option>
+                                                        <option value="groom">Groom</option>
                                                     </select>
                                                 </div>
                                             </div>
