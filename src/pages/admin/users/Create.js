@@ -328,7 +328,6 @@ const Create = () => {
             return false
         }
 
-
         const primaryData = {
             ...data,
             baranchId: branch.value ? branch.value : null,
@@ -351,7 +350,6 @@ const Create = () => {
         } catch (error) {
             if (error) {
                 setUpdate(false)
-                console.log(error.response);
                 toast.warn(error.response.data.message)
             }
         }
@@ -359,7 +357,7 @@ const Create = () => {
 
 
     return (
-        <div className="create-user pb-lg-3 pt-lg-5">
+        <div className="create-user pb-lg-3 pt-lg-1">
             <div className="container">
                 <div className="row">
                     <div className="col-12 px-0 px-lg-3">
@@ -480,6 +478,7 @@ const Create = () => {
                                                     <input
                                                         type="text"
                                                         name="email"
+                                                        placeholder="example@gmail.com"
                                                         className={errors.email ? "form-control shadow-none danger-border" : "form-control shadow-none"}
                                                         ref={register({
                                                             required: "E-mail is required",
@@ -524,8 +523,8 @@ const Create = () => {
                                                         className={errors.lookingFor ? "form-control shadow-none danger-border" : "form-control shadow-none"}
                                                         ref={register({ required: "Select what you want." })}
                                                     >
-                                                        <option value="groom">Groom</option>
-                                                        <option value="female">Female</option>
+                                                        <option value="bride">Groom</option>
+                                                        <option value="groom">Female</option>
                                                     </select>
                                                 </div>
                                             </div>
