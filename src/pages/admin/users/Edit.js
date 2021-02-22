@@ -12,6 +12,7 @@ import { Link, useHistory, useParams } from 'react-router-dom'
 
 import PrimaryInfoForm from '../../../components/forms/PrimaryInfo'
 import PictureAndDescUpdateForm from '../../../components/forms/ProfilePictureDescription'
+import EducationAndProfessionForm from '../../../components/forms/EducationProfession'
 import BasicAndLifestyleUpdateForm from '../../../components/forms/BasicAndLifestyle'
 import ContactInfoCreateForm from '../../../components/forms/ContactInformation'
 import HobbiForm from '../../../components/forms/Hobbi'
@@ -46,6 +47,7 @@ const Edit = () => {
                     setLoading(false)
                 }, 2000)
             }
+            console.log(response.data.user)
         } catch (error) {
             if (error) {
                 toast.warn(error.response.data.message)
@@ -53,9 +55,11 @@ const Edit = () => {
         }
     }, [email, header])
 
+
     useEffect(() => {
         fetchUser()
     }, [email, header, fetchUser])
+
 
     // re fetch data after updated
     const reFetch = data => {
@@ -114,22 +118,29 @@ const Edit = () => {
                 </div>
                 <div className="card-body p-4">
                     {/* Primary info */}
-                    <PrimaryInfoForm
+                    {/* <PrimaryInfoForm
                         email={email}
                         user={user}
                         updated={reFetch}
                         header={header}
-                    />
+                    /> */}
                 </div>
             </div>
 
             {/* Profile Picture & Description form */}
-            <PictureAndDescUpdateForm
+            {/* <PictureAndDescUpdateForm
                 email={email}
                 profileimages={user.profilePicture ? user.profilePicture : null}
                 olddescription={user.shortDescription ? user.shortDescription : null}
                 updated={reFetch}
                 header={header}
+            /> */}
+
+            {/* Education & Profession */}
+            <EducationAndProfessionForm
+                email={email}
+                header={header}
+                updated={reFetch}
             />
 
             {/* Basic and lifestyle information form */}

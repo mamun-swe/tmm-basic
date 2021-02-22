@@ -156,96 +156,99 @@ const Index = () => {
         return (<ErrorModal message={isError.value} header={header} />)
     }
 
-    return (<div className="users-index">
-        <div className="container-fluid py-3 py-lg-4">
-            <div className="row"> {/* Search */}
-                <div className="col-12 search-column">
-                    <div className="text-center">
-                        <h3 className="mb-3">{users.length}Users</h3>
-                    </div>
+    return (
+        <div className="users-index">
+            <div className="container-fluid py-3 py-lg-4">
+                <div className="row">
+                    {/* Search */}
+                    <div className="col-12 search-column">
+                        <div className="text-center">
+                            <h3 className="mb-3">{users.length}Users</h3>
+                        </div>
 
-                    <div className="card border-0">
-                        <div className="d-flex">
-                            <div className="flex-fill">
-                                <form onSubmit={handleSubmit(onSubmit)}>
-                                    <div className="form-group">
-                                        <input
-                                            type="text"
-                                            name="query"
-                                            className="form-control shadow-none border-0"
-                                            placeholder="Search user by e-mail"
-                                            ref={register()}
-                                            onChange={filterHandle}
-                                        />
-                                    </div>
-                                </form>
+                        <div className="card border-0">
+                            <div className="d-flex">
+                                <div className="flex-fill">
+                                    <form onSubmit={handleSubmit(onSubmit)}>
+                                        <div className="form-group">
+                                            <input
+                                                type="text"
+                                                name="query"
+                                                className="form-control shadow-none border-0"
+                                                placeholder="Search user by e-mail"
+                                                ref={register()}
+                                                onChange={filterHandle}
+                                            />
+                                        </div>
+                                    </form>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                {/* Users */}
-                <div className="col-12 px-2 profile-column"> {/* User Card */}
-                    <InfiniteScroll
-                        dataLength={filteredUsers.length}
-                        next={() => setPage(page + 1)}
-                        hasMore={true}
-                    >
-                        {filteredUsers && filteredUsers.length > 0 ?
-                            (filteredUsers.map((user, i) => (
-                                <div className="card border-0" key={i}>
-                                    <div className="card-body text-center">
-                                        <div className="photo-container rounded-circle">
-                                            <img
-                                                src={user.profilePicture.clearImage ? user.profilePicture.clearImage : Images.Blank}
-                                                className="img-fluid"
-                                                alt="..."
-                                            />
+                    {/* Users */}
+                    <div className="col-12 px-2 profile-column"> {/* User Card */}
+                        <InfiniteScroll
+                            dataLength={filteredUsers.length}
+                            next={() => setPage(page + 1)}
+                            hasMore={true}
+                        >
+                            {filteredUsers && filteredUsers.length > 0 ?
+                                (filteredUsers.map((user, i) => (
+                                    <div className="card border-0" key={i}>
+                                        <div className="card-body text-center">
+                                            <div className="photo-container rounded-circle">
+                                                <img
+                                                    src={user.profilePicture.clearImage ? user.profilePicture.clearImage : Images.Blank}
+                                                    className="img-fluid"
+                                                    alt="..."
+                                                />
+                                            </div>
+                                            <div className="content-container">
+                                                <h6 className="text-capitalize">{user.name ? user.name : null}</h6>
+                                                <p> {user.email ? user.email : null}</p>
+                                            </div>
+                                            <Link to={`/dashboard/user/${user.email}`}
+                                                type="button"
+                                                className="btn shadow-none rounded-circle">
+                                                <Icon icon={ic_create} size={20} />
+                                            </Link>
                                         </div>
-                                        <div className="content-container">
-                                            <h6 className="text-capitalize">{user.name ? user.name : null}</h6>
-                                            <p> {user.email ? user.email : null}</p>
-                                        </div>
-                                        <Link to={`/dashboard/user/${user.email}`}
-                                            type="button"
-                                            className="btn shadow-none rounded-circle">
-                                            <Icon icon={ic_create} size={20} />
-                                        </Link>
                                     </div>
-                                </div>
-                            ))
-                            ) : (
-                                <div className="text-center four-o-four py-4">
-                                    <img
-                                        src={Images.NoData}
-                                        className="img-fluid"
-                                        alt="..."
-                                    />
-                                    <h5>Not data found !!</h5>
-                                </div>)
-                        } </InfiniteScroll>
+                                ))
+                                ) : (
+                                    <div className="text-center four-o-four py-4">
+                                        <img
+                                            src={Images.NoData}
+                                            className="img-fluid"
+                                            alt="..."
+                                        />
+                                        <h5>Not data found !!</h5>
+                                    </div>)
+                            } </InfiniteScroll>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        {/* Float add button */}
-        <Link
-            to="/dashboard/create"
-            type="button"
-            className="btn float-add-btn shadow-lg rounded-circle"
-        ><Icon icon={ic_add} size={22} /></Link>
-
-        {/* Float logout button */}
-        {isLoggingOut ? <Icon icon={loadC} className="spin" size={40} /> :
-            <button
+            {/* Float add button */}
+            <Link
+                to="/dashboard/create"
                 type="button"
-                className="btn float-logout-btn shadow-lg rounded-circle"
-                onClick={doLogout}
-            >
-                <Icon icon={ic_lock} size={20} />
-            </button>
-        }
-    </div>);
+                className="btn float-add-btn shadow-lg rounded-circle"
+            ><Icon icon={ic_add} size={22} /></Link>
+
+            {/* Float logout button */}
+            {isLoggingOut ? <Icon icon={loadC} className="spin" size={40} /> :
+                <button
+                    type="button"
+                    className="btn float-logout-btn shadow-lg rounded-circle"
+                    onClick={doLogout}
+                >
+                    <Icon icon={ic_lock} size={20} />
+                </button>
+            }
+        </div>
+    );
 };
 
 export default Index;
