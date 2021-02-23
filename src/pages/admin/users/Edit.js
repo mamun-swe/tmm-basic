@@ -47,7 +47,6 @@ const Edit = () => {
                     setLoading(false)
                 }, 2000)
             }
-            console.log(response.data.user)
         } catch (error) {
             if (error) {
                 toast.warn(error.response.data.message)
@@ -118,29 +117,31 @@ const Edit = () => {
                 </div>
                 <div className="card-body p-4">
                     {/* Primary info */}
-                    {/* <PrimaryInfoForm
+                    <PrimaryInfoForm
                         email={email}
                         user={user}
                         updated={reFetch}
                         header={header}
-                    /> */}
+                    />
                 </div>
             </div>
 
             {/* Profile Picture & Description form */}
-            {/* <PictureAndDescUpdateForm
+            <PictureAndDescUpdateForm
                 email={email}
                 profileimages={user.profilePicture ? user.profilePicture : null}
                 olddescription={user.shortDescription ? user.shortDescription : null}
                 updated={reFetch}
                 header={header}
-            /> */}
+            />
 
             {/* Education & Profession */}
             <EducationAndProfessionForm
                 email={email}
                 header={header}
                 updated={reFetch}
+                income={user.annualIncome ? user.annualIncome : null}
+                educationAndProfession={user.educationAndProfession ? user.educationAndProfession : null}
             />
 
             {/* Basic and lifestyle information form */}

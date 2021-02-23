@@ -15,17 +15,18 @@ import WorkingWithModal from '../modal/WorkingWith'
 import ProfessionAreaModal from '../modal/ProfessionArea'
 
 toast.configure({ autoClose: 2000 })
-const EducationProfession = ({ email, header }) => {
+const EducationProfession = ({ email, header, educationAndProfession, income }) => {
     const { handleSubmit } = useForm()
     const [isLoading, setLoading] = useState(false)
     // Input States
     const [annualIncome, setAnnualIncome] = useState({
-        startFrom: 0,
-        endTo: 100000
+        startFrom: income ? income.startFrom : 0,
+        endTo: income ? income.endTo : 100000
     })
-    const [qualification, setQualification] = useState()
-    const [workingWith, setWorkingWith] = useState()
-    const [professionArea, setProfessionArea] = useState()
+
+    const [qualification, setQualification] = useState({ value: null, error: null })
+    const [workingWith, setWorkingWith] = useState({ value: null, error: null })
+    const [professionArea, setProfessionArea] = useState({ value: null, error: null })
 
     // Modal states
     const [showQualification, setShowQualification] = useState(false)
@@ -181,12 +182,36 @@ const EducationProfession = ({ email, header }) => {
     // Submit data to API
     const onSubmit = async () => {
         try {
+            // Check qualification
+            if ((qualification.value === null || qualification.value === "" || qualification.value === undefined) &&
+                (educationAndProfession.qualification === null || educationAndProfession.qualification === "" || educationAndProfession.qualification === undefined)
+            ) {
+                setQualification({ value: null, error: true })
+                return
+            }
+
+            // Check workingWith
+            if ((workingWith.value === null || workingWith.value === "" || workingWith.value === undefined) &&
+                (educationAndProfession.workingWith === null || educationAndProfession.workingWith === "" || educationAndProfession.workingWith === undefined)
+            ) {
+                setWorkingWith({ value: null, error: true })
+                return
+            }
+
+            // Check professionArea
+            if ((professionArea.value === null || professionArea.value === "" || professionArea.value === undefined) &&
+                (educationAndProfession.professionArea === null || educationAndProfession.professionArea === "" || educationAndProfession.professionArea === undefined)
+            ) {
+                setProfessionArea({ value: null, error: true })
+                return
+            }
+
             setLoading(true)
             const newData = {
                 email,
-                qualification,
-                workingWith,
-                professionArea,
+                qualification: qualification.value ? qualification.value : educationAndProfession.qualification,
+                workingWith: workingWith.value ? workingWith.value : educationAndProfession.workingWith,
+                professionArea: professionArea.value ? professionArea.value : educationAndProfession.professionArea,
                 annualIncome
             }
 
@@ -215,17 +240,19 @@ const EducationProfession = ({ email, header }) => {
                         {/* Qualification */}
                         <div className="col-12">
                             <div className="form-group mb-4">
-                                <p>Qualification</p>
+                                {qualification.error ? <p className="text-danger">Qualification is required.</p>
+                                    : <p>Qualification</p>}
 
                                 <div className="d-flex">
                                     <div className="flex-fill">
                                         <Select
+                                            defaultValue={educationAndProfession ? { value: educationAndProfession.qualification, label: educationAndProfession.qualification } : null}
                                             classNamePrefix="custom-select"
                                             styles={customStyles}
                                             placeholder={'Select qualification'}
                                             components={{ DropdownIndicator: () => null, IndicatorSeparator: () => null }}
                                             options={qualificationOptions}
-                                            onChange={(event) => setQualification(event.value)}
+                                            onChange={(event) => setQualification({ value: event.value, error: null })}
                                         />
                                     </div>
                                     <div className="pl-2 pt-1">
@@ -245,17 +272,19 @@ const EducationProfession = ({ email, header }) => {
                         {/* Working with */}
                         <div className="col-12">
                             <div className="form-group mb-4">
-                                <p>Working with</p>
+                                {workingWith.error ? <p className="text-danger">Working with is required.</p>
+                                    : <p>Working with</p>}
 
                                 <div className="d-flex">
                                     <div className="flex-fill">
                                         <Select
+                                            defaultValue={educationAndProfession ? { value: educationAndProfession.workingWith, label: educationAndProfession.workingWith } : null}
                                             classNamePrefix="custom-select"
                                             styles={customStyles}
                                             placeholder={'Select working area'}
                                             components={{ DropdownIndicator: () => null, IndicatorSeparator: () => null }}
                                             options={workingWithOptions}
-                                            onChange={(event) => setWorkingWith(event.value)}
+                                            onChange={(event) => setWorkingWith({ value: event.value, error: null })}
                                         />
                                     </div>
                                     <div className="pl-2 pt-1">
@@ -275,17 +304,19 @@ const EducationProfession = ({ email, header }) => {
                         {/* Profession area */}
                         <div className="col-12">
                             <div className="form-group mb-4">
-                                <p>Profession area</p>
+                                {professionArea.error ? <p className="text-danger">Profession area is required.</p>
+                                    : <p>Profession area</p>}
 
                                 <div className="d-flex">
                                     <div className="flex-fill">
                                         <Select
+                                            defaultValue={educationAndProfession ? { value: educationAndProfession.professionArea, label: educationAndProfession.professionArea } : null}
                                             classNamePrefix="custom-select"
                                             styles={customStyles}
                                             placeholder={'Select profession area'}
                                             components={{ DropdownIndicator: () => null, IndicatorSeparator: () => null }}
                                             options={professionAreaOptions}
-                                            onChange={(event) => setProfessionArea(event.value)}
+                                            onChange={(event) => setProfessionArea({ value: event.value, error: null })}
                                         />
                                     </div>
                                     <div className="pl-2 pt-1">
