@@ -106,21 +106,6 @@ const PartnerPreference = ({ email, updated, preference, header }) => {
         { label: 'Physical disability', value: 'physical disability' }
     ]
 
-    // Get partner preference
-    const getPartnerPreferenceInfo = useCallback(async () => {
-        try {
-            const response = await axios.get(`${api}admin/user/partner-preference/info`, header)
-            setReligionOptions(response.data.religions.map(religion => ({ label: religion, value: religion })))
-            setSocialOrderOptions(response.data.socialOrders.map(order => ({ label: order, value: order })))
-            setLanguageOptions(response.data.languages.map(language => ({ label: language, value: language })))
-            setCountryOptions(response.data.countries.map(country => ({ label: country, value: country })))
-        } catch (error) {
-            if (error) {
-                console.log(error.response)
-            }
-        }
-    }, [header])
-
     // Get Qualification
     const getQualification = useCallback(async () => {
         try {
@@ -193,19 +178,89 @@ const PartnerPreference = ({ email, updated, preference, header }) => {
         }
     }, [header])
 
+    // Get Religion
+    const getReligion = useCallback(async () => {
+        try {
+            const response = await axios.get(`${api}admin/religion`, header)
+            setReligionOptions(response.data.religions.map(data => ({ label: data.name, value: data.name })))
+            const orders = response.data.religions.map(order => order.socialOrders).flat()
+            setSocialOrderOptions(orders.map(order => ({ label: order, value: order })))
+        } catch (error) {
+            if (error) {
+                toast.error(`${error.response.data.message}`, {
+                    position: "bottom-right",
+                    autoClose: false,
+                    hideProgressBar: true,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                })
+            }
+        }
+    }, [header])
+
+    // Get Country
+    const getCountry = useCallback(async () => {
+        try {
+            const response = await axios.get(`${api}admin/country`, header)
+            if (response.status === 200) {
+                setCountryOptions(response.data.countries.map(country => ({ label: country.name, value: country.name })))
+            }
+        } catch (error) {
+            if (error) {
+                toast.error(`${error.response.data.message}`, {
+                    position: "bottom-right",
+                    autoClose: false,
+                    hideProgressBar: true,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                })
+            }
+        }
+    }, [header])
+
+    // Get Language
+    const getLanguage = useCallback(async () => {
+        try {
+            const response = await axios.get(`${api}admin/language/index`, header)
+            if (response.status === 200) {
+                setLanguageOptions(response.data.languages.map(language => ({ label: language.name, value: language.name })))
+            }
+        } catch (error) {
+            if (error) {
+                toast.error(`${error.response.data.message}`, {
+                    position: "bottom-right",
+                    autoClose: false,
+                    hideProgressBar: true,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                })
+            }
+        }
+    }, [header])
+
 
     useEffect(() => {
-        getPartnerPreferenceInfo()
+        getReligion()
+        getCountry()
+        getLanguage()
         getQualification()
         getWorkingWith()
         getProfessionArea()
-    }, [header, getPartnerPreferenceInfo, getQualification, getWorkingWith, getProfessionArea])
+    }, [header, getReligion, getCountry, getLanguage, getQualification, getWorkingWith, getProfessionArea])
 
     // On Change methods
     const onAfterAgeChange = value => setAgeRange({ startFrom: value[0], endTo: value[1] })
     const onAfterHeightChange = value => setHeightRange({ startFrom: value[0], endTo: value[1] })
     const onChangeMaterialStatus = event => setMaterialStatus({ value: event })
-    const onChangeReligion = event => setReligion({ value: event })
+    const onChangeReligion = event => {
+        setReligion({ value: event })
+    }
     const onChangeSocialOrder = event => setSocialOrder({ value: event })
     const onChangeMotherTounge = event => setMotherTounge(event.value)
     const onChangeSpokenLanguages = event => setSpokenLanguages({ value: event })
