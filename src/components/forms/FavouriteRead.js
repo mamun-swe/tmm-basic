@@ -143,7 +143,7 @@ const FavouriteRead = ({ email, header, activities }) => {
             <div className="section-body">
                 <div className="row">
                     {reads && reads.map((read, i) =>
-                        <div className="col-6 col-sm-4 col-md-3" key={i}>
+                        <div className="col-6 col-sm-6 col-lg-4" key={i}>
                             <Form.Group controlId={read}>
                                 <Form.Check
                                     type="checkbox"
