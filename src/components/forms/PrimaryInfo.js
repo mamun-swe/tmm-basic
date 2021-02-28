@@ -7,6 +7,8 @@ import { toast } from 'react-toastify'
 import { useForm } from 'react-hook-form'
 import { ic_add } from 'react-icons-kit/md'
 import 'react-toastify/dist/ReactToastify.css'
+import DatePicker from 'react-datepicker'
+import "react-datepicker/dist/react-datepicker.css";
 
 import BranchCreateModal from '../../components/modal/Branch'
 import ReligionCreateModal from '../../components/modal/Religion'
@@ -21,6 +23,7 @@ const PrimaryInfo = ({ email, user, updated, header }) => {
 
     // Input states
     const [branch, setBranch] = useState({ value: null, error: null })
+    const [userDOB, setUserDOB] = useState({ value: null, error: null })
     const [religion, setReligion] = useState({ value: null, error: null })
     const [socialOrder, setSocialOrder] = useState({ value: null, error: null })
     const [birthCountry, setBirthCountry] = useState({ value: null, error: null })
@@ -288,6 +291,12 @@ const PrimaryInfo = ({ email, user, updated, header }) => {
             return false
         }
 
+        // Check DOB
+        if ((userDOB.value === null || userDOB.value === "" || userDOB.value === undefined) && (user.userDOB === null || user.userDOB === "" || user.userDOB === undefined)) {
+            setUserDOB({ error: true })
+            return false
+        }
+
         // Check Religion
         if ((religion.value === null || religion.value === "" || religion.value === undefined) && (user.religion === null || user.religion === "" || user.religion === undefined)) {
             setReligion({ error: true })
@@ -318,6 +327,7 @@ const PrimaryInfo = ({ email, user, updated, header }) => {
             email: email,
             baranchId: branch.value ? branch.value : user.baranchId,
             religion: religion.value ? religion.value : user.religion,
+            dob: userDOB.value ? userDOB.value : user.dob,
             socialOrder: socialOrder.value ? socialOrder.value : user.socialOrder,
             birthCountry: birthCountry.value ? birthCountry.value : user.birthCountry,
             livingCountry: livingCountry.value ? livingCountry.value : user.livingCountry,
@@ -340,6 +350,15 @@ const PrimaryInfo = ({ email, user, updated, header }) => {
                 toast.warn(error.response.data.message)
             }
         }
+    }
+
+
+    // Check Max Age is < 18
+    const maxAge = () => {
+        const dateNow = new Date()
+        const yearNow = dateNow.getFullYear()
+        const lastAge = `${yearNow - 18}`
+        return lastAge
     }
 
     return (
@@ -493,12 +512,21 @@ const PrimaryInfo = ({ email, user, updated, header }) => {
                     {/* DOB */}
                     <div className="col-12 col-lg-4">
                         <div className="form-group mb-4">
-                            {errors.dob && errors.dob.message ? (
-                                <small className="text-danger">{errors.dob && errors.dob.message}</small>
-                            ) : <small>Date of birth</small>
-                            }
+                            {userDOB.error ? (
+                                <small className="text-danger">Date of birth is required*</small>
+                            ) : <small>Date of birth</small>}
 
-                            <input
+                            <div>
+                                <DatePicker
+                                    selected={Date.parse(user.dob || userDOB.value)}
+                                    onChange={date => setUserDOB({ value: date, error: null })}
+                                    maxDate={new Date(maxAge(), 1, 1)}
+                                    showDisabledMonthNavigation
+                                    className={errors.dob ? "form-control shadow-none danger-border" : "form-control shadow-none"}
+                                />
+                            </div>
+
+                            {/* <input
                                 type="date"
                                 name="dob"
                                 defaultValue={user.dob}
@@ -506,7 +534,7 @@ const PrimaryInfo = ({ email, user, updated, header }) => {
                                 ref={register({
                                     required: "Date of birth is required"
                                 })}
-                            />
+                            /> */}
                         </div>
                     </div>
 
