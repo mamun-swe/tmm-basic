@@ -199,7 +199,7 @@ const Index = () => {
                                         <div className="card-body text-center">
                                             <div className="photo-container rounded-circle">
                                                 <img
-                                                    src={user.profilePicture.clearImage ? user.profilePicture.clearImage : Images.Blank}
+                                                    src={user.profilePicture.clearImage ? user.profilePicture.clearImage : Images.Logo2}
                                                     className="img-fluid"
                                                     alt="..."
                                                 />
