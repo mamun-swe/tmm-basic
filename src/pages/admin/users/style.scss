@@ -45,7 +45,8 @@
             .card-body {
                 background: #fff;
                 position: relative;
-                max-height: 210px;
+                height: 220px;
+                overflow: hidden;
 
                 .photo-container {
                     width: 90px;
