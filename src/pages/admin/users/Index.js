@@ -14,16 +14,16 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import ErrorModal from '../../../components/errorModal/Index'
 
 const Index = () => {
-    const refs = createRef();
+    const refs = createRef()
     const history = useHistory()
-    const windowWidth = window.innerWidth;
-    const { register, handleSubmit } = useForm();
-    const [page, setPage] = useState(0);
-    const [isLoading, setLoading] = useState(true);
-    const [users, setUsers] = useState([]);
-    const [isLoggingOut, setLoggingOut] = useState(false)
-    const [filteredUsers, setFilteredUsers] = useState(users);
+    const [page, setPage] = useState(0)
     const fakeArr = [...Array(30).keys()]
+    const windowWidth = window.innerWidth
+    const [users, setUsers] = useState([])
+    const { register, handleSubmit } = useForm()
+    const [isLoading, setLoading] = useState(true)
+    const [isLoggingOut, setLoggingOut] = useState(false)
+    const [filteredUsers, setFilteredUsers] = useState(users)
     const [isError, setError] = useState({ value: null, status: false })
     const [header] = useState({
         headers: { Authorization: "Bearer " + localStorage.getItem("token") }
@@ -34,14 +34,8 @@ const Index = () => {
         try {
             const response = await axios.get(`${api}admin/user/index?_page=${page}&_limit=36`, header)
             if (response.status === 200) {
-                setUsers([
-                    ...users,
-                    ...response.data.users
-                ]);
-                setFilteredUsers([
-                    ...users,
-                    ...response.data.users
-                ]);
+                setUsers(prevUsers => ([...prevUsers, ...response.data.users]))
+                setFilteredUsers(prevUsers => ([...prevUsers, ...response.data.users]))
                 setLoading(false)
             }
         } catch (error) {
@@ -50,7 +44,7 @@ const Index = () => {
                 setError({ value: error.response, status: true })
             }
         }
-    }, [page, header, users])
+    }, [page, header])
 
     useEffect(() => {
         fetchUsers()
