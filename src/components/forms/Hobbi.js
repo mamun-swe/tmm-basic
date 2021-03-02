@@ -49,7 +49,7 @@ const PersonalActivities = ({ email, activities, header }) => {
     useEffect(() => {
         fetchHobbi()
         setSelectedHobbies(activities.hobbies)
-    }, [header, fetchHobbi])
+    }, [header, activities, fetchHobbi])
 
     // Create Hobbi
     const createHobbi = async (data) => {

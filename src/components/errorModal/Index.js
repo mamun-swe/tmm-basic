@@ -26,7 +26,7 @@ const Index = ({ message, header }) => {
         setTimeout(() => {
             doLogout()
         }, 2000);
-    }, [header])
+    }, [header, history])
 
     return (
         <div className="error-modal-container">

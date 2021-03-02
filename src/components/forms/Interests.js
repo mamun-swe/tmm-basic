@@ -50,7 +50,7 @@ const Interests = ({ email, header, activities }) => {
     useEffect(() => {
         fetchInterests()
         setSelectedInterests(activities.interests)
-    }, [header, fetchInterests])
+    }, [header, activities, fetchInterests])
 
     // Create Interest
     const createInterests = async (data) => {

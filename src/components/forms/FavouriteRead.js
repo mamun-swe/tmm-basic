@@ -50,7 +50,7 @@ const FavouriteRead = ({ email, header, activities }) => {
     useEffect(() => {
         getReads()
         setSelectedReads(activities.favouriteReads)
-    }, [header, getReads])
+    }, [header, activities, getReads])
 
 
     // Create Read

@@ -48,7 +48,7 @@ const FavouriteSports = ({ email, header, activities }) => {
     useEffect(() => {
         getSports()
         setSelectedSports(activities.sports)
-    }, [header, getSports])
+    }, [header, activities, getSports])
 
 
     // Create Sport

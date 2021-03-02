@@ -50,7 +50,7 @@ const Index = () => {
                 setError({ value: error.response, status: true })
             }
         }
-    }, [page, header])
+    }, [page, header, users])
 
     useEffect(() => {
         fetchUsers()
