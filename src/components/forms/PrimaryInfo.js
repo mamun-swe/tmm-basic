@@ -7,12 +7,17 @@ import { toast } from 'react-toastify'
 import { useForm } from 'react-hook-form'
 import { ic_add } from 'react-icons-kit/md'
 import 'react-toastify/dist/ReactToastify.css'
+// import { DatePicker, Space } from 'antd'
+import moment from 'moment'
+import DatePicker from 'react-date-picker'
 
 import BranchCreateModal from '../../components/modal/Branch'
 import ReligionCreateModal from '../../components/modal/Religion'
 import SocialOrderCreateModal from '../../components/modal/SocialOrder'
 import CountryCreateModal from '../../components/modal/Country'
 import LanguageCreateModal from '../../components/modal/Language'
+
+const dateFormat = 'YYYY/MM/DD';
 
 toast.configure({ autoClose: 2000 })
 const PrimaryInfo = ({ email, user, updated, header }) => {
@@ -342,6 +347,30 @@ const PrimaryInfo = ({ email, user, updated, header }) => {
         }
     }
 
+
+    // Check DOB is < 18
+    const checkDOB = () => {
+        const dateNow = new Date()
+        const yearNow = dateNow.getFullYear()
+        const lastAge = `${yearNow - 18}-01-01`
+        return new Date(lastAge)
+    }
+
+    // Formate date
+    const formateDate = (dob) => {
+        if (dob) {
+            return dob
+        } else {
+            // const oldDate = new Date()
+            // const year = oldDate.getFullYear()
+            // const month = oldDate.getMonth() + 1
+            // const day = oldDate.getDate()
+            // const fullDate = year + "-" + month + "-" + day
+            return new Date()
+        }
+    }
+
+
     return (
         <div>
             {/* Form 1 */}
@@ -495,18 +524,33 @@ const PrimaryInfo = ({ email, user, updated, header }) => {
                         <div className="form-group mb-4">
                             {errors.dob && errors.dob.message ? (
                                 <small className="text-danger">{errors.dob && errors.dob.message}</small>
-                            ) : <small>Date of birth</small>
-                            }
+                            ) : <small>Date of birth</small>}
 
-                            <input
+                            <DatePicker
+                                clearIcon={false}
+                                // maxDate={checkDOB}
+                                onChange={(event) => console.log(event)}
+                                value={user.dob || checkDOB}
+                            />
+
+                            {/* <DatePicker
+                                max={checkDOB()}
+                                defaultValue={moment(`${formateDate(user.dob)}`, dateFormat)}
+                                format={dateFormat}
+                                className={errors.dob ? "form-control shadow-none danger-border" : "form-control shadow-none"}
+
+                            /> */}
+
+                            {/* <input
                                 type="date"
                                 name="dob"
-                                defaultValue={user.dob}
+                                max={checkDOB()}
+                                defaultValue={formateDate(user.dob)}
                                 className={errors.dob ? "form-control shadow-none danger-border" : "form-control shadow-none"}
                                 ref={register({
                                     required: "Date of birth is required"
                                 })}
-                            />
+                            /> */}
                         </div>
                     </div>
 
