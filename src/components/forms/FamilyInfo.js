@@ -32,10 +32,26 @@ const FamilyInfo = ({ id, header, family }) => {
     })
 
     // Handle father status
-    const onChangeFatherStatus = event => setFather({ ...father, status: event.target.value })
+    const onChangeFatherStatus = event => setFather({
+        ...father,
+        employedCompany: family ? family.father.employedCompany : null,
+        employedDesignation: family ? family.father.employedDesignation : null,
+        buisnessCompany: family ? family.father.buisnessCompany : null,
+        retiredCompany: family ? family.father.retiredCompany : null,
+        retiredDesignation: family ? family.father.retiredDesignation : null,
+        status: event.target.value
+    })
 
     // Handle mateher status
-    const onChangeMotherStatus = event => setMother({ ...mother, status: event.target.value })
+    const onChangeMotherStatus = event => setMother({
+        ...mother,
+        employedCompany: family ? family.mother.employedCompany : null,
+        employedDesignation: family ? family.mother.employedDesignation : null,
+        buisnessCompany: family ? family.mother.buisnessCompany : null,
+        retiredCompany: family ? family.mother.retiredCompany : null,
+        retiredDesignation: family ? family.mother.retiredDesignation : null,
+        status: event.target.value
+    })
 
     const onSubmit = async (data) => {
         try {
@@ -295,7 +311,7 @@ const FamilyInfo = ({ id, header, family }) => {
                                         placeholder="Your family location"
                                         className="form-control rounded-0 shadow-none"
                                         ref={register()}
-                                        defaultValue={family.familyLocation}
+                                        defaultValue={family ? family.familyLocation : null}
                                     />
                                 </div>
                             </div>
@@ -310,7 +326,7 @@ const FamilyInfo = ({ id, header, family }) => {
                                         placeholder="Enter Native Place"
                                         className="form-control rounded-0 shadow-none"
                                         ref={register()}
-                                        defaultValue={family.nativePlace}
+                                        defaultValue={family ? family.nativePlace : null}
                                     />
                                 </div>
                             </div>
@@ -325,7 +341,7 @@ const FamilyInfo = ({ id, header, family }) => {
                                         placeholder="Enter Number of Brothers"
                                         className="form-control rounded-0 shadow-none"
                                         ref={register()}
-                                        defaultValue={family.numberOfBrothers}
+                                        defaultValue={family ? family.numberOfBrothers : null}
                                     />
                                 </div>
                             </div>
@@ -340,7 +356,7 @@ const FamilyInfo = ({ id, header, family }) => {
                                         placeholder="Enter Number of Sisters"
                                         className="form-control rounded-0 shadow-none"
                                         ref={register()}
-                                        defaultValue={family.numberOfSisters}
+                                        defaultValue={family ? family.numberOfSisters : null}
                                     />
                                 </div>
                             </div>
@@ -355,7 +371,7 @@ const FamilyInfo = ({ id, header, family }) => {
                                         placeholder="Enter Number of brothers married"
                                         className="form-control rounded-0 shadow-none"
                                         ref={register()}
-                                        defaultValue={family.numberOfBrothersMarried}
+                                        defaultValue={family ? family.numberOfBrothersMarried : null}
                                     />
                                 </div>
                             </div>
@@ -370,7 +386,7 @@ const FamilyInfo = ({ id, header, family }) => {
                                         placeholder="Enter Number of sisters married"
                                         className="form-control rounded-0 shadow-none"
                                         ref={register()}
-                                        defaultValue={family.numberOfSistersMarried}
+                                        defaultValue={family ? family.numberOfSistersMarried : null}
                                     />
                                 </div>
                             </div>
@@ -383,7 +399,7 @@ const FamilyInfo = ({ id, header, family }) => {
                                         name="familyType"
                                         className="form-control rounded-0 shadow-none"
                                         ref={register()}
-                                        defaultValue={family.familyType}
+                                        defaultValue={family ? family.familyType : null}
                                     >
                                         <option value="Joint">Joint</option>
                                         <option value="Nuclear">Nuclear</option>
@@ -399,7 +415,7 @@ const FamilyInfo = ({ id, header, family }) => {
                                         name="familyValue"
                                         className="form-control rounded-0 shadow-none"
                                         ref={register()}
-                                        defaultValue={family.familyValue}
+                                        defaultValue={family ? family.familyValue : null}
                                     >
                                         <option value="Traditional">Traditional</option>
                                         <option value="Moderate">Moderate</option>
@@ -416,7 +432,7 @@ const FamilyInfo = ({ id, header, family }) => {
                                         name="familyAffluence"
                                         className="form-control rounded-0 shadow-none"
                                         ref={register()}
-                                        defaultValue={family.familyAffluence}
+                                        defaultValue={family ? family.familyAffluence : null}
                                     >
                                         <option value="Affluent">Affluent</option>
                                         <option value="Upper Middle Class">Upper Middle Class</option>
