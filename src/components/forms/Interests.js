@@ -50,7 +50,7 @@ const Interests = ({ email, header, activities }) => {
     useEffect(() => {
         fetchInterests()
         setSelectedInterests(activities.interests)
-    }, [header, fetchInterests])
+    }, [header, activities, fetchInterests])
 
     // Create Interest
     const createInterests = async (data) => {
@@ -141,7 +141,7 @@ const Interests = ({ email, header, activities }) => {
             <div className="section-body">
                 <div className="row">
                     {interests && interests.map((interest, i) =>
-                        <div className="col-6 col-sm-4 col-md-3" key={i}>
+                        <div className="col-6 col-sm-6 col-lg-4" key={i}>
                             <Form.Group controlId={interest}>
                                 <Form.Check
                                     type="checkbox"

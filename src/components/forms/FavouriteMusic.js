@@ -50,7 +50,7 @@ const FavouriteMusic = ({ email, header, activities }) => {
     useEffect(() => {
         fetchMusics()
         setSelectedMusics(activities.favouriteMusic)
-    }, [header, fetchMusics])
+    }, [header, activities, activities.favouriteMusic, fetchMusics])
 
 
     // Create Music
@@ -143,7 +143,7 @@ const FavouriteMusic = ({ email, header, activities }) => {
             <div className="section-body">
                 <div className="row">
                     {musics && musics.map((music, i) =>
-                        <div className="col-6 col-sm-4 col-md-3" key={i}>
+                        <div className="col-6 col-sm-6 col-lg-4" key={i}>
                             <Form.Group controlId={music}>
                                 <Form.Check
                                     type="checkbox"

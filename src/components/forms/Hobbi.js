@@ -49,7 +49,7 @@ const PersonalActivities = ({ email, activities, header }) => {
     useEffect(() => {
         fetchHobbi()
         setSelectedHobbies(activities.hobbies)
-    }, [header, fetchHobbi])
+    }, [header, activities, fetchHobbi])
 
     // Create Hobbi
     const createHobbi = async (data) => {
@@ -139,7 +139,7 @@ const PersonalActivities = ({ email, activities, header }) => {
             <div className="section-body">
                 <div className="row">
                     {hobbies && hobbies.map((hobbie, i) =>
-                        <div className="col-6 col-sm-4 col-md-3" key={i}>
+                        <div className="col-6 col-sm-6 col-lg-4" key={i}>
                             <Form.Group controlId={i}>
                                 <Form.Check
                                     type="checkbox"

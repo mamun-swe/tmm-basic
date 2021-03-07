@@ -48,7 +48,7 @@ const FavouriteSports = ({ email, header, activities }) => {
     useEffect(() => {
         getSports()
         setSelectedSports(activities.sports)
-    }, [header, getSports])
+    }, [header, activities, getSports])
 
 
     // Create Sport
@@ -139,7 +139,7 @@ const FavouriteSports = ({ email, header, activities }) => {
             <div className="section-body">
                 <div className="row">
                     {sports && sports.map((read, i) =>
-                        <div className="col-6 col-sm-4 col-md-3" key={i}>
+                        <div className="col-6 col-sm-6 col-lg-4" key={i}>
                             <Form.Group controlId={read}>
                                 <Form.Check
                                     type="checkbox"

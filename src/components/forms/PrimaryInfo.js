@@ -7,17 +7,14 @@ import { toast } from 'react-toastify'
 import { useForm } from 'react-hook-form'
 import { ic_add } from 'react-icons-kit/md'
 import 'react-toastify/dist/ReactToastify.css'
-// import { DatePicker, Space } from 'antd'
-import moment from 'moment'
-import DatePicker from 'react-date-picker'
+import DatePicker from 'react-datepicker'
+import "react-datepicker/dist/react-datepicker.css";
 
 import BranchCreateModal from '../../components/modal/Branch'
 import ReligionCreateModal from '../../components/modal/Religion'
 import SocialOrderCreateModal from '../../components/modal/SocialOrder'
 import CountryCreateModal from '../../components/modal/Country'
 import LanguageCreateModal from '../../components/modal/Language'
-
-const dateFormat = 'YYYY/MM/DD';
 
 toast.configure({ autoClose: 2000 })
 const PrimaryInfo = ({ email, user, updated, header }) => {
@@ -26,6 +23,7 @@ const PrimaryInfo = ({ email, user, updated, header }) => {
 
     // Input states
     const [branch, setBranch] = useState({ value: null, error: null })
+    const [userDOB, setUserDOB] = useState({ value: null, error: null })
     const [religion, setReligion] = useState({ value: null, error: null })
     const [socialOrder, setSocialOrder] = useState({ value: null, error: null })
     const [birthCountry, setBirthCountry] = useState({ value: null, error: null })
@@ -293,6 +291,12 @@ const PrimaryInfo = ({ email, user, updated, header }) => {
             return false
         }
 
+        // Check DOB
+        if ((userDOB.value === null || userDOB.value === "" || userDOB.value === undefined) && (user.userDOB === null || user.userDOB === "" || user.userDOB === undefined)) {
+            setUserDOB({ error: true })
+            return false
+        }
+
         // Check Religion
         if ((religion.value === null || religion.value === "" || religion.value === undefined) && (user.religion === null || user.religion === "" || user.religion === undefined)) {
             setReligion({ error: true })
@@ -323,6 +327,7 @@ const PrimaryInfo = ({ email, user, updated, header }) => {
             email: email,
             baranchId: branch.value ? branch.value : user.baranchId,
             religion: religion.value ? religion.value : user.religion,
+            dob: userDOB.value ? userDOB.value : user.dob,
             socialOrder: socialOrder.value ? socialOrder.value : user.socialOrder,
             birthCountry: birthCountry.value ? birthCountry.value : user.birthCountry,
             livingCountry: livingCountry.value ? livingCountry.value : user.livingCountry,
@@ -347,29 +352,13 @@ const PrimaryInfo = ({ email, user, updated, header }) => {
         }
     }
 
-
-    // Check DOB is < 18
-    const checkDOB = () => {
+    // Check Max Age is < 18
+    const maxAge = () => {
         const dateNow = new Date()
         const yearNow = dateNow.getFullYear()
-        const lastAge = `${yearNow - 18}-01-01`
-        return new Date(lastAge)
+        const lastAge = `${yearNow - 18}`
+        return lastAge
     }
-
-    // Formate date
-    const formateDate = (dob) => {
-        if (dob) {
-            return dob
-        } else {
-            // const oldDate = new Date()
-            // const year = oldDate.getFullYear()
-            // const month = oldDate.getMonth() + 1
-            // const day = oldDate.getDate()
-            // const fullDate = year + "-" + month + "-" + day
-            return new Date()
-        }
-    }
-
 
     return (
         <div>
@@ -522,24 +511,19 @@ const PrimaryInfo = ({ email, user, updated, header }) => {
                     {/* DOB */}
                     <div className="col-12 col-lg-4">
                         <div className="form-group mb-4">
-                            {errors.dob && errors.dob.message ? (
-                                <small className="text-danger">{errors.dob && errors.dob.message}</small>
+                            {userDOB.error ? (
+                                <small className="text-danger">Date of birth is required*</small>
                             ) : <small>Date of birth</small>}
 
-                            <DatePicker
-                                clearIcon={false}
-                                // maxDate={checkDOB}
-                                onChange={(event) => console.log(event)}
-                                value={user.dob || checkDOB}
-                            />
-
-                            {/* <DatePicker
-                                max={checkDOB()}
-                                defaultValue={moment(`${formateDate(user.dob)}`, dateFormat)}
-                                format={dateFormat}
-                                className={errors.dob ? "form-control shadow-none danger-border" : "form-control shadow-none"}
-
-                            /> */}
+                            <div>
+                                <DatePicker
+                                    selected={Date.parse(user.dob || userDOB.value)}
+                                    onChange={date => setUserDOB({ value: date, error: null })}
+                                    maxDate={new Date(maxAge(), 1, 1)}
+                                    showDisabledMonthNavigation
+                                    className={errors.dob ? "form-control shadow-none danger-border" : "form-control shadow-none"}
+                                />
+                            </div>
 
                             {/* <input
                                 type="date"
