@@ -48,7 +48,7 @@ const FavouriteCuisine = ({ email, header, activities }) => {
     useEffect(() => {
         getCuisine()
         setSelectedCuisine(activities.favouriteCuisine)
-    }, [header, getCuisine])
+    }, [header, activities, getCuisine])
 
 
     // Create Cuisine

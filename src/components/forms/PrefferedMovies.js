@@ -50,7 +50,7 @@ const PrefferedMovies = ({ email, header, activities }) => {
     useEffect(() => {
         getMovies()
         setSelectedMovies(activities.preferredMovies)
-    }, [header, getMovies])
+    }, [header, activities, getMovies])
 
 
     // Create Movie

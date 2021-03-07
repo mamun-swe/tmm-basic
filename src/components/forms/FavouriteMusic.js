@@ -50,7 +50,7 @@ const FavouriteMusic = ({ email, header, activities }) => {
     useEffect(() => {
         fetchMusics()
         setSelectedMusics(activities.favouriteMusic)
-    }, [header, fetchMusics])
+    }, [header, activities, activities.favouriteMusic, fetchMusics])
 
 
     // Create Music
