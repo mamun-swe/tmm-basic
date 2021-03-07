@@ -44,8 +44,6 @@ const Edit = () => {
             const response = await axios.get(`${api}admin/user/show/${email}`, header)
             if (response.status === 200) {
                 setUser(response.data.user)
-                console.log(response.data.user)
-
                 setTimeout(() => {
                     setLoading(false)
                 }, 2000)
@@ -165,6 +163,7 @@ const Edit = () => {
             <FamilyInfoForm
                 header={header}
                 id={user._id}
+                family={user.familyInfo ? user.familyInfo : null}
             />
 
             {/* Personal activities */}
