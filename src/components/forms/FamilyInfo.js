@@ -7,41 +7,57 @@ import { useForm } from 'react-hook-form'
 import 'react-toastify/dist/ReactToastify.css'
 
 toast.configure({ autoClose: 2000 })
-const FamilyInfo = ({ id, header }) => {
+const FamilyInfo = ({ id, header, family }) => {
     const { register, handleSubmit } = useForm()
     const [isLoading, setLoading] = useState(false)
 
     const [father, setFather] = useState({
-        name: null,
-        status: null,
-        employedCompany: null,
-        employedDesignation: null,
-        buisnessCompany: null,
-        retiredCompany: null,
-        retiredDesignation: null,
+        name: family ? family.father.name : null,
+        status: family ? family.father.status : null,
+        employedCompany: family ? family.father.employedCompany : null,
+        employedDesignation: family ? family.father.employedDesignation : null,
+        buisnessCompany: family ? family.father.buisnessCompany : null,
+        retiredCompany: family ? family.father.retiredCompany : null,
+        retiredDesignation: family ? family.father.retiredDesignation : null,
     })
 
     const [mother, setMother] = useState({
-        name: null,
-        status: null,
-        employedCompany: null,
-        employedDesignation: null,
-        buisnessCompany: null,
-        retiredCompany: null,
-        retiredDesignation: null,
+        name: family ? family.mother.name : null,
+        status: family ? family.mother.status : null,
+        employedCompany: family ? family.mother.employedCompany : null,
+        employedDesignation: family ? family.mother.employedDesignation : null,
+        buisnessCompany: family ? family.mother.buisnessCompany : null,
+        retiredCompany: family ? family.mother.retiredCompany : null,
+        retiredDesignation: family ? family.mother.retiredDesignation : null,
     })
 
     // Handle father status
-    const onChangeFatherStatus = event => setFather({ ...father, status: event.target.value })
+    const onChangeFatherStatus = event => setFather({
+        ...father,
+        employedCompany: family ? family.father.employedCompany : null,
+        employedDesignation: family ? family.father.employedDesignation : null,
+        buisnessCompany: family ? family.father.buisnessCompany : null,
+        retiredCompany: family ? family.father.retiredCompany : null,
+        retiredDesignation: family ? family.father.retiredDesignation : null,
+        status: event.target.value
+    })
 
     // Handle mateher status
-    const onChangeMotherStatus = event => setMother({ ...mother, status: event.target.value })
+    const onChangeMotherStatus = event => setMother({
+        ...mother,
+        employedCompany: family ? family.mother.employedCompany : null,
+        employedDesignation: family ? family.mother.employedDesignation : null,
+        buisnessCompany: family ? family.mother.buisnessCompany : null,
+        retiredCompany: family ? family.mother.retiredCompany : null,
+        retiredDesignation: family ? family.mother.retiredDesignation : null,
+        status: event.target.value
+    })
 
     const onSubmit = async (data) => {
         try {
 
             const newData = {
-                id: id,
+                userId: id,
                 father: father,
                 mother: mother,
                 familyLocation: data.familyLocation,
@@ -56,7 +72,6 @@ const FamilyInfo = ({ id, header }) => {
             }
 
             setLoading(true)
-
             const response = await axios.post(`${api}admin/familyinformation/store`, newData, header)
             if (response.status === 201) {
                 setLoading(false)
@@ -87,6 +102,7 @@ const FamilyInfo = ({ id, header }) => {
                                     <input
                                         type="text"
                                         name="fathersName"
+                                        defaultValue={father.name}
                                         placeholder="Enter father's name"
                                         className="form-control rounded-0 shadow-none"
                                         onChange={(event) => setFather({ name: event.target.value })}
@@ -101,6 +117,7 @@ const FamilyInfo = ({ id, header }) => {
                                         className="form-control rounded-0 shadow-none"
                                         onChange={onChangeFatherStatus}
                                         ref={register()}
+                                        defaultValue={father.status}
                                     >
                                         <option>Select</option>
                                         <option value="Employed">Employed</option>
@@ -122,7 +139,8 @@ const FamilyInfo = ({ id, header }) => {
                                                 type="text"
                                                 placeholder="Company Name"
                                                 className="form-control rounded-0 shadow-none"
-                                                onChange={(event) => setFather({ employedCompany: event.target.value })}
+                                                onChange={(event) => setFather({ ...father, employedCompany: event.target.value })}
+                                                defaultValue={father.employedCompany}
                                             />
                                         </div>
 
@@ -132,7 +150,8 @@ const FamilyInfo = ({ id, header }) => {
                                                 type="text"
                                                 placeholder="Designation"
                                                 className="form-control rounded-0 shadow-none"
-                                                onChange={(event) => setFather({ employedDesignation: event.target.value })}
+                                                onChange={(event) => setFather({ ...father, employedDesignation: event.target.value })}
+                                                defaultValue={father.employedDesignation}
                                             />
                                         </div>
                                     </div>
@@ -145,7 +164,8 @@ const FamilyInfo = ({ id, header }) => {
                                                 type="text"
                                                 placeholder="Example (Real Estate, Ecommerce)"
                                                 className="form-control rounded-0 shadow-none"
-                                                onChange={(event) => setFather({ buisnessCompany: event.target.value })}
+                                                onChange={(event) => setFather({ ...father, buisnessCompany: event.target.value })}
+                                                defaultValue={father.buisnessCompany}
                                             />
                                         </div>
 
@@ -158,7 +178,8 @@ const FamilyInfo = ({ id, header }) => {
                                                         type="text"
                                                         name="retiredFrom"
                                                         className="form-control rounded-0 shadow-none"
-                                                        onChange={(event) => setFather({ retiredCompany: event.target.value })}
+                                                        onChange={(event) => setFather({ ...father, retiredCompany: event.target.value })}
+                                                        defaultValue={father.retiredCompany}
                                                     />
                                                 </div>
 
@@ -169,7 +190,8 @@ const FamilyInfo = ({ id, header }) => {
                                                         name="retiredDesignation"
                                                         placeholder="Designation"
                                                         className="form-control rounded-0 shadow-none"
-                                                        onChange={(event) => setFather({ retiredDesignation: event.target.value })}
+                                                        onChange={(event) => setFather({ ...father, retiredDesignation: event.target.value })}
+                                                        defaultValue={father.retiredDesignation}
                                                     />
                                                 </div>
                                             </div>
@@ -186,6 +208,7 @@ const FamilyInfo = ({ id, header }) => {
                                         placeholder="Enter mother's name"
                                         className="form-control rounded-0 shadow-none"
                                         onChange={(event) => setMother({ name: event.target.value })}
+                                        defaultValue={mother.name}
                                     />
                                 </div>
 
@@ -197,6 +220,7 @@ const FamilyInfo = ({ id, header }) => {
                                         className="form-control rounded-0 shadow-none"
                                         onChange={onChangeMotherStatus}
                                         ref={register()}
+                                        defaultValue={mother.status}
                                     >
                                         <option>Select</option>
                                         <option value="Homemaker">Homemaker</option>
@@ -210,7 +234,7 @@ const FamilyInfo = ({ id, header }) => {
 
                                 {/* Optional fields for mother status */}
                                 {/* Employeed */}
-                                {father.status === 'Employed' ?
+                                {mother.status === 'Employed' ?
                                     <div>
                                         <div className="form-group mb-4">
                                             <small>With</small>
@@ -218,7 +242,8 @@ const FamilyInfo = ({ id, header }) => {
                                                 type="text"
                                                 placeholder="Company Name"
                                                 className="form-control rounded-0 shadow-none"
-                                                onChange={(event) => setFather({ employedCompany: event.target.value })}
+                                                onChange={(event) => setMother({ ...mother, employedCompany: event.target.value })}
+                                                defaultValue={mother.employedCompany}
                                             />
                                         </div>
 
@@ -228,25 +253,27 @@ const FamilyInfo = ({ id, header }) => {
                                                 type="text"
                                                 placeholder="Designation"
                                                 className="form-control rounded-0 shadow-none"
-                                                onChange={(event) => setFather({ employedDesignation: event.target.value })}
+                                                onChange={(event) => setMother({ ...mother, employedDesignation: event.target.value })}
+                                                defaultValue={mother.employedDesignation}
                                             />
                                         </div>
                                     </div>
 
                                     // Buisness
-                                    : father.status === 'Business' ?
+                                    : mother.status === 'Business' ?
                                         <div className="form-group mb-4">
                                             <small>Nature of Buisness</small>
                                             <input
                                                 type="text"
                                                 placeholder="Example (Real Estate, Ecommerce)"
                                                 className="form-control rounded-0 shadow-none"
-                                                onChange={(event) => setMother({ buisnessCompany: event.target.value })}
+                                                onChange={(event) => setMother({ ...mother, buisnessCompany: event.target.value })}
+                                                defaultValue={mother.buisnessCompany}
                                             />
                                         </div>
 
                                         // Retired
-                                        : father.status === 'Retired' ?
+                                        : mother.status === 'Retired' ?
                                             <div>
                                                 <div className="form-group mb-4">
                                                     <small>From</small>
@@ -254,7 +281,8 @@ const FamilyInfo = ({ id, header }) => {
                                                         type="text"
                                                         name="retiredFrom"
                                                         className="form-control rounded-0 shadow-none"
-                                                        onChange={(event) => setMother({ retiredCompany: event.target.value })}
+                                                        onChange={(event) => setMother({ ...mother, retiredCompany: event.target.value })}
+                                                        defaultValue={mother.retiredCompany}
                                                     />
                                                 </div>
 
@@ -265,7 +293,8 @@ const FamilyInfo = ({ id, header }) => {
                                                         name="retiredDesignation"
                                                         placeholder="Designation"
                                                         className="form-control rounded-0 shadow-none"
-                                                        onChange={(event) => setMother({ retiredDesignation: event.target.value })}
+                                                        onChange={(event) => setMother({ ...mother, retiredDesignation: event.target.value })}
+                                                        defaultValue={mother.retiredDesignation}
                                                     />
                                                 </div>
                                             </div>
@@ -282,6 +311,7 @@ const FamilyInfo = ({ id, header }) => {
                                         placeholder="Your family location"
                                         className="form-control rounded-0 shadow-none"
                                         ref={register()}
+                                        defaultValue={family ? family.familyLocation : null}
                                     />
                                 </div>
                             </div>
@@ -296,6 +326,7 @@ const FamilyInfo = ({ id, header }) => {
                                         placeholder="Enter Native Place"
                                         className="form-control rounded-0 shadow-none"
                                         ref={register()}
+                                        defaultValue={family ? family.nativePlace : null}
                                     />
                                 </div>
                             </div>
@@ -310,6 +341,7 @@ const FamilyInfo = ({ id, header }) => {
                                         placeholder="Enter Number of Brothers"
                                         className="form-control rounded-0 shadow-none"
                                         ref={register()}
+                                        defaultValue={family ? family.numberOfBrothers : null}
                                     />
                                 </div>
                             </div>
@@ -324,6 +356,7 @@ const FamilyInfo = ({ id, header }) => {
                                         placeholder="Enter Number of Sisters"
                                         className="form-control rounded-0 shadow-none"
                                         ref={register()}
+                                        defaultValue={family ? family.numberOfSisters : null}
                                     />
                                 </div>
                             </div>
@@ -338,6 +371,7 @@ const FamilyInfo = ({ id, header }) => {
                                         placeholder="Enter Number of brothers married"
                                         className="form-control rounded-0 shadow-none"
                                         ref={register()}
+                                        defaultValue={family ? family.numberOfBrothersMarried : null}
                                     />
                                 </div>
                             </div>
@@ -352,6 +386,7 @@ const FamilyInfo = ({ id, header }) => {
                                         placeholder="Enter Number of sisters married"
                                         className="form-control rounded-0 shadow-none"
                                         ref={register()}
+                                        defaultValue={family ? family.numberOfSistersMarried : null}
                                     />
                                 </div>
                             </div>
@@ -364,6 +399,7 @@ const FamilyInfo = ({ id, header }) => {
                                         name="familyType"
                                         className="form-control rounded-0 shadow-none"
                                         ref={register()}
+                                        defaultValue={family ? family.familyType : null}
                                     >
                                         <option value="Joint">Joint</option>
                                         <option value="Nuclear">Nuclear</option>
@@ -379,6 +415,7 @@ const FamilyInfo = ({ id, header }) => {
                                         name="familyValue"
                                         className="form-control rounded-0 shadow-none"
                                         ref={register()}
+                                        defaultValue={family ? family.familyValue : null}
                                     >
                                         <option value="Traditional">Traditional</option>
                                         <option value="Moderate">Moderate</option>
@@ -395,6 +432,7 @@ const FamilyInfo = ({ id, header }) => {
                                         name="familyAffluence"
                                         className="form-control rounded-0 shadow-none"
                                         ref={register()}
+                                        defaultValue={family ? family.familyAffluence : null}
                                     >
                                         <option value="Affluent">Affluent</option>
                                         <option value="Upper Middle Class">Upper Middle Class</option>
