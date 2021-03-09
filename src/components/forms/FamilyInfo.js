@@ -123,7 +123,7 @@ const FamilyInfo = ({ id, header, family }) => {
                                         <option value="Employed">Employed</option>
                                         <option value="Business">Business</option>
                                         <option value="Retired">Retired</option>
-                                        <option value="Not Employed">Not Employed</option>
+                                        <option value="NotEmployed">Not Employed</option>
                                         <option value="Passed Away">Passed Away</option>
                                     </select>
                                 </div>
@@ -434,14 +434,13 @@ const FamilyInfo = ({ id, header, family }) => {
                                         ref={register()}
                                         defaultValue={family ? family.familyAffluence : null}
                                     >
-                                        <option value="Affluent">Affluent</option>
+                                        <option value="Affluence">Affluence</option>
                                         <option value="Upper Middle Class">Upper Middle Class</option>
                                         <option value="Middle Class">Middle Class</option>
                                         <option value="Lower Middle Class">Lower Middle Class</option>
                                     </select>
                                 </div>
                             </div>
-
                         </div>
 
 
