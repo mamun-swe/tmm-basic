@@ -123,7 +123,7 @@ const FamilyInfo = ({ id, header, family }) => {
                                         <option value="Employed">Employed</option>
                                         <option value="Business">Business</option>
                                         <option value="Retired">Retired</option>
-                                        <option value="NotEmployed">Not Employed</option>
+                                        <option value="NotEmployed">NotEmployed</option>
                                         <option value="Passed Away">Passed Away</option>
                                     </select>
                                 </div>
