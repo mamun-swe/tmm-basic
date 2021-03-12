@@ -296,7 +296,7 @@ const Create = () => {
 
 
     // Submit Registration Data
-    const onSubmit = async (data) => {
+    const onSubmit = async (data, event) => {
 
         // Check Branch
         if (branch.value === null || branch.value === "" || branch.value === undefined) {
@@ -345,8 +345,8 @@ const Create = () => {
             if (response.status === 201) {
                 setUpdate(false)
                 toast.success(response.data.message)
+                event.target.reset()
             }
-
         } catch (error) {
             if (error) {
                 setUpdate(false)
