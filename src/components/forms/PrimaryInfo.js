@@ -352,7 +352,6 @@ const PrimaryInfo = ({ email, user, updated, header }) => {
         }
     }
 
-
     // Check Max Age is < 18
     const maxAge = () => {
         const dateNow = new Date()
@@ -529,7 +528,8 @@ const PrimaryInfo = ({ email, user, updated, header }) => {
                             {/* <input
                                 type="date"
                                 name="dob"
-                                defaultValue={user.dob}
+                                max={checkDOB()}
+                                defaultValue={formateDate(user.dob)}
                                 className={errors.dob ? "form-control shadow-none danger-border" : "form-control shadow-none"}
                                 ref={register({
                                     required: "Date of birth is required"

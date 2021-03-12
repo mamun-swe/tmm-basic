@@ -15,6 +15,7 @@ import PictureAndDescUpdateForm from '../../../components/forms/ProfilePictureDe
 import EducationAndProfessionForm from '../../../components/forms/EducationProfession'
 import BasicAndLifestyleUpdateForm from '../../../components/forms/BasicAndLifestyle'
 import ContactInfoCreateForm from '../../../components/forms/ContactInformation'
+import FamilyInfoForm from '../../../components/forms/FamilyInfo'
 import HobbiForm from '../../../components/forms/Hobbi'
 import InterestForm from '../../../components/forms/Interests'
 import MusicForm from '../../../components/forms/FavouriteMusic'
@@ -157,6 +158,14 @@ const Edit = () => {
                 contact={user.contactInformation ? user.contactInformation : null}
                 header={header}
             />
+
+            {/* Family information form */}
+            <FamilyInfoForm
+                header={header}
+                id={user._id}
+                family={user.familyInfo ? user.familyInfo : null}
+            />
+
             {/* Personal activities */}
             <div className="card my-lg-4">
                 <div className="card-header bg-white">
