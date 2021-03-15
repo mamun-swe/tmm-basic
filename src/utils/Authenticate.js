@@ -1,13 +1,13 @@
 import jwt_decode from "jwt-decode"
 
 export const checkIfLoggedIn = () => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("token")
     if (token) {
-        const user = jwt_decode(token);
-        if (user.role === 'super_admin') {
-            return ({ role: user.role })
+        const user = jwt_decode(token)
+        if (user) {
+            return user
+        } else {
+            return false
         }
-        return false
     }
-    return false;
-};
+}

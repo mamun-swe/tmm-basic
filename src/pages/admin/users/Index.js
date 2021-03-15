@@ -10,9 +10,10 @@ import Skeleton from "react-loading-skeleton";
 import { loadC } from 'react-icons-kit/ionicons';
 import { ic_create, ic_lock, ic_add } from "react-icons-kit/md";
 import InfiniteScroll from "react-infinite-scroll-component";
+import { toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
-import ErrorModal from '../../../components/errorModal/Index'
-
+toast.configure({ autoClose: 2000 })
 const Index = () => {
     const refs = createRef()
     const history = useHistory()
@@ -24,10 +25,11 @@ const Index = () => {
     const [isLoading, setLoading] = useState(true)
     const [isLoggingOut, setLoggingOut] = useState(false)
     const [filteredUsers, setFilteredUsers] = useState(users)
-    const [isError, setError] = useState({ value: null, status: false })
     const [header] = useState({
         headers: { Authorization: "Bearer " + localStorage.getItem("token") }
     })
+
+    console.log(header);
 
     // Fetch Users
     const fetchUsers = useCallback(async () => {
@@ -40,15 +42,18 @@ const Index = () => {
             }
         } catch (error) {
             if (error) {
-                setLoading(false)
-                setError({ value: error.response, status: true })
+                toast.error(error.response.data.message + ' Logging out.')
+                setTimeout(() => {
+                    localStorage.clear()
+                    history.push('/')
+                }, 1000)
             }
         }
-    }, [page, header])
+    }, [page, history, header])
 
     useEffect(() => {
         fetchUsers()
-    }, [page, header, fetchUsers])
+    }, [page, fetchUsers])
 
     // Submit to filter user
     const onSubmit = async (data) => {
@@ -68,10 +73,20 @@ const Index = () => {
             }
         } catch (error) {
             if (error) {
-                // handleError(error);
+                toast.error(error.response.data.message)
             }
         }
-    };
+    }
+
+    // Logout
+    const doLogout = () => {
+        setLoggingOut(true)
+        localStorage.clear()
+        setTimeout(() => {
+            setLoggingOut(false)
+            history.push('/')
+        }, 1000)
+    }
 
     // On change filter
     const filterHandle = (event) => {
@@ -79,27 +94,6 @@ const Index = () => {
         if (!value) {
             setLoading(true);
             fetchUsers();
-        }
-    };
-
-    // Logout
-    const doLogout = async () => {
-        try {
-            setLoggingOut(true)
-            const response = await axios.get(`${api}admin/auth/logout`, header)
-            if (response.status === 200) {
-                localStorage.clear()
-                setTimeout(() => {
-                    history.push('/')
-                }, 2000)
-            }
-        } catch (error) {
-            if (error) {
-                localStorage.clear()
-                setTimeout(() => {
-                    history.push('/')
-                }, 2000)
-            }
         }
     }
 
@@ -145,10 +139,6 @@ const Index = () => {
         </div>);
     }
 
-    // Showing Error
-    if (isError.status) {
-        return (<ErrorModal message={isError.value} header={header} />)
-    }
 
     return (
         <div className="users-index">

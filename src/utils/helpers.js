@@ -4,4 +4,7 @@ export const removeItem = (array, item) => {
     return filteredItems
 }
 
-
+// header
+export const header = {
+    headers: { Authorization: "Bearer " + localStorage.getItem("token") }
+}

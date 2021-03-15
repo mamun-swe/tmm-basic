@@ -58,7 +58,7 @@ const Edit = () => {
 
     useEffect(() => {
         fetchUser()
-    }, [email, header, fetchUser])
+    }, [email, fetchUser])
 
 
     // re fetch data after updated
@@ -69,24 +69,13 @@ const Edit = () => {
     }
 
     // Logout
-    const doLogout = async () => {
-        try {
-            setLoggingOut(true)
-            const response = await axios.get(`${api}admin/auth/logout`, header)
-            if (response.status === 200) {
-                localStorage.clear()
-                setTimeout(() => {
-                    history.push('/')
-                }, 2000)
-            }
-        } catch (error) {
-            if (error) {
-                localStorage.clear()
-                setTimeout(() => {
-                    history.push('/')
-                }, 2000)
-            }
-        }
+    const doLogout = () => {
+        setLoggingOut(true)
+        localStorage.clear()
+        setTimeout(() => {
+            setLoggingOut(false)
+            history.push('/')
+        }, 1000)
     }
 
     // if loading to fetch data
