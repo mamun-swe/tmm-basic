@@ -435,11 +435,7 @@ const Create = () => {
                                                         className={errors.name ? "form-control shadow-none danger-border" : "form-control shadow-none"}
                                                         placeholder="Your name"
                                                         ref={register({
-                                                            required: "Name is required.",
-                                                            minLength: {
-                                                                value: 5,
-                                                                message: "Minimun length 5 character."
-                                                            }
+                                                            required: "Name is required."
                                                         })}
                                                     />
                                                 </div>
