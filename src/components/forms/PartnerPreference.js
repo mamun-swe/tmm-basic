@@ -29,6 +29,8 @@ const PartnerPreference = ({ email, updated, preference, header }) => {
     const [isWorkingWithCreated, setWorkingWithCreated] = useState(false)
     const [showProfessionArea, setShowProfessionArea] = useState(false)
     const [isProfessionAreaCreated, setProfessionAreaCreated] = useState(false)
+    // Social title
+    const [socialTitle, setSocialTitle] = useState({ show: false, value: [], options: [], loading: false })
 
     // Input States
     const [ageRange, setAgeRange] = useState({
@@ -200,6 +202,27 @@ const PartnerPreference = ({ email, updated, preference, header }) => {
         }
     }, [header])
 
+    // Get social title
+    const getSocialTitle = useCallback(async () => {
+        try {
+            const response = await axios.get(`${api}admin/user/title`, header)
+            if (response.data) setSocialTitle(exTitle => ({ ...exTitle, options: response.data && response.data.titles.map(item => ({ label: item.title, value: item.title })) }))
+        } catch (error) {
+            if (error) {
+                toast.error(`${error.response.data.message}`, {
+                    position: "bottom-right",
+                    autoClose: false,
+                    hideProgressBar: true,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                })
+            }
+        }
+    }, [header])
+
+
     // Get Country
     const getCountry = useCallback(async () => {
         try {
@@ -252,7 +275,8 @@ const PartnerPreference = ({ email, updated, preference, header }) => {
         getQualification()
         getWorkingWith()
         getProfessionArea()
-    }, [header, getReligion, getCountry, getLanguage, getQualification, getWorkingWith, getProfessionArea])
+        getSocialTitle()
+    }, [header, getReligion, getCountry, getLanguage, getQualification, getWorkingWith, getProfessionArea, getSocialTitle])
 
     // On Change methods
     const onAfterAgeChange = value => setAgeRange({ startFrom: value[0], endTo: value[1] })
@@ -262,6 +286,7 @@ const PartnerPreference = ({ email, updated, preference, header }) => {
         setReligion({ value: event })
     }
     const onChangeSocialOrder = event => setSocialOrder({ value: event })
+    const onChangeSocialTitle = event => setSocialTitle({ ...socialTitle, value: event })
     const onChangeMotherTounge = event => setMotherTounge(event.value)
     const onChangeSpokenLanguages = event => setSpokenLanguages({ value: event })
     const onChangeCountries = event => setCountries({ value: event })
@@ -343,6 +368,7 @@ const PartnerPreference = ({ email, updated, preference, header }) => {
                 ...data,
                 ageRange,
                 heightRange,
+                title: socialTitle.value ? socialTitle.value.map(data => data.value) : null,
                 materialStatus: materialStatus.value ? materialStatus.value.map(data => data.value) : preference ? preference.materialStatus : null,
                 religion: religion.value ? religion.value.map(data => data.value) : preference ? preference.religion : null,
                 socialOrder: socialOrder.value ? socialOrder.value.map(data => data.value) : preference ? preference.socialOrder : null,
@@ -373,7 +399,6 @@ const PartnerPreference = ({ email, updated, preference, header }) => {
         } catch (error) {
             if (error) {
                 setLoading(false)
-                console.log(error.response)
                 toast.warn(error.response.message)
             }
         }
@@ -467,6 +492,25 @@ const PartnerPreference = ({ email, updated, preference, header }) => {
                                     />
                                 </div>
                             </div>
+
+                            {/* Social title */}
+                            <div className="col-12 col-lg-4">
+                                <div className="form-group mb-4">
+                                    <small>Social title</small>
+
+                                    <Select
+                                        isMulti
+                                        defaultValue={preference ? preference.title && preference.title.map(item => ({ value: item, label: item })) : null}
+                                        classNamePrefix="custom-select"
+                                        styles={customStyles}
+                                        placeholder={'Social title'}
+                                        cSocialTitleCreateModalomponents={{ DropdownIndicator: () => null, IndicatorSeparator: () => null }}
+                                        options={socialTitle.options}
+                                        onChange={onChangeSocialTitle}
+                                    />
+                                </div>
+                            </div>
+
 
                             {/* Mother tounge */}
                             <div className="col-12 col-lg-4">
@@ -751,14 +795,16 @@ const PartnerPreference = ({ email, updated, preference, header }) => {
             </div>
 
             {/* Qualification create modal */}
-            {showQualification ?
-                <QualificationModal
-                    show={showQualification}
-                    isCreate={isQualificationCreated}
-                    newdata={createQualification}
-                    onHide={() => setShowQualification(false)}
-                />
-                : null}
+            {
+                showQualification ?
+                    <QualificationModal
+                        show={showQualification}
+                        isCreate={isQualificationCreated}
+                        newdata={createQualification}
+                        onHide={() => setShowQualification(false)}
+                    />
+                    : null
+            }
 
             {/* Working with create modal */}
             <WorkingWithModal
@@ -777,7 +823,7 @@ const PartnerPreference = ({ email, updated, preference, header }) => {
             />
 
 
-        </div>
+        </div >
     );
 }
 

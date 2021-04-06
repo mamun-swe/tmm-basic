@@ -86,8 +86,8 @@ const PrimaryInfo = ({ email, user, updated, header }) => {
     // Get social title
     const getSocialTitle = useCallback(async () => {
         try {
-            const response = await axios.get(`${api}admin/religion`, header)
-            setSocialTitle({ ...socialTitle, options: response.data.religions.map(data => ({ label: data.name, value: data.name })) })
+            const response = await axios.get(`${api}admin/user/title`, header)
+            if (response.data) setSocialTitle(exTitle => ({ ...exTitle, options: response.data && response.data.titles.map(item => ({ label: item.title, value: item.title })) }))
         } catch (error) {
             if (error) {
                 toast.error(`${error.response.data.message}`, {
@@ -273,12 +273,14 @@ const PrimaryInfo = ({ email, user, updated, header }) => {
     // Create social title
     const createSocialTitle = async data => {
         try {
-            console.log(data)
             setSocialTitle({ ...socialTitle, show: true, options: data, loading: true })
 
-            setTimeout(() => {
-                setSocialTitle({ ...socialTitle, show: false, value: null, loading: true })
-            }, 2000);
+            const response = await axios.post(`${api}admin/user/title`, data, header)
+            if (response.status === 201) {
+                getSocialTitle()
+                setSocialTitle({ ...socialTitle, show: false, value: null, loading: false })
+                toast.success(response.data.message)
+            }
 
         } catch (error) {
             if (error) {
@@ -287,7 +289,6 @@ const PrimaryInfo = ({ email, user, updated, header }) => {
             }
         }
     }
-
 
     // Create Country
     const createCountry = async (data) => {
@@ -376,7 +377,7 @@ const PrimaryInfo = ({ email, user, updated, header }) => {
             religion: religion.value ? religion.value : user.religion,
             dob: userDOB.value ? userDOB.value : user.dob,
             socialOrder: socialOrder.value ? socialOrder.value : user.socialOrder,
-            socialTitle: socialTitle.value ? socialTitle.value : user.socialTitle,
+            title: socialTitle.value ? socialTitle.value : null,
             birthCountry: birthCountry.value ? birthCountry.value : user.birthCountry,
             livingCountry: livingCountry.value ? livingCountry.value : user.livingCountry,
             motherTongue: motherTongue.value ? motherTongue.value : user.language.motherTongue,
@@ -652,10 +653,10 @@ const PrimaryInfo = ({ email, user, updated, header }) => {
                             <div className="d-flex">
                                 <div className="flex-fill">
                                     <Select
-                                        // defaultValue={{ value: user.socialOrder, label: user.socialOrder }}
+                                        defaultValue={{ value: user.title, label: user.title }}
                                         classNamePrefix="custom-select"
                                         styles={customStyles}
-                                        placeholder={'Social order'}
+                                        placeholder={'Social title'}
                                         cSocialTitleCreateModalomponents={{ DropdownIndicator: () => null, IndicatorSeparator: () => null }}
                                         options={socialTitle.options}
                                         onChange={onChangeSocialTitle}
