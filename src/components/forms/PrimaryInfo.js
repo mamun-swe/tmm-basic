@@ -13,6 +13,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import BranchCreateModal from '../../components/modal/Branch'
 import ReligionCreateModal from '../../components/modal/Religion'
 import SocialOrderCreateModal from '../../components/modal/SocialOrder'
+import SocialTitleCreateModal from '../../components/modal/SocialTitle'
 import CountryCreateModal from '../../components/modal/Country'
 import LanguageCreateModal from '../../components/modal/Language'
 
@@ -47,6 +48,9 @@ const PrimaryInfo = ({ email, user, updated, header }) => {
     const [isCreateSocialOrder, setCreateSocialOrder] = useState(false)
     const [socialOrderOptions, setSocialOrderOptions] = useState([])
 
+    // Social title
+    const [socialTitle, setSocialTitle] = useState({ show: false, value: null, options: [], loading: false })
+
     // Country states
     const [isCountryShow, setCountryShow] = useState(false)
     const [isCountryCreate, setCountryCreate] = useState(false)
@@ -78,6 +82,27 @@ const PrimaryInfo = ({ email, user, updated, header }) => {
             }
         }
     }, [header])
+
+    // Get social title
+    const getSocialTitle = useCallback(async () => {
+        try {
+            const response = await axios.get(`${api}admin/religion`, header)
+            setSocialTitle({ ...socialTitle, options: response.data.religions.map(data => ({ label: data.name, value: data.name })) })
+        } catch (error) {
+            if (error) {
+                toast.error(`${error.response.data.message}`, {
+                    position: "bottom-right",
+                    autoClose: false,
+                    hideProgressBar: true,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                })
+            }
+        }
+    }, [header])
+
 
     // Get Branch
     const getBranches = useCallback(async () => {
@@ -151,9 +176,10 @@ const PrimaryInfo = ({ email, user, updated, header }) => {
     useEffect(() => {
         getReligion()
         getCountry()
+        getSocialTitle()
         getBranches()
         getLanguage()
-    }, [header, getReligion, getBranches, getCountry, getLanguage])
+    }, [header, getReligion, getSocialTitle, getBranches, getCountry, getLanguage])
 
     // onChange branch
     const onChangeBranch = event => setBranch({ value: event.value, error: null })
@@ -169,6 +195,9 @@ const PrimaryInfo = ({ email, user, updated, header }) => {
 
     // OnChange social order
     const onChangeSocialOrder = event => setSocialOrder({ value: event.value, error: null })
+
+    // OnChange social title
+    const onChangeSocialTitle = event => setSocialTitle({ ...socialTitle, value: event.value })
 
     // OnChange Birth Country
     const onChangeBirthCountry = event => setBirthCountry({ value: event.value, error: null })
@@ -236,6 +265,24 @@ const PrimaryInfo = ({ email, user, updated, header }) => {
         } catch (error) {
             if (error) {
                 setCreateSocialOrder(false)
+                toast.warn(error.response.data.message)
+            }
+        }
+    }
+
+    // Create social title
+    const createSocialTitle = async data => {
+        try {
+            console.log(data)
+            setSocialTitle({ ...socialTitle, show: true, options: data, loading: true })
+
+            setTimeout(() => {
+                setSocialTitle({ ...socialTitle, show: false, value: null, loading: true })
+            }, 2000);
+
+        } catch (error) {
+            if (error) {
+                setSocialTitle({ ...socialTitle, show: false, value: null, loading: false })
                 toast.warn(error.response.data.message)
             }
         }
@@ -329,6 +376,7 @@ const PrimaryInfo = ({ email, user, updated, header }) => {
             religion: religion.value ? religion.value : user.religion,
             dob: userDOB.value ? userDOB.value : user.dob,
             socialOrder: socialOrder.value ? socialOrder.value : user.socialOrder,
+            socialTitle: socialTitle.value ? socialTitle.value : user.socialTitle,
             birthCountry: birthCountry.value ? birthCountry.value : user.birthCountry,
             livingCountry: livingCountry.value ? livingCountry.value : user.livingCountry,
             motherTongue: motherTongue.value ? motherTongue.value : user.language.motherTongue,
@@ -524,17 +572,6 @@ const PrimaryInfo = ({ email, user, updated, header }) => {
                                     className={errors.dob ? "form-control shadow-none danger-border" : "form-control shadow-none"}
                                 />
                             </div>
-
-                            {/* <input
-                                type="date"
-                                name="dob"
-                                max={checkDOB()}
-                                defaultValue={formateDate(user.dob)}
-                                className={errors.dob ? "form-control shadow-none danger-border" : "form-control shadow-none"}
-                                ref={register({
-                                    required: "Date of birth is required"
-                                })}
-                            /> */}
                         </div>
                     </div>
 
@@ -599,6 +636,37 @@ const PrimaryInfo = ({ email, user, updated, header }) => {
                                         style={customStyles.smBtn}
                                         className="btn shadow-none rounded-circle p-1"
                                         onClick={() => setSocialOrderShow(true)}
+                                    >
+                                        <Icon icon={ic_add} size={22} />
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Social title */}
+                    <div className="col-12 col-lg-4">
+                        <div className="form-group mb-4">
+                            <small>Social title</small>
+
+                            <div className="d-flex">
+                                <div className="flex-fill">
+                                    <Select
+                                        // defaultValue={{ value: user.socialOrder, label: user.socialOrder }}
+                                        classNamePrefix="custom-select"
+                                        styles={customStyles}
+                                        placeholder={'Social order'}
+                                        cSocialTitleCreateModalomponents={{ DropdownIndicator: () => null, IndicatorSeparator: () => null }}
+                                        options={socialTitle.options}
+                                        onChange={onChangeSocialTitle}
+                                    />
+                                </div>
+                                <div className="pl-2 pt-1">
+                                    <button
+                                        type="button"
+                                        style={customStyles.smBtn}
+                                        className="btn shadow-none rounded-circle p-1"
+                                        onClick={() => setSocialTitle({ ...socialTitle, show: true })}
                                     >
                                         <Icon icon={ic_add} size={22} />
                                     </button>
@@ -786,6 +854,16 @@ const PrimaryInfo = ({ email, user, updated, header }) => {
                     newdata={createSocialOrder}
                     isCreate={isCreateSocialOrder}
                     onHide={() => setSocialOrderShow(false)}
+                />
+                : null}
+
+            {/* Social title modal */}
+            {socialTitle.show ?
+                <SocialTitleCreateModal
+                    show={socialTitle.show}
+                    create={createSocialTitle}
+                    loading={socialTitle.loading}
+                    onHide={() => setSocialTitle({ show: false, value: null, loading: false })}
                 />
                 : null}
 
